@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
+import Partners from '../components/Partners';
 import ValueProps from '../components/ValueProps';
 import FeaturedCourses from '../components/FeaturedCourses';
 import Features from '../components/Features';
@@ -10,6 +11,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Hero />
+      <Partners />
       <ValueProps />
       <FeaturedCourses />
       <Features />

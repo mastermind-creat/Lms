@@ -1,85 +1,82 @@
 import React from 'react';
-import { ArrowRight, PlayCircle } from 'lucide-react';
+import { ArrowRight, Play, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
+    <section className="relative pt-32 pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-white">
+      {/* Abstract Background Elements */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4 z-0 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-500/5 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/4 z-0 pointer-events-none"></div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+        <div className="flex flex-col items-center text-center">
           
-          {/* Text Content */}
-          <div className="w-full lg:w-1/2 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-50 text-gray-600 text-xs font-medium mb-8 border border-gray-200">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              New courses available now
-            </div>
-            
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.1] mb-8 tracking-tight">
-              Master new skills, <br />
-              <span className="text-gray-400">shape your future.</span>
-            </h1>
-            
-            <p className="text-lg text-gray-500 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-              ElimuTech provides the tools and mentorship you need to thrive in the digital economy. Practical, accessible, and designed for you.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link to="/courses" className="w-full sm:w-auto px-8 py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-all flex items-center justify-center gap-2">
-                Browse Courses
-                <ArrowRight size={18} />
-              </Link>
-              <button className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
-                <PlayCircle size={18} />
-                View Demo
-              </button>
-            </div>
-            
-            <div className="mt-12 flex items-center justify-center lg:justify-start gap-4 text-sm text-gray-400">
-               <div className="flex -space-x-2">
-                 {[1,2,3].map(i => (
-                   <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                     <img src={`https://picsum.photos/100/100?random=${i}`} alt="User" className="w-full h-full object-cover" />
-                   </div>
-                 ))}
-               </div>
-               <p>Trusted by 2,000+ students</p>
-            </div>
+          {/* Badge */}
+          <div className="animate-fade-in-up flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-gray-600 text-sm font-medium mb-8 hover:bg-white hover:shadow-sm transition-all cursor-default">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+            </span>
+            <span>Powering Silicon Savannah's Workforce</span>
+          </div>
+          
+          {/* Headline */}
+          <h1 className="animate-fade-in-up [animation-delay:200ms] text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 leading-[1.05] tracking-tight mb-8">
+            Build the <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-accent-500">Future</span> <br />
+            of Africa.
+          </h1>
+          
+          {/* Subheadline */}
+          <p className="animate-fade-in-up [animation-delay:400ms] text-lg md:text-xl text-gray-500 mb-12 max-w-2xl leading-relaxed">
+            ElimuTech is Kenya's premier digital skills ecosystem. We bridge the gap between talent and opportunity with world-class mentorship and practical projects.
+          </p>
+          
+          {/* CTA Buttons */}
+          <div className="animate-fade-in-up [animation-delay:600ms] flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <Link to="/courses" className="w-full sm:w-auto px-8 py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20">
+              Start Learning
+              <Zap size={18} className="fill-current" />
+            </Link>
+            <button className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2">
+              <Play size={18} />
+              Watch Success Stories
+            </button>
           </div>
 
-          {/* Minimalist Image Composition */}
-          <div className="w-full lg:w-1/2 relative lg:h-[600px] flex items-center justify-center">
-             <div className="relative w-full max-w-md lg:max-w-full aspect-[4/5] lg:aspect-auto lg:h-full rounded-2xl overflow-hidden shadow-2xl bg-gray-100">
-                <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                  alt="Students working" 
-                  className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700"
-                />
-                
-                {/* Minimal Overlay Card */}
-                <div className="absolute bottom-8 left-8 right-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Current Course</p>
-                      <p className="font-bold text-gray-900">Product Design</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900">84%</p>
-                      <p className="text-xs text-green-600">On Track</p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-100 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div className="bg-gray-900 h-full w-[84%] rounded-full"></div>
-                  </div>
-                </div>
-             </div>
+          {/* Floating UI Elements (Decorative) */}
+          <div className="mt-20 relative w-full max-w-5xl mx-auto hidden md:block animate-fade-in-up [animation-delay:800ms]">
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-white via-transparent to-transparent z-10 h-20"></div>
              
-             {/* Decorative minimalist element */}
-             <div className="absolute -top-12 -right-12 w-64 h-64 border border-gray-200 rounded-full opacity-50 z-[-1]"></div>
-             <div className="absolute top-12 -right-24 w-64 h-64 border border-gray-100 rounded-full opacity-50 z-[-1]"></div>
+             {/* Main Dashboard Preview */}
+             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
+               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Platform Dashboard" className="w-full h-auto opacity-90" />
+               
+               {/* Floating Card 1: Progress */}
+               <div className="absolute top-12 left-12 glass-card p-4 rounded-xl shadow-lg flex items-center gap-4 animate-bounce [animation-duration:4s]">
+                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                   <Zap size={20} fill="currentColor" />
+                 </div>
+                 <div>
+                   <p className="text-xs text-gray-500 font-semibold uppercase">Weekly Streak</p>
+                   <p className="text-gray-900 font-bold">5 Days</p>
+                 </div>
+               </div>
+
+               {/* Floating Card 2: Live Class */}
+               <div className="absolute bottom-12 right-12 glass-card p-4 rounded-xl shadow-lg animate-pulse [animation-duration:3s]">
+                  <div className="flex items-center gap-3">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-gray-900">Live: Intro to Python</p>
+                      <p className="text-xs text-gray-500">Dr. Wanjiku • 240 watching</p>
+                    </div>
+                  </div>
+               </div>
+             </div>
           </div>
         </div>
       </div>
