@@ -1,56 +1,12 @@
-import React from 'react';
-import { Star, ArrowRight, Layout } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
-interface Course {
-  id: number;
-  title: string;
-  category: string;
-  instructor: string;
-  rating: number;
-  price: string;
-  image: string;
-}
+import React from 'react';
+import { Star, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { courses } from '../data/courses';
 
 const FeaturedCourses: React.FC = () => {
-  const courses: Course[] = [
-    {
-      id: 1,
-      title: "M-PESA Integration & API Development",
-      category: "Fintech",
-      instructor: "Kevin Omondi",
-      rating: 5.0,
-      price: "KES 5,000",
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 2,
-      title: "Data Science for Agriculture",
-      category: "AgriTech",
-      instructor: "Dr. Zainab Ahmed",
-      rating: 4.8,
-      price: "Free",
-      image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 3,
-      title: "Frontend Development with React",
-      category: "Web Dev",
-      instructor: "Wanjiku Kimani",
-      rating: 4.9,
-      price: "KES 8,500",
-      image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 4,
-      title: "UX Design for Mobile Money Apps",
-      category: "Design",
-      instructor: "Brian Kipkorir",
-      rating: 4.9,
-      price: "KES 6,000",
-      image: "https://images.unsplash.com/photo-1586717791821-3f44a5638d48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    }
-  ];
+  // Select first 4 courses for the featured section
+  const featuredCourses = courses.slice(0, 4);
 
   return (
     <section className="py-16 md:py-24 bg-white">
@@ -69,8 +25,8 @@ const FeaturedCourses: React.FC = () => {
 
         {/* Responsive Grid: 2 cols on mobile, 3 on md, 4 on lg */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-          {courses.map((course) => (
-            <div key={course.id} className="group relative bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+          {featuredCourses.map((course) => (
+            <Link to={`/courses/${course.id}`} key={course.id} className="group relative bg-white rounded-xl md:rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
               {/* Image with overlay */}
               <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                 <img 
@@ -114,7 +70,7 @@ const FeaturedCourses: React.FC = () => {
                    </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         

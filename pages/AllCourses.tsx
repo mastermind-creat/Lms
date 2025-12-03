@@ -1,146 +1,16 @@
+
 import React, { useState } from 'react';
-import { Search, Filter, BookOpen, Clock, BarChart, Star } from 'lucide-react';
+import { Search, BookOpen, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { courses } from '../data/courses';
 
 const AllCourses: React.FC = () => {
-  const allCourses = [
-    {
-      id: 1,
-      title: "Full-Stack Web Development Bootcamp",
-      category: "Development",
-      instructor: "Sarah Jenkins",
-      rating: 4.9,
-      students: 1250,
-      duration: "12 weeks",
-      level: "Beginner",
-      price: "KES 15,000",
-      image: "https://picsum.photos/600/400?random=10",
-      avatar: "https://picsum.photos/100/100?random=11"
-    },
-    {
-      id: 2,
-      title: "Data Science & Machine Learning",
-      category: "Data Science",
-      instructor: "David Chen",
-      rating: 4.8,
-      students: 850,
-      duration: "10 weeks",
-      level: "Intermediate",
-      price: "KES 18,500",
-      image: "https://picsum.photos/600/400?random=12",
-      avatar: "https://picsum.photos/100/100?random=13"
-    },
-    {
-      id: 3,
-      title: "Digital Marketing Masterclass 2024",
-      category: "Marketing",
-      instructor: "Emily Roth",
-      rating: 4.7,
-      students: 2100,
-      duration: "6 weeks",
-      level: "All Levels",
-      price: "Free",
-      image: "https://picsum.photos/600/400?random=14",
-      avatar: "https://picsum.photos/100/100?random=15"
-    },
-    {
-      id: 4,
-      title: "UI/UX Design Fundamentals",
-      category: "Design",
-      instructor: "Michael Ross",
-      rating: 4.9,
-      students: 3200,
-      duration: "8 weeks",
-      level: "Beginner",
-      price: "KES 5,000",
-      image: "https://picsum.photos/600/400?random=16",
-      avatar: "https://picsum.photos/100/100?random=17"
-    },
-    {
-      id: 5,
-      title: "Advanced React Patterns",
-      category: "Development",
-      instructor: "Sarah Jenkins",
-      rating: 4.8,
-      students: 500,
-      duration: "4 weeks",
-      level: "Advanced",
-      price: "KES 8,000",
-      image: "https://picsum.photos/600/400?random=18",
-      avatar: "https://picsum.photos/100/100?random=11"
-    },
-    {
-      id: 6,
-      title: "Python for Finance",
-      category: "Finance",
-      instructor: "James Wilson",
-      rating: 4.6,
-      students: 1200,
-      duration: "8 weeks",
-      level: "Intermediate",
-      price: "KES 12,000",
-      image: "https://picsum.photos/600/400?random=19",
-      avatar: "https://picsum.photos/100/100?random=20"
-    },
-    {
-      id: 7,
-      title: "Mobile App Development with Flutter",
-      category: "Development",
-      instructor: "Alex Chen",
-      rating: 4.7,
-      students: 950,
-      duration: "10 weeks",
-      level: "Intermediate",
-      price: "KES 14,000",
-      image: "https://picsum.photos/600/400?random=21",
-      avatar: "https://picsum.photos/100/100?random=22"
-    },
-    {
-      id: 8,
-      title: "Copywriting for Conversion",
-      category: "Marketing",
-      instructor: "Lisa Ray",
-      rating: 4.9,
-      students: 1500,
-      duration: "5 weeks",
-      level: "Beginner",
-      price: "Free",
-      image: "https://picsum.photos/600/400?random=23",
-      avatar: "https://picsum.photos/100/100?random=24"
-    },
-    {
-      id: 9,
-      title: "Blockchain Basics",
-      category: "Technology",
-      instructor: "Tom Baker",
-      rating: 4.5,
-      students: 600,
-      duration: "6 weeks",
-      level: "Beginner",
-      price: "Free",
-      image: "https://picsum.photos/600/400?random=25",
-      avatar: "https://picsum.photos/100/100?random=26"
-    },
-    {
-      id: 10,
-      title: "Cybersecurity Essentials",
-      category: "Technology",
-      instructor: "Maria Garcia",
-      rating: 4.8,
-      students: 900,
-      duration: "8 weeks",
-      level: "Beginner",
-      price: "KES 9,500",
-      image: "https://picsum.photos/600/400?random=27",
-      avatar: "https://picsum.photos/100/100?random=28"
-    }
-  ];
-
-  const categories = ["All", "Development", "Design", "Marketing", "Data Science", "Finance"];
+  const categories = ["All", "Development", "Design", "Marketing", "Data Science", "Finance", "AgriTech", "Fintech"];
   const [activeCategory, setActiveCategory] = useState("All");
 
   const filteredCourses = activeCategory === "All" 
-    ? allCourses 
-    : allCourses.filter(c => c.category === activeCategory);
+    ? courses 
+    : courses.filter(c => c.category === activeCategory || (activeCategory === "Development" && (c.category === "Web Dev" || c.category === "Technology")));
 
   return (
     <div className="pt-24 md:pt-32 pb-20 min-h-screen bg-white">
@@ -183,13 +53,13 @@ const AllCourses: React.FC = () => {
         {/* Responsive Grid: 2 cols on mobile, 3 on md, 4 on lg */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           {filteredCourses.map((course) => (
-            <div key={course.id} className="group flex flex-col cursor-pointer hover:-translate-y-1 transition-transform duration-300">
+            <Link to={`/courses/${course.id}`} key={course.id} className="group flex flex-col cursor-pointer hover:-translate-y-1 transition-transform duration-300">
               {/* Image */}
               <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-gray-100 mb-3 md:mb-4">
                 <img 
                   src={course.image} 
                   alt={course.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[10%] group-hover:grayscale-0"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {/* Price Badge */}
                 <div className={`absolute top-1.5 right-1.5 md:top-2 md:right-2 backdrop-blur-md px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-md text-[8px] md:text-[10px] font-bold shadow-sm ${
@@ -204,7 +74,7 @@ const AllCourses: React.FC = () => {
               {/* Content - Dense layout */}
               <div className="flex flex-col flex-grow">
                 <div className="mb-1">
-                   <h3 className="text-xs md:text-sm font-bold text-gray-900 leading-tight group-hover:text-primary-600 transition-colors line-clamp-2 pr-1">
+                   <h3 className="text-xs md:text-sm font-bold text-gray-900 leading-tight group-hover:text-brand-600 transition-colors line-clamp-2 pr-1">
                     {course.title}
                   </h3>
                 </div>
@@ -225,7 +95,7 @@ const AllCourses: React.FC = () => {
                    </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         

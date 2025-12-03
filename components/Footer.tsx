@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { BookOpen, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { BookOpen, Twitter, Linkedin, Facebook, Instagram, Smartphone } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -10,7 +11,7 @@ const Footer: React.FC = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="bg-primary-600 p-1.5 rounded-lg text-white">
+              <div className="bg-brand-600 p-1.5 rounded-lg text-white">
                 <BookOpen size={20} />
               </div>
               <span className="text-xl font-bold text-gray-900">ElimuTech</span>
@@ -18,11 +19,30 @@ const Footer: React.FC = () => {
             <p className="text-gray-500 text-sm leading-relaxed mb-6 max-w-xs">
               ElimuTech is an online learning platform dedicated to providing accessible, high-quality digital education to students worldwide.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-primary-600 transition-colors"><Twitter size={20} /></a>
-              <a href="#" className="text-gray-400 hover:text-primary-600 transition-colors"><Linkedin size={20} /></a>
-              <a href="#" className="text-gray-400 hover:text-primary-600 transition-colors"><Facebook size={20} /></a>
-              <a href="#" className="text-gray-400 hover:text-primary-600 transition-colors"><Instagram size={20} /></a>
+            <div className="flex gap-4 mb-8">
+              <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Twitter size={20} /></a>
+              <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Linkedin size={20} /></a>
+              <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Facebook size={20} /></a>
+              <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Instagram size={20} /></a>
+            </div>
+
+            {/* App Store Buttons */}
+            <div>
+              <p className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Download App</p>
+              <div className="flex flex-wrap gap-3">
+                <button className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                   <div className="text-left">
+                     <p className="text-[10px] leading-none text-gray-300">GET IT ON</p>
+                     <p className="text-xs font-bold leading-none mt-0.5">Google Play</p>
+                   </div>
+                </button>
+                <button className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                   <div className="text-left">
+                     <p className="text-[10px] leading-none text-gray-300">Download on the</p>
+                     <p className="text-xs font-bold leading-none mt-0.5">App Store</p>
+                   </div>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -30,30 +50,30 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold text-gray-900 mb-6">Platform</h4>
             <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Browse Courses</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Mentorship</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Pricing</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">For Business</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Browse Courses</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Mentorship</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">For Business</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-gray-900 mb-6">Company</h4>
             <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-primary-600 transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Contact</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Careers</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Contact</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold text-gray-900 mb-6">Support</h4>
             <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-primary-600 transition-colors">Cookie Settings</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-brand-600 transition-colors">Cookie Settings</a></li>
             </ul>
           </div>
         </div>
