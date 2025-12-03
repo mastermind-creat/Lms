@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowRight, Play, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,8 +7,8 @@ const Hero: React.FC = () => {
   return (
     <section className="relative pt-28 pb-12 md:pt-32 md:pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-white">
       {/* Abstract Background Elements */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4 z-0 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-500/5 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/4 z-0 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4 z-0 pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-500/5 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/4 z-0 pointer-events-none animate-float"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col items-center text-center">
@@ -34,9 +35,9 @@ const Hero: React.FC = () => {
           
           {/* CTA Buttons */}
           <div className="animate-fade-in-up [animation-delay:600ms] flex flex-col sm:flex-row items-center gap-3 md:gap-4 w-full sm:w-auto px-4 sm:px-0">
-            <Link to="/courses" className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 text-sm md:text-base">
+            <Link to="/courses" className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 text-sm md:text-base group">
               Start Learning
-              <Zap size={18} className="fill-current" />
+              <Zap size={18} className="fill-current group-hover:text-yellow-400 transition-colors" />
             </Link>
             <button className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 text-sm md:text-base">
               <Play size={18} />
@@ -49,11 +50,11 @@ const Hero: React.FC = () => {
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-white via-transparent to-transparent z-10 h-20"></div>
              
              {/* Main Dashboard Preview */}
-             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
-               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Platform Dashboard" className="w-full h-auto opacity-90" />
+             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white group hover:shadow-3xl transition-shadow duration-500">
+               <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Platform Dashboard" className="w-full h-auto opacity-90 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                
                {/* Floating Card 1: Progress */}
-               <div className="absolute top-12 left-12 glass-card p-4 rounded-xl shadow-lg flex items-center gap-4 animate-bounce [animation-duration:4s]">
+               <div className="absolute top-12 left-12 glass-card p-4 rounded-xl shadow-lg flex items-center gap-4 animate-float [animation-duration:6s]">
                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                    <Zap size={20} fill="currentColor" />
                  </div>
@@ -64,7 +65,7 @@ const Hero: React.FC = () => {
                </div>
 
                {/* Floating Card 2: Live Class */}
-               <div className="absolute bottom-12 right-12 glass-card p-4 rounded-xl shadow-lg animate-pulse [animation-duration:3s]">
+               <div className="absolute bottom-12 right-12 glass-card p-4 rounded-xl shadow-lg animate-float [animation-duration:5s] [animation-delay:1s]">
                   <div className="flex items-center gap-3">
                     <span className="relative flex h-3 w-3">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
