@@ -1,27 +1,34 @@
 import React from 'react';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import ValueProps from './components/ValueProps';
-import FeaturedCourses from './components/FeaturedCourses';
-import Features from './components/Features';
-import Testimonials from './components/Testimonials';
-import CallToAction from './components/CallToAction';
+import Home from './pages/Home';
+import AllCourses from './pages/AllCourses';
 import Footer from './components/Footer';
+
+// Scroll to top on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
-      <Navbar />
-      <main>
-        <Hero />
-        <ValueProps />
-        <FeaturedCourses />
-        <Features />
-        <Testimonials />
-        <CallToAction />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <ScrollToTop />
+      <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden selection:bg-primary-100 selection:text-primary-900">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<AllCourses />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
