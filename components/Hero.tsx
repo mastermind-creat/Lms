@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-white">
+    <section className="relative pt-28 pb-12 md:pt-32 md:pb-16 lg:pt-48 lg:pb-24 overflow-hidden bg-white">
       {/* Abstract Background Elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/4 z-0 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent-500/5 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/4 z-0 pointer-events-none"></div>
@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
         <div className="flex flex-col items-center text-center">
           
           {/* Badge */}
-          <div className="animate-fade-in-up flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-50 border border-gray-200 text-gray-600 text-sm font-medium mb-8 hover:bg-white hover:shadow-sm transition-all cursor-default">
+          <div className="animate-fade-in-up flex items-center gap-2 px-3 py-1.5 md:px-4 rounded-full bg-gray-50 border border-gray-200 text-gray-600 text-xs md:text-sm font-medium mb-6 md:mb-8 hover:bg-white hover:shadow-sm transition-all cursor-default">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
@@ -21,31 +21,31 @@ const Hero: React.FC = () => {
             <span>Powering Silicon Savannah's Workforce</span>
           </div>
           
-          {/* Headline */}
-          <h1 className="animate-fade-in-up [animation-delay:200ms] text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 leading-[1.05] tracking-tight mb-8">
+          {/* Headline - reduced font size slightly for better scaling */}
+          <h1 className="animate-fade-in-up [animation-delay:200ms] text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 leading-[1.1] tracking-tight mb-6 md:mb-8">
             Build the <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-accent-500">Future</span> <br />
             of Africa.
           </h1>
           
           {/* Subheadline */}
-          <p className="animate-fade-in-up [animation-delay:400ms] text-lg md:text-xl text-gray-500 mb-12 max-w-2xl leading-relaxed">
+          <p className="animate-fade-in-up [animation-delay:400ms] text-base md:text-xl text-gray-500 mb-8 md:mb-12 max-w-2xl leading-relaxed px-4">
             ElimuTech is Kenya's premier digital skills ecosystem. We bridge the gap between talent and opportunity with world-class mentorship and practical projects.
           </p>
           
           {/* CTA Buttons */}
-          <div className="animate-fade-in-up [animation-delay:600ms] flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <Link to="/courses" className="w-full sm:w-auto px-8 py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20">
+          <div className="animate-fade-in-up [animation-delay:600ms] flex flex-col sm:flex-row items-center gap-3 md:gap-4 w-full sm:w-auto px-4 sm:px-0">
+            <Link to="/courses" className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 hover:scale-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-900/20 text-sm md:text-base">
               Start Learning
               <Zap size={18} className="fill-current" />
             </Link>
-            <button className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2">
+            <button className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 text-sm md:text-base">
               <Play size={18} />
               Watch Success Stories
             </button>
           </div>
 
           {/* Floating UI Elements (Decorative) */}
-          <div className="mt-20 relative w-full max-w-5xl mx-auto hidden md:block animate-fade-in-up [animation-delay:800ms]">
+          <div className="mt-12 md:mt-20 relative w-full max-w-5xl mx-auto hidden md:block animate-fade-in-up [animation-delay:800ms]">
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-white via-transparent to-transparent z-10 h-20"></div>
              
              {/* Main Dashboard Preview */}
