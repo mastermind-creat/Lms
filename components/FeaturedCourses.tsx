@@ -8,6 +8,7 @@ interface Course {
   category: string;
   instructor: string;
   rating: number;
+  price: string;
   image: string;
 }
 
@@ -19,6 +20,7 @@ const FeaturedCourses: React.FC = () => {
       category: "Fintech",
       instructor: "Kevin Omondi",
       rating: 5.0,
+      price: "KES 5,000",
       image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     },
     {
@@ -27,6 +29,7 @@ const FeaturedCourses: React.FC = () => {
       category: "AgriTech",
       instructor: "Dr. Zainab Ahmed",
       rating: 4.8,
+      price: "Free",
       image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     },
     {
@@ -35,6 +38,7 @@ const FeaturedCourses: React.FC = () => {
       category: "Web Dev",
       instructor: "Wanjiku Kimani",
       rating: 4.9,
+      price: "KES 8,500",
       image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     },
     {
@@ -43,6 +47,7 @@ const FeaturedCourses: React.FC = () => {
       category: "Design",
       instructor: "Brian Kipkorir",
       rating: 4.9,
+      price: "KES 6,000",
       image: "https://images.unsplash.com/photo-1586717791821-3f44a5638d48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     }
   ];
@@ -75,6 +80,15 @@ const FeaturedCourses: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-gray-800">
                   {course.category}
+                </div>
+                
+                {/* Price Badge */}
+                <div className={`absolute top-3 right-3 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold shadow-sm ${
+                  course.price === 'Free' 
+                    ? 'bg-green-500/90 text-white' 
+                    : 'bg-white/90 text-gray-900'
+                }`}>
+                  {course.price}
                 </div>
               </div>
 

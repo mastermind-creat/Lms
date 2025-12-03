@@ -12,6 +12,7 @@ const AllCourses: React.FC = () => {
       students: 1250,
       duration: "12 weeks",
       level: "Beginner",
+      price: "KES 15,000",
       image: "https://picsum.photos/600/400?random=10",
       avatar: "https://picsum.photos/100/100?random=11"
     },
@@ -24,6 +25,7 @@ const AllCourses: React.FC = () => {
       students: 850,
       duration: "10 weeks",
       level: "Intermediate",
+      price: "KES 18,500",
       image: "https://picsum.photos/600/400?random=12",
       avatar: "https://picsum.photos/100/100?random=13"
     },
@@ -36,6 +38,7 @@ const AllCourses: React.FC = () => {
       students: 2100,
       duration: "6 weeks",
       level: "All Levels",
+      price: "Free",
       image: "https://picsum.photos/600/400?random=14",
       avatar: "https://picsum.photos/100/100?random=15"
     },
@@ -48,6 +51,7 @@ const AllCourses: React.FC = () => {
       students: 3200,
       duration: "8 weeks",
       level: "Beginner",
+      price: "KES 5,000",
       image: "https://picsum.photos/600/400?random=16",
       avatar: "https://picsum.photos/100/100?random=17"
     },
@@ -60,6 +64,7 @@ const AllCourses: React.FC = () => {
       students: 500,
       duration: "4 weeks",
       level: "Advanced",
+      price: "KES 8,000",
       image: "https://picsum.photos/600/400?random=18",
       avatar: "https://picsum.photos/100/100?random=11"
     },
@@ -72,6 +77,7 @@ const AllCourses: React.FC = () => {
       students: 1200,
       duration: "8 weeks",
       level: "Intermediate",
+      price: "KES 12,000",
       image: "https://picsum.photos/600/400?random=19",
       avatar: "https://picsum.photos/100/100?random=20"
     },
@@ -84,6 +90,7 @@ const AllCourses: React.FC = () => {
       students: 950,
       duration: "10 weeks",
       level: "Intermediate",
+      price: "KES 14,000",
       image: "https://picsum.photos/600/400?random=21",
       avatar: "https://picsum.photos/100/100?random=22"
     },
@@ -96,6 +103,7 @@ const AllCourses: React.FC = () => {
       students: 1500,
       duration: "5 weeks",
       level: "Beginner",
+      price: "Free",
       image: "https://picsum.photos/600/400?random=23",
       avatar: "https://picsum.photos/100/100?random=24"
     },
@@ -108,6 +116,7 @@ const AllCourses: React.FC = () => {
       students: 600,
       duration: "6 weeks",
       level: "Beginner",
+      price: "Free",
       image: "https://picsum.photos/600/400?random=25",
       avatar: "https://picsum.photos/100/100?random=26"
     },
@@ -120,6 +129,7 @@ const AllCourses: React.FC = () => {
       students: 900,
       duration: "8 weeks",
       level: "Beginner",
+      price: "KES 9,500",
       image: "https://picsum.photos/600/400?random=27",
       avatar: "https://picsum.photos/100/100?random=28"
     }
@@ -181,6 +191,14 @@ const AllCourses: React.FC = () => {
                   alt={course.title} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 grayscale-[10%] group-hover:grayscale-0"
                 />
+                {/* Price Badge */}
+                <div className={`absolute top-2 right-2 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-bold shadow-sm ${
+                  course.price === 'Free' 
+                    ? 'bg-green-500/90 text-white' 
+                    : 'bg-white/90 text-gray-900'
+                }`}>
+                  {course.price}
+                </div>
               </div>
 
               {/* Content */}
