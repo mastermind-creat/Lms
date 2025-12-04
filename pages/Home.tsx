@@ -4,14 +4,19 @@ import Hero from '../components/Hero';
 import Partners from '../components/Partners';
 import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
+import Testimonials from '../components/Testimonials';
 import { courses } from '../data/courses';
 
+const IlluminatedSeparator = () => (
+  <div className="relative h-px w-full bg-gray-100 overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500/30 to-transparent w-1/3 mx-auto"></div>
+  </div>
+);
+
 const Home: React.FC = () => {
-  // Filter courses for different sections
-  const featuredCourses = courses.slice(0, 4); // Just take first 4 for now
+  const featuredCourses = courses.slice(0, 4);
   const popularCourses = courses.filter(c => c.isPopular).slice(0, 4);
   const newCourses = courses.filter(c => c.isNew).slice(0, 4);
-  // Simple recommendation logic: Top rated
   const recommendedCourses = [...courses].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
   return (
@@ -19,36 +24,38 @@ const Home: React.FC = () => {
       <Hero />
       <Partners />
       
-      {/* 1. Featured Courses */}
       <CourseSection 
         title="Featured Courses" 
-        subtitle="Explore our most impactful programs chosen by industry experts."
+        subtitle="Curriculum designed by Kenya's top tech leads."
         courses={featuredCourses}
         bgColor="bg-white"
       />
 
-      {/* 2. Most Studied */}
+      <IlluminatedSeparator />
+
       <CourseSection 
         title="Most Studied" 
-        subtitle="Join thousands of students learning these trending skills right now."
+        subtitle="Join thousands of students learning these trending skills."
         courses={popularCourses}
-        bgColor="bg-gray-50"
+        bgColor="bg-gray-50/50"
       />
 
-      {/* 3. New Courses */}
+      {/* Dark/Live Section for New Courses */}
       <CourseSection 
-        title="New on ElimuTech" 
-        subtitle="Stay ahead of the curve with our latest curriculum updates."
+        title="Fresh on ElimuTech" 
+        subtitle="Latest curriculum updates to keep you ahead."
         courses={newCourses}
-        bgColor="bg-white"
+        bgColor="bg-gray-900"
+        dark={true}
       />
 
-      {/* 4. Recommended */}
+      <Testimonials />
+
       <CourseSection 
         title="Top Picks for You" 
         subtitle="Highly rated courses to boost your career trajectory."
         courses={recommendedCourses}
-        bgColor="bg-gray-50"
+        bgColor="bg-white"
       />
 
       <CallToAction />

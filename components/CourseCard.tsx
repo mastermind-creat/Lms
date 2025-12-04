@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight } from 'lucide-react';
+import { Star, ArrowRight, User } from 'lucide-react';
 import { Course } from '../data/courses';
 
 interface CourseCardProps {
@@ -10,55 +10,69 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   return (
-    <div className="group flex flex-col bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 transition-all duration-300 h-full">
-      {/* Image */}
+    <Link 
+      to={`/courses/${course.id}`} 
+      className="group relative flex flex-col bg-white rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 h-full border border-gray-100"
+    >
+      {/* Illuminated Hover Border Effect */}
+      <div className="absolute inset-0 rounded-xl ring-2 ring-transparent group-hover:ring-brand-100 transition-all duration-500 pointer-events-none z-10"></div>
+      
+      {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
         <img 
           src={course.image} 
           alt={course.title} 
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+        {/* Dark Gradient Overlay on Hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
         {/* Category Badge */}
-        <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-gray-900 shadow-sm">
+        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-gray-900 shadow-sm z-10">
           {course.category}
+        </div>
+
+        {/* Price Badge */}
+        <div className={`absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] md:text-[10px] font-bold shadow-sm z-10 backdrop-blur-md ${
+          course.price === 'Free' 
+            ? 'bg-green-500/90 text-white' 
+            : 'bg-white/90 text-gray-900'
+        }`}>
+          {course.price}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-bold text-brand-600">{course.instructor}</div>
-          <div className="flex items-center gap-1 text-xs font-bold text-gray-700 bg-gray-50 px-1.5 py-0.5 rounded">
-            <Star size={10} className="text-yellow-500 fill-current" />
-            {course.rating}
-          </div>
-        </div>
-
-        <Link to={`/courses/${course.id}`} className="block mb-2">
-          <h3 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-brand-600 transition-colors line-clamp-2">
-            {course.title}
-          </h3>
-        </Link>
+      {/* Content - Compact Layout */}
+      <div className="p-3 md:p-4 flex flex-col flex-grow relative bg-white">
         
-        <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+        {/* Title */}
+        <h3 className="text-xs md:text-sm font-bold text-gray-900 leading-snug mb-1.5 md:mb-2 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-brand-600 group-hover:to-accent-500 transition-colors">
+          {course.title}
+        </h3>
+        
+        {/* Description - Hidden on very small screens, visible on md */}
+        <p className="hidden md:block text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed">
           {course.description}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-          <span className={`text-sm font-bold ${course.price === 'Free' ? 'text-green-600' : 'text-gray-900'}`}>
-            {course.price}
-          </span>
-          <Link 
-            to={`/courses/${course.id}`}
-            className="text-sm font-bold text-gray-900 hover:text-brand-600 flex items-center gap-1 transition-colors"
-          >
-            View Course <ArrowRight size={14} />
-          </Link>
+        {/* Footer Info */}
+        <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-2 md:pt-3">
+          <div className="flex items-center gap-1.5 min-w-0">
+             <div className="w-4 h-4 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+               <User size={8} className="text-gray-500" />
+             </div>
+             <span className="text-[10px] md:text-[11px] text-gray-600 font-medium truncate">
+               {course.instructor}
+             </span>
+          </div>
+          
+          <div className="flex items-center gap-0.5 text-[10px] md:text-[11px] font-bold text-gray-900 shrink-0 bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-100">
+            <Star size={8} className="text-yellow-500 fill-current md:w-2.5 md:h-2.5" />
+            {course.rating}
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
