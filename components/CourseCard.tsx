@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight, User } from 'lucide-react';
+import { Star, User, ShoppingCart, Heart } from 'lucide-react';
 import { Course } from '../data/courses';
 
 interface CourseCardProps {
@@ -9,6 +9,13 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const handleAction = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // In a real app, this would trigger global state updates
+    console.log("Action triggered");
+  };
+
   return (
     <Link 
       to={`/courses/${course.id}`} 
@@ -30,6 +37,24 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         {/* Category Badge */}
         <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-gray-900 shadow-sm z-10">
           {course.category}
+        </div>
+
+        {/* Action Buttons (Visible on Hover/Touch) */}
+        <div className="absolute top-2 right-2 flex flex-col gap-2 z-20 translate-x-10 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-out delay-75">
+          <button 
+            onClick={handleAction}
+            className="p-1.5 md:p-2 bg-white/90 backdrop-blur-md rounded-full text-gray-700 hover:text-red-500 hover:bg-white shadow-sm transition-colors border border-gray-100"
+            aria-label="Add to Wishlist"
+          >
+            <Heart size={14} className="md:w-4 md:h-4" />
+          </button>
+          <button 
+            onClick={handleAction}
+            className="p-1.5 md:p-2 bg-white/90 backdrop-blur-md rounded-full text-gray-700 hover:text-brand-600 hover:bg-white shadow-sm transition-colors border border-gray-100"
+            aria-label="Add to Cart"
+          >
+            <ShoppingCart size={14} className="md:w-4 md:h-4" />
+          </button>
         </div>
 
         {/* Price Badge */}

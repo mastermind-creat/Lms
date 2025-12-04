@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { Search, BookOpen, Star } from 'lucide-react';
+import { Search, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { courses } from '../data/courses';
+import CourseCard from '../components/CourseCard';
 
 const AllCourses: React.FC = () => {
   const categories = ["All", "Development", "Design", "Marketing", "Data Science", "Finance", "AgriTech", "Fintech"];
@@ -53,57 +54,13 @@ const AllCourses: React.FC = () => {
         {/* Responsive Grid: 2 cols on mobile, 3 on md, 4 on lg */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 min-h-[50vh]">
           {filteredCourses.map((course, index) => (
-            <Link 
-              to={`/courses/${course.id}`} 
+            <div 
               key={course.id} 
-              className="group flex flex-col cursor-pointer bg-white rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1.5 transition-all duration-500 animate-fade-in-up"
+              className="animate-fade-in-up" 
               style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
             >
-              {/* Image */}
-              <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-gray-100 mb-3 md:mb-4 mx-2 mt-2">
-                <img 
-                  src={course.image} 
-                  alt={course.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
-
-                {/* Price Badge */}
-                <div className={`absolute top-1.5 right-1.5 md:top-2 md:right-2 backdrop-blur-md px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-md text-[8px] md:text-[10px] font-bold shadow-sm ${
-                  course.price === 'Free' 
-                    ? 'bg-green-500/90 text-white' 
-                    : 'bg-white/90 text-gray-900'
-                }`}>
-                  {course.price}
-                </div>
-              </div>
-
-              {/* Content - Dense layout */}
-              <div className="flex flex-col flex-grow px-2 pb-3">
-                <div className="mb-1">
-                   <h3 className="text-xs md:text-sm font-bold text-gray-900 leading-tight group-hover:text-brand-600 transition-colors line-clamp-2 pr-1">
-                    {course.title}
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-2 mb-2 md:mb-3 text-[10px] md:text-[11px] text-gray-500 font-medium">
-                  <span className="bg-gray-50 px-1.5 py-0.5 rounded">{course.level}</span>
-                  <span className="w-0.5 h-0.5 bg-gray-300 rounded-full"></span>
-                  <span>{course.duration}</span>
-                </div>
-
-                <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-2 md:pt-3">
-                   <div className="flex items-center gap-1.5">
-                     <span className="text-[10px] md:text-[11px] text-gray-600 truncate max-w-[80px] md:max-w-none">{course.instructor}</span>
-                   </div>
-                   <div className="flex items-center gap-0.5 md:gap-1 text-[10px] md:text-[11px] font-bold text-gray-900">
-                     <Star size={10} className="text-yellow-500 fill-current md:w-3 md:h-3" />
-                     {course.rating}
-                   </div>
-                </div>
-              </div>
-            </Link>
+              <CourseCard course={course} />
+            </div>
           ))}
         </div>
         
