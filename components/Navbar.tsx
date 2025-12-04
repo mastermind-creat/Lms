@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -35,10 +34,13 @@ const Navbar: React.FC = () => {
 
   const isHome = location.pathname === '/';
   
-  // Dynamic styles based on scroll, page, and mobile menu state
-  // If menu is open, force white background to match overlay
+  // Logic for Navbar Background
+  // 1. If Mobile Menu is Open -> Solid White
+  // 2. If Scrolled -> Solid White (with blur)
+  // 3. If Not Home Page -> Solid White (with blur)
+  // 4. Default (Top of Home) -> Transparent
   const navBackground = isOpen
-    ? 'bg-white' 
+    ? 'bg-white shadow-none' 
     : (isScrolled || !isHome 
         ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-200/50' 
         : 'bg-transparent');
