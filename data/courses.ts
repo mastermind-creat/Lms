@@ -27,7 +27,7 @@ export const courses: Course[] = [
     duration: "12 weeks",
     level: "Intermediate",
     price: "KES 5,000",
-    image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
     description: "Master the Daraja API. Learn to integrate STK Push, B2C, and C2B payments into real-world applications.",
     syllabus: ["Introduction to Daraja API", "Authentication & Security", "STK Push Implementation", "B2C & C2B Transactions", "Handling Callbacks", "Final Project: E-commerce Integration"],
     isPopular: true
@@ -78,7 +78,7 @@ export const courses: Course[] = [
   },
   {
     id: 5,
-    title: "Digital Marketing Masterclass 2024",
+    title: "Digital Marketing Masterclass 2025",
     category: "Marketing",
     instructor: "Emily Roth",
     rating: 4.7,
@@ -86,7 +86,7 @@ export const courses: Course[] = [
     duration: "6 weeks",
     level: "All Levels",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1533750349088-cd8773a98863?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80",
     description: "Learn SEO, Social Media, and Email marketing strategies tailored for the East African digital landscape.",
     syllabus: ["Social Media Strategy", "SEO Fundamentals", "Content Marketing", "Paid Advertising (FB & Google)", "Analytics & Reporting"],
     isPopular: true

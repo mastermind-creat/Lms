@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>© 2024 ElimuTech. All rights reserved.</p>
+          <p>© 2025 ElimuTech. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-gray-900 transition-colors">Terms of Service</a>
