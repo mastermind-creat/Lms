@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Play, Zap } from 'lucide-react';
+import { Play, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
