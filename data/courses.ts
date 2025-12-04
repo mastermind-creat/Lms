@@ -27,7 +27,7 @@ export const courses: Course[] = [
     duration: "12 weeks",
     level: "Intermediate",
     price: "KES 5,000",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=800&q=80",
     description: "Master the Daraja API. Learn to integrate STK Push, B2C, and C2B payments into real-world applications.",
     syllabus: ["Introduction to Daraja API", "Authentication & Security", "STK Push Implementation", "B2C & C2B Transactions", "Handling Callbacks", "Final Project: E-commerce Integration"],
     isPopular: true

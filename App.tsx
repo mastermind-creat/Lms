@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import AllCourses from './pages/AllCourses';
 import CourseDetails from './pages/CourseDetails';
 import Footer from './components/Footer';
+import Chatbot from './components/Chatbot';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -29,6 +30,7 @@ const App: React.FC = () => {
             <Route path="/courses/:id" element={<CourseDetails />} />
           </Routes>
         </main>
+        <Chatbot />
         <Footer />
       </div>
     </Router>
