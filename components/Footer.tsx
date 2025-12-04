@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookOpen, Twitter, Linkedin, Facebook, Instagram, Smartphone } from 'lucide-react';
+import { BookOpen, Twitter, Linkedin, Facebook, Instagram, Apple, Play } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -25,31 +25,12 @@ const Footer: React.FC = () => {
               <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Facebook size={20} /></a>
               <a href="#" className="text-gray-400 hover:text-brand-600 transition-colors"><Instagram size={20} /></a>
             </div>
-
-            {/* App Store Buttons */}
-            <div>
-              <p className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Download App</p>
-              <div className="flex flex-wrap gap-3">
-                <button className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                   <div className="text-left">
-                     <p className="text-[10px] leading-none text-gray-300">GET IT ON</p>
-                     <p className="text-xs font-bold leading-none mt-0.5">Google Play</p>
-                   </div>
-                </button>
-                <button className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                   <div className="text-left">
-                     <p className="text-[10px] leading-none text-gray-300">Download on the</p>
-                     <p className="text-xs font-bold leading-none mt-0.5">App Store</p>
-                   </div>
-                </button>
-              </div>
-            </div>
           </div>
 
-          {/* Link Columns */}
+          {/* Links 1 */}
           <div>
             <h4 className="font-bold text-gray-900 mb-6">Platform</h4>
-            <ul className="space-y-3 text-sm text-gray-600">
+            <ul className="space-y-4 text-sm text-gray-500">
               <li><a href="#" className="hover:text-brand-600 transition-colors">Browse Courses</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Mentorship</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Pricing</a></li>
@@ -57,9 +38,10 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Links 2 */}
           <div>
             <h4 className="font-bold text-gray-900 mb-6">Company</h4>
-            <ul className="space-y-3 text-sm text-gray-600">
+            <ul className="space-y-4 text-sm text-gray-500">
               <li><a href="#" className="hover:text-brand-600 transition-colors">About Us</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Careers</a></li>
               <li><a href="#" className="hover:text-brand-600 transition-colors">Blog</a></li>
@@ -67,23 +49,33 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Download App */}
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">Support</h4>
-            <ul className="space-y-3 text-sm text-gray-600">
-              <li><a href="#" className="hover:text-brand-600 transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-brand-600 transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-brand-600 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-brand-600 transition-colors">Cookie Settings</a></li>
-            </ul>
+             <h4 className="font-bold text-gray-900 mb-6">Get the App</h4>
+             <div className="flex flex-col gap-3">
+               <button className="flex items-center gap-3 bg-gray-900 text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors text-left">
+                 <Apple size={20} />
+                 <div>
+                   <div className="text-[10px] uppercase font-bold text-gray-400">Download on the</div>
+                   <div className="text-sm font-bold leading-none">App Store</div>
+                 </div>
+               </button>
+               <button className="flex items-center gap-3 bg-gray-900 text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition-colors text-left">
+                 <Play size={20} className="fill-current" />
+                 <div>
+                   <div className="text-[10px] uppercase font-bold text-gray-400">Get it on</div>
+                   <div className="text-sm font-bold leading-none">Google Play</div>
+                 </div>
+               </button>
+             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-100 pt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} ElimuTech Inc. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-gray-900">Privacy</a>
-            <a href="#" className="hover:text-gray-900">Terms</a>
-            <a href="#" className="hover:text-gray-900">Sitemap</a>
+        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+          <p>© 2024 ElimuTech. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-gray-900 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-gray-900 transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>
