@@ -70,20 +70,20 @@
                 900: '#111827',
               },
               brand: {
-                50: '#fff7ed', // Orange Tint
+                50: '#fff7ed', 
                 100: '#ffedd5',
                 200: '#fed7aa',
                 300: '#fdba74',
                 400: '#fb923c',
-                500: '#F36F21', // PRIMARY BRAND ORANGE
+                500: '#F36F21', // LOGO ORANGE
                 600: '#ea580c',
                 700: '#c2410c',
                 800: '#9a3412',
-                900: '#2E3092', // PRIMARY BRAND BLUE (Used for dark backgrounds)
+                900: '#2E3092', // LOGO BLUE
                 950: '#1e1b4b',
               },
               accent: {
-                500: '#2E3092', // Brand Blue as accent
+                500: '#2E3092', // Logo Blue as accent
               }
             }
           }
@@ -99,7 +99,6 @@
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Space Grotesk', sans-serif;
       }
-      /* Hide scrollbar for clean horizontal scroll if needed */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -120,13 +119,13 @@
   <script type="importmap">
 {
   "imports": {
-    "vite": "https://aistudiocdn.com/vite@^7.2.6",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.10.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "vite": "https://aistudiocdn.com/vite@^7.2.6",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
 }
 </script>
@@ -137,8 +136,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Add version query to force update check
-          navigator.serviceWorker.register('/sw.js?v=7')
+          navigator.serviceWorker.register('/sw.js?v=8')
             .then((registration) => {
               console.log('SW registered: ', registration);
             })

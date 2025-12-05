@@ -17,12 +17,10 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -36,7 +34,6 @@ const Navbar: React.FC = () => {
 
   const isHome = location.pathname === '/';
   
-  // Logic for Navbar Background
   const navBackground = isOpen
     ? 'bg-white dark:bg-gray-900 shadow-sm' 
     : (isScrolled || !isHome 
@@ -44,8 +41,6 @@ const Navbar: React.FC = () => {
         : 'bg-transparent');
     
   const padding = isScrolled ? 'py-2 md:py-3' : 'py-3 md:py-5';
-
-  // Text Color Logic
   const textColor = (isScrolled || !isHome || isOpen) ? 'text-gray-900 dark:text-white' : 'text-white';
   const iconColor = (isScrolled || !isHome || isOpen) ? 'text-gray-600 dark:text-gray-300' : 'text-white/80';
   const hoverBg = (isScrolled || !isHome || isOpen) ? 'hover:bg-gray-100 dark:hover:bg-gray-800' : 'hover:bg-white/10';
@@ -74,17 +69,13 @@ const Navbar: React.FC = () => {
     <nav className={`fixed w-full z-50 transition-all duration-300 ${navBackground} ${padding}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center relative">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group relative z-50">
-            {/* Displaying local logo.png - Ensure this file exists in /public folder */}
             <div className={`transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'opacity-100' : 'brightness-0 invert opacity-90'}`}>
                <img src="/logo.png" alt="ElimuTech Logo" className="h-8 md:h-10 w-auto object-contain" />
             </div>
-            {/* Fallback Text if logo image fails to load or for accessibility */}
             <span className="sr-only">ElimuTech</span> 
           </Link>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-2 lg:gap-6">
             <div className={`flex items-center rounded-full p-1 border backdrop-blur-sm transition-colors duration-300 ${isScrolled || !isHome ? 'bg-gray-100/50 border-gray-200/50 dark:bg-gray-800/50 dark:border-gray-700/50' : 'bg-white/10 border-white/10'}`}>
               {navLinks.map((link) => (
@@ -125,7 +116,6 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2 relative z-50">
             <button 
               onClick={toggleTheme}
@@ -151,8 +141,6 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Modern Floating Mobile Menu Overlay */}
-      {/* Background Backdrop */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-30 md:hidden animate-fade-in"
@@ -160,14 +148,12 @@ const Navbar: React.FC = () => {
         />
       )}
 
-      {/* Menu Content */}
       <div 
         className={`absolute top-full left-4 right-4 mt-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl z-40 md:hidden rounded-2xl shadow-2xl border border-white/50 dark:border-gray-800 origin-top transition-all duration-300 ease-out overflow-hidden ${
           isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
         }`}
       >
         <div className="flex flex-col p-2">
-          {/* Links */}
           <div className="grid grid-cols-2 gap-2 mb-2">
             {navLinks.map((link, index) => (
               <Link 
@@ -194,7 +180,6 @@ const Navbar: React.FC = () => {
             ))}
           </div>
           
-          {/* CTA Section */}
           <div className="flex gap-2">
              <button className="flex-1 flex items-center justify-center gap-2 text-gray-700 dark:text-gray-200 font-bold py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-xs bg-white dark:bg-gray-800">
               <LogIn size={14} />

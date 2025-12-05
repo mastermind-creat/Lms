@@ -6,7 +6,6 @@ const Footer: React.FC = () => {
     <footer className="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 pt-8 pb-6 md:pt-16 md:pb-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Newsletter Section */}
         <div className="mb-12 md:mb-16 bg-brand-50 dark:bg-brand-900/10 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-10 border border-brand-100 dark:border-brand-900/30">
           <div className="text-center lg:text-left">
             <h3 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-2">Subscribe to our newsletter</h3>
@@ -33,7 +32,6 @@ const Footer: React.FC = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
           
-          {/* Brand Column */}
           <div className="col-span-2 lg:col-span-2">
             <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-4">
               <img src="/logo.png" alt="ElimuTech Logo" className="h-8 md:h-10 w-auto object-contain" />
@@ -49,7 +47,6 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Links 1 */}
           <div>
             <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Platform</h4>
             <ul className="space-y-2 md:space-y-4 text-[10px] md:text-sm text-gray-500 dark:text-gray-400">
@@ -60,7 +57,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Links 2 */}
           <div>
             <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Company</h4>
             <ul className="space-y-2 md:space-y-4 text-[10px] md:text-sm text-gray-500 dark:text-gray-400">
@@ -71,7 +67,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Download App */}
           <div className="col-span-2 md:col-span-1">
              <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Get the App</h4>
              <div className="flex flex-row md:flex-col gap-2 md:gap-3">
