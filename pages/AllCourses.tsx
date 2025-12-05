@@ -51,8 +51,8 @@ const AllCourses: React.FC = () => {
           </div>
         </div>
 
-        {/* Responsive Grid: 2 cols on mobile, 3 on md, 4 on lg */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 min-h-[50vh]">
+        {/* Responsive Grid: 4 cols on mobile (squeezed) and 4 on desktop */}
+        <div className="grid grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 min-h-[50vh]">
           {filteredCourses.map((course, index) => (
             <div 
               key={course.id} 

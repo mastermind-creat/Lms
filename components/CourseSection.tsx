@@ -66,13 +66,13 @@ const CourseSection: React.FC<CourseSectionProps> = ({
           )}
         </div>
 
-        {/* Responsive Grid: 2 cols on mobile, 4 on desktop */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 lg:gap-6">
+        {/* Responsive Grid: 4 cols on mobile (squeezed) and desktop */}
+        <div className="grid grid-cols-4 gap-2 md:gap-5 lg:gap-6">
           {courses.map((course, index) => (
             <div 
               key={course.id} 
               className="animate-fade-in-up" 
-              style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
+              style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'both' }}
             >
               <CourseCard course={course} />
             </div>
