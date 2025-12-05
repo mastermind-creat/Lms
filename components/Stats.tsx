@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Users, Globe, BookOpen, Award } from 'lucide-react';
 
@@ -29,13 +28,13 @@ const Stats: React.FC = () => {
 
   const stats = [
     {
-      icon: <Users className="w-4 h-4 md:w-10 md:h-10 text-purple-600 dark:text-purple-400" />,
+      icon: <Users className="w-4 h-4 md:w-10 md:h-10 text-brand-900 dark:text-brand-300" />,
       value: 7520,
       label: "Expert Instructors",
-      color: "bg-purple-50 dark:bg-purple-900/20"
+      color: "bg-brand-50 dark:bg-brand-900/20"
     },
     {
-      icon: <Globe className="w-4 h-4 md:w-10 md:h-10 text-orange-600 dark:text-orange-400" />,
+      icon: <Globe className="w-4 h-4 md:w-10 md:h-10 text-brand-500 dark:text-brand-400" />,
       value: 54252,
       label: "Foreign Followers",
       color: "bg-orange-50 dark:bg-orange-900/20"
@@ -47,10 +46,10 @@ const Stats: React.FC = () => {
       color: "bg-brand-50 dark:bg-brand-900/20"
     },
     {
-      icon: <Award className="w-4 h-4 md:w-10 md:h-10 text-green-600 dark:text-green-400" />,
+      icon: <Award className="w-4 h-4 md:w-10 md:h-10 text-brand-900 dark:text-brand-200" />,
       value: 20,
       label: "Years of Experience",
-      color: "bg-green-50 dark:bg-green-900/20"
+      color: "bg-brand-100 dark:bg-brand-900/40"
     }
   ];
 

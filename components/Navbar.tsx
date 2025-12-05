@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn, Moon, Sun, Laptop } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -77,12 +76,12 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center relative">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group relative z-50">
-            <div className={`p-1.5 md:p-2 rounded-xl transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-white text-brand-600'}`}>
-              <BookOpen size={18} className="md:w-5 md:h-5" />
+            {/* Displaying local logo.png - Ensure this file exists in /public folder */}
+            <div className={`transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'opacity-100' : 'brightness-0 invert opacity-90'}`}>
+               <img src="/logo.png" alt="ElimuTech Logo" className="h-8 md:h-10 w-auto object-contain" />
             </div>
-            <span className={`text-lg md:text-xl font-bold tracking-tight font-display transition-colors duration-300 ${textColor}`}>
-              ElimuTech
-            </span>
+            {/* Fallback Text if logo image fails to load or for accessibility */}
+            <span className="sr-only">ElimuTech</span> 
           </Link>
 
           {/* Desktop Menu */}
@@ -94,7 +93,7 @@ const Navbar: React.FC = () => {
                   to={link.path} 
                   className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     location.pathname === link.path
-                      ? 'bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 shadow-sm'
+                      ? 'bg-white dark:bg-gray-800 text-brand-500 dark:text-brand-400 shadow-sm'
                       : `${iconColor} ${hoverBg} hover:text-white dark:hover:text-white`
                   }`}
                 >
@@ -120,7 +119,7 @@ const Navbar: React.FC = () => {
                 <LogIn size={18} />
                 Log In
               </button>
-              <button className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg hover:-translate-y-0.5 ${isScrolled || !isHome ? 'bg-gray-900 text-white shadow-gray-900/20 dark:bg-brand-600 dark:text-white' : 'bg-white text-brand-600 shadow-black/20'}`}>
+              <button className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg hover:-translate-y-0.5 ${isScrolled || !isHome ? 'bg-brand-900 text-white shadow-brand-900/20 dark:bg-brand-500 dark:text-white' : 'bg-white text-brand-500 shadow-black/20'}`}>
                 Get Started
               </button>
             </div>
@@ -182,7 +181,7 @@ const Navbar: React.FC = () => {
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
                 <div className={`mb-1 ${
-                  location.pathname === link.path ? 'text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400'
+                  location.pathname === link.path ? 'text-brand-500 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400'
                 }`}>
                   {link.icon}
                 </div>
@@ -201,7 +200,7 @@ const Navbar: React.FC = () => {
               <LogIn size={14} />
               Log In
             </button>
-             <button className="flex-[2] bg-brand-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/30 active:scale-95 transition-transform flex items-center justify-center gap-2 text-xs">
+             <button className="flex-[2] bg-brand-500 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/30 active:scale-95 transition-transform flex items-center justify-center gap-2 text-xs">
               Get Started <ChevronRight size={14} />
             </button>
           </div>

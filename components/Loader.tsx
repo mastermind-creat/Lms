@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { BookOpen } from 'lucide-react';
 
 const Loader: React.FC = () => {
   return (
@@ -8,7 +6,8 @@ const Loader: React.FC = () => {
       <div className="relative">
         <div className="absolute inset-0 bg-brand-500 blur-xl opacity-20 animate-pulse"></div>
         <div className="relative bg-white p-4 rounded-2xl shadow-xl border border-gray-100 animate-bounce">
-          <BookOpen size={48} className="text-brand-600" />
+           {/* Loading Logo - Uses local icon.png */}
+          <img src="/icon.png" alt="Loading..." className="w-12 h-12 object-contain" />
         </div>
       </div>
       <div className="mt-8 flex flex-col items-center gap-2">

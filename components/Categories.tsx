@@ -1,18 +1,17 @@
-
 import React from 'react';
 import { Monitor, Briefcase, PenTool, Laptop, Calculator, Wand2, Database, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Categories: React.FC = () => {
   const categories = [
-    { name: 'Development', icon: <Monitor size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '120+ Courses', color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' },
+    { name: 'Development', icon: <Monitor size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '120+ Courses', color: 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400' },
     { name: 'Business', icon: <Briefcase size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '85+ Courses', color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' },
     { name: 'Design', icon: <PenTool size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '40+ Courses', color: 'bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400' },
     { name: 'IT & Software', icon: <Laptop size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '90+ Courses', color: 'bg-cyan-50 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400' },
     { name: 'Data Science', icon: <Database size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '35+ Courses', color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' },
     { name: 'Marketing', icon: <Wand2 size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '50+ Courses', color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400' },
     { name: 'Cybersecurity', icon: <Shield size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '25+ Courses', color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' },
-    { name: 'Finance', icon: <Calculator size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '30+ Courses', color: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400' },
+    { name: 'Finance', icon: <Calculator size={24} className="w-4 h-4 md:w-6 md:h-6" />, count: '30+ Courses', color: 'bg-brand-100 dark:bg-brand-900/10 text-brand-900 dark:text-brand-300' },
   ];
 
   return (
@@ -36,7 +35,7 @@ const Categories: React.FC = () => {
               <div className={`w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-4 transition-transform group-hover:scale-110 ${cat.color}`}>
                 {cat.icon}
               </div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-0.5 md:mb-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors text-[9px] md:text-base leading-tight">{cat.name}</h3>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-0.5 md:mb-1 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors text-[9px] md:text-base leading-tight">{cat.name}</h3>
               <p className="hidden md:block text-xs text-gray-400 font-medium">{cat.count}</p>
             </Link>
           ))}
