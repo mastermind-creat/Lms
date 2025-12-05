@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
   
   // Logic for Navbar Background
   const navBackground = isOpen
-    ? 'bg-white shadow-none' 
+    ? 'bg-white shadow-sm' 
     : (isScrolled || !isHome 
         ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-200/50' 
         : 'bg-transparent');
@@ -60,7 +60,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${navBackground} ${padding}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center relative">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group relative z-50">
             <div className={`p-1.5 md:p-2 rounded-xl transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-white text-brand-600'}`}>
@@ -121,54 +121,57 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Modern Floating Mobile Menu Overlay */}
+      {/* Background Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-30 md:hidden animate-fade-in"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Menu Content */}
       <div 
-        className={`fixed inset-0 bg-white z-40 md:hidden transition-transform duration-500 ease-in-out flex flex-col pt-20 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`absolute top-full left-4 right-4 mt-2 bg-white/95 backdrop-blur-xl z-40 md:hidden rounded-2xl shadow-2xl border border-white/50 origin-top transition-all duration-300 ease-out overflow-hidden ${
+          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
         }`}
       >
-        <div className="flex flex-col h-full px-4 pb-6 overflow-y-auto">
+        <div className="flex flex-col p-2">
           {/* Links */}
-          <div className="flex flex-col gap-2 mb-6">
+          <div className="grid grid-cols-2 gap-2 mb-2">
             {navLinks.map((link, index) => (
               <Link 
                 key={link.name}
                 to={link.path} 
-                className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 active:scale-[0.98] transition-all group"
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border active:scale-[0.98] transition-all group ${
+                   location.pathname === link.path 
+                    ? 'bg-brand-50 border-brand-100' 
+                    : 'bg-gray-50/50 border-transparent hover:bg-gray-100'
+                }`}
                 style={{ transitionDelay: `${index * 50}ms` }}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-1.5 rounded-lg ${
-                    location.pathname === link.path 
-                      ? 'bg-brand-100 text-brand-600' 
-                      : 'bg-white text-gray-500 group-hover:text-brand-500'
-                  }`}>
-                    {link.icon}
-                  </div>
-                  <span className={`text-sm font-bold ${
-                    location.pathname === link.path ? 'text-brand-700' : 'text-gray-900'
-                  }`}>
-                    {link.name}
-                  </span>
+                <div className={`mb-1 ${
+                  location.pathname === link.path ? 'text-brand-600' : 'text-gray-500'
+                }`}>
+                  {link.icon}
                 </div>
-                <ChevronRight size={16} className="text-gray-300 group-hover:text-brand-500 transition-colors" />
+                <span className={`text-xs font-bold ${
+                  location.pathname === link.path ? 'text-brand-700' : 'text-gray-700'
+                }`}>
+                  {link.name}
+                </span>
               </Link>
             ))}
           </div>
           
           {/* CTA Section */}
-          <div className="mt-auto space-y-3">
-            <div className="p-3 bg-brand-50 rounded-xl border border-brand-100">
-              <h4 className="font-bold text-brand-900 mb-0.5 text-xs">Ready to learn?</h4>
-              <p className="text-[10px] text-brand-700 mb-2">Join 5,000+ students today.</p>
-              <button className="w-full bg-brand-600 text-white font-bold py-2.5 rounded-lg shadow-lg shadow-brand-500/30 active:scale-95 transition-transform flex items-center justify-center gap-2 text-xs">
-                Get Started Free <ChevronRight size={14} />
-              </button>
-            </div>
-            
-            <button className="w-full flex items-center justify-center gap-2 text-gray-700 font-bold py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-xs">
-              <LogIn size={16} />
-              Log In to Account
+          <div className="flex gap-2">
+             <button className="flex-1 flex items-center justify-center gap-2 text-gray-700 font-bold py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-xs bg-white">
+              <LogIn size={14} />
+              Log In
+            </button>
+             <button className="flex-[2] bg-brand-600 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-brand-500/30 active:scale-95 transition-transform flex items-center justify-center gap-2 text-xs">
+              Get Started <ChevronRight size={14} />
             </button>
           </div>
         </div>
