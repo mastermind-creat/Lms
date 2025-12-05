@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
@@ -113,25 +114,25 @@
   <script type="importmap">
 {
   "imports": {
-    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.10.1",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.10.1",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
     "vite": "https://aistudiocdn.com/vite@^7.2.6",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
 }
 </script>
 </head>
-  <body>
+  <body class="bg-white dark:bg-gray-900 transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           // Add version query to force update check
-          navigator.serviceWorker.register('/sw.js?v=5')
+          navigator.serviceWorker.register('/sw.js?v=6')
             .then((registration) => {
               console.log('SW registered: ', registration);
             })

@@ -29,35 +29,35 @@ const Stats: React.FC = () => {
 
   const stats = [
     {
-      icon: <Users className="w-8 h-8 md:w-10 md:h-10 text-purple-600" />,
+      icon: <Users className="w-4 h-4 md:w-10 md:h-10 text-purple-600 dark:text-purple-400" />,
       value: 7520,
       label: "Expert Instructors",
-      color: "bg-purple-50 text-purple-600"
+      color: "bg-purple-50 dark:bg-purple-900/20"
     },
     {
-      icon: <Globe className="w-8 h-8 md:w-10 md:h-10 text-orange-600" />,
+      icon: <Globe className="w-4 h-4 md:w-10 md:h-10 text-orange-600 dark:text-orange-400" />,
       value: 54252,
       label: "Foreign Followers",
-      color: "bg-orange-50 text-orange-600"
+      color: "bg-orange-50 dark:bg-orange-900/20"
     },
     {
-      icon: <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-brand-600" />,
+      icon: <BookOpen className="w-4 h-4 md:w-10 md:h-10 text-brand-600 dark:text-brand-400" />,
       value: 97220,
       label: "Students Enrolled",
-      color: "bg-brand-50 text-brand-600"
+      color: "bg-brand-50 dark:bg-brand-900/20"
     },
     {
-      icon: <Award className="w-8 h-8 md:w-10 md:h-10 text-green-600" />,
+      icon: <Award className="w-4 h-4 md:w-10 md:h-10 text-green-600 dark:text-green-400" />,
       value: 20,
       label: "Years of Experience",
-      color: "bg-green-50 text-green-600"
+      color: "bg-green-50 dark:bg-green-900/20"
     }
   ];
 
   return (
-    <section ref={sectionRef} className="py-12 md:py-20 bg-white">
+    <section ref={sectionRef} className="py-8 md:py-20 bg-white dark:bg-gray-900 transition-colors duration-300 border-b border-gray-100 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-4 gap-2 md:gap-12">
           {stats.map((stat, index) => (
             <StatItem 
               key={index} 
@@ -108,14 +108,14 @@ const StatItem: React.FC<{
   }, [isVisible, value]);
 
   return (
-    <div className="flex flex-col items-center text-center p-4">
-      <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 md:mb-6 transition-transform duration-500 hover:scale-110 ${color}`}>
+    <div className="flex flex-col items-center text-center p-1 md:p-4">
+      <div className={`w-10 h-10 md:w-20 md:h-20 rounded-xl md:rounded-full flex items-center justify-center mb-2 md:mb-6 transition-transform duration-500 hover:scale-110 ${color}`}>
         {icon}
       </div>
-      <h3 className="text-2xl md:text-4xl font-bold text-gray-900 mb-1 md:mb-2 font-display">
+      <h3 className="text-sm md:text-4xl font-bold text-gray-900 dark:text-white mb-0.5 md:mb-2 font-display">
         {count.toLocaleString()}{value > 100 ? '+' : ''}
       </h3>
-      <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest">
+      <p className="text-[8px] md:text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-tight">
         {label}
       </p>
     </div>
