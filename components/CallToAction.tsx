@@ -5,26 +5,26 @@ import { ArrowRight } from 'lucide-react';
 
 const CallToAction: React.FC = () => {
   return (
-    <section className="py-24 px-4 bg-white">
-      <div className="max-w-5xl mx-auto bg-gray-900 rounded-[2rem] shadow-2xl overflow-hidden relative">
+    <section className="py-10 md:py-24 px-2 md:px-4 bg-white">
+      <div className="max-w-5xl mx-auto bg-gray-900 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl overflow-hidden relative">
         {/* Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-500 opacity-20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent-500 opacity-20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
+        <div className="absolute top-0 right-0 w-48 h-48 md:w-96 md:h-96 bg-brand-500 opacity-20 rounded-full blur-[60px] md:blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 md:w-80 md:h-80 bg-accent-500 opacity-20 rounded-full blur-[60px] md:blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
 
-        <div className="relative z-10 py-20 px-6 md:px-12 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+        <div className="relative z-10 py-10 px-4 md:py-20 md:px-12 text-center">
+          <h2 className="text-xl md:text-5xl font-bold text-white mb-3 md:mb-6 tracking-tight">
             Start your learning journey today.
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-400 text-xs md:text-xl mb-6 md:mb-12 max-w-2xl mx-auto leading-relaxed">
             Find the course that moves you forward. From local fintech integration to global software standards, your path begins here.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
               to="/courses"
-              className="px-8 py-4 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-50 transition-all shadow-lg hover:scale-105 flex items-center gap-2"
+              className="px-6 py-3 md:px-8 md:py-4 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-50 transition-all shadow-lg hover:scale-105 flex items-center gap-2 text-xs md:text-base"
             >
-              Browse All Courses <ArrowRight size={18} />
+              Browse All Courses <ArrowRight size={14} className="md:w-5 md:h-5" />
             </Link>
           </div>
         </div>

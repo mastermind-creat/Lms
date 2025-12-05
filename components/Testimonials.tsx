@@ -131,14 +131,14 @@ const Testimonials: React.FC = () => {
   };
 
   return (
-    <section className="py-24 bg-gray-900 relative overflow-hidden select-none">
+    <section className="py-12 md:py-24 bg-gray-900 relative overflow-hidden select-none">
       {/* Background Ambience */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-[100px] animate-pulse-slow"></div>
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px] animate-float"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="text-xl md:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tight">
             Community Voices
           </h2>
           
@@ -148,7 +148,7 @@ const Testimonials: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-2.5 rounded-full text-sm font-bold capitalize transition-all duration-300 ${
+                className={`px-4 py-1.5 md:px-8 md:py-2.5 rounded-full text-xs md:text-sm font-bold capitalize transition-all duration-300 ${
                   activeTab === tab 
                     ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/20' 
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -162,17 +162,17 @@ const Testimonials: React.FC = () => {
 
         {/* Carousel Container */}
         <div className="relative group">
-          {/* Controls */}
+          {/* Controls - Hidden on mobile */}
           <button 
             onClick={prevSlide}
-            className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-30"
+            className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-30"
           >
             <ChevronLeft size={24} />
           </button>
           
           <button 
             onClick={nextSlide}
-            className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+            className="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
           >
             <ChevronRight size={24} />
           </button>
@@ -191,34 +191,34 @@ const Testimonials: React.FC = () => {
               {activeData.map((item, index) => (
                 <div 
                   key={index} 
-                  className="flex-shrink-0 px-3"
+                  className="flex-shrink-0 px-1 md:px-3"
                   style={{ width: `${100 / visibleItems}%` }}
                 >
-                  <div className="bg-gray-800/40 backdrop-blur-md border border-gray-700/50 p-8 rounded-3xl h-full flex flex-col hover:bg-gray-800/60 transition-colors duration-300">
-                    <div className="mb-6 text-brand-500">
-                      <Quote size={32} className="opacity-50" />
+                  <div className="bg-gray-800/40 backdrop-blur-md border border-gray-700/50 p-4 md:p-8 rounded-2xl md:rounded-3xl h-full flex flex-col hover:bg-gray-800/60 transition-colors duration-300">
+                    <div className="mb-3 md:mb-6 text-brand-500">
+                      <Quote size={20} className="md:w-8 md:h-8 opacity-50" />
                     </div>
                     
-                    <p className="text-gray-300 text-lg leading-relaxed mb-8 italic flex-grow">
+                    <p className="text-gray-300 text-xs md:text-lg leading-relaxed mb-4 md:mb-8 italic flex-grow line-clamp-4 md:line-clamp-none">
                       "{item.quote}"
                     </p>
                     
-                    <div className="flex items-center gap-4 mt-auto">
+                    <div className="flex items-center gap-2 md:gap-4 mt-auto">
                       <div className="relative">
                         <div className="absolute inset-0 bg-brand-500 rounded-full blur opacity-20"></div>
                         <img 
                           src={item.image} 
                           alt={item.name} 
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-700 relative z-10"
+                          className="w-8 h-8 md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-700 relative z-10"
                         />
                       </div>
-                      <div>
-                        <h4 className="font-bold text-white text-base">{item.name}</h4>
-                        <p className="text-sm text-brand-400 font-medium">{item.role}</p>
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-white text-xs md:text-base truncate">{item.name}</h4>
+                        <p className="text-[10px] md:text-sm text-brand-400 font-medium truncate">{item.role}</p>
                       </div>
                       <div className="ml-auto flex gap-0.5">
                          {[...Array(5)].map((_, i) => (
-                           <Star key={i} size={12} className="text-yellow-500 fill-current" />
+                           <Star key={i} size={8} className="text-yellow-500 fill-current md:w-3 md:h-3" />
                          ))}
                       </div>
                     </div>
@@ -230,13 +230,13 @@ const Testimonials: React.FC = () => {
         </div>
 
         {/* Dots Pagination */}
-        <div className="flex justify-center gap-2 mt-12">
+        <div className="flex justify-center gap-1 md:gap-2 mt-6 md:mt-12">
           {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex ? 'w-8 bg-brand-500' : 'w-2 bg-gray-700 hover:bg-gray-600'
+              className={`h-1 md:h-1.5 rounded-full transition-all duration-300 ${
+                idx === currentIndex ? 'w-4 md:w-8 bg-brand-500' : 'w-1.5 md:w-2 bg-gray-700 hover:bg-gray-600'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
