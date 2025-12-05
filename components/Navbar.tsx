@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -35,10 +36,6 @@ const Navbar: React.FC = () => {
   const isHome = location.pathname === '/';
   
   // Logic for Navbar Background
-  // 1. If Mobile Menu is Open -> Solid White
-  // 2. If Scrolled -> Solid White (with blur)
-  // 3. If Not Home Page -> Solid White (with blur)
-  // 4. Default (Top of Home) -> Transparent
   const navBackground = isOpen
     ? 'bg-white shadow-none' 
     : (isScrolled || !isHome 
@@ -46,6 +43,11 @@ const Navbar: React.FC = () => {
         : 'bg-transparent');
     
   const padding = isScrolled ? 'py-3' : 'py-4 md:py-5';
+
+  // Text Color Logic: White when transparent (on dark hero), Black when scrolled or not home
+  const textColor = (isScrolled || !isHome || isOpen) ? 'text-gray-900' : 'text-white';
+  const iconColor = (isScrolled || !isHome || isOpen) ? 'text-gray-600' : 'text-white/80';
+  const hoverBg = (isScrolled || !isHome || isOpen) ? 'hover:bg-gray-100' : 'hover:bg-white/10';
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home size={18} /> },
@@ -61,17 +63,17 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group relative z-50">
-            <div className={`p-2 rounded-xl transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-gray-900 text-white'}`}>
+            <div className={`p-2 rounded-xl transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-white text-brand-600'}`}>
               <BookOpen size={20} />
             </div>
-            <span className={`text-xl font-bold tracking-tight font-display transition-colors duration-300 ${isScrolled || !isHome || isOpen ? 'text-gray-900' : 'text-gray-900'}`}>
+            <span className={`text-xl font-bold tracking-tight font-display transition-colors duration-300 ${textColor}`}>
               ElimuTech
             </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-2 lg:gap-6">
-            <div className="flex items-center bg-gray-100/50 rounded-full p-1 border border-gray-200/50 backdrop-blur-sm">
+            <div className={`flex items-center rounded-full p-1 border backdrop-blur-sm transition-colors duration-300 ${isScrolled || !isHome ? 'bg-gray-100/50 border-gray-200/50' : 'bg-white/10 border-white/10'}`}>
               {navLinks.map((link) => (
                 <Link 
                   key={link.name}
@@ -79,23 +81,25 @@ const Navbar: React.FC = () => {
                   className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     location.pathname === link.path
                       ? 'bg-white text-brand-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'
+                      : `${iconColor} ${hoverBg} hover:text-white`
                   }`}
                 >
-                  <span className={`${location.pathname === link.path ? 'text-brand-500' : 'text-gray-400 group-hover:text-gray-600'}`}>
+                  <span className={`${location.pathname === link.path ? 'text-brand-500' : ''}`}>
                     {link.icon}
                   </span>
-                  {link.name}
+                  <span className={location.pathname === link.path ? 'text-brand-600' : ''}>
+                    {link.name}
+                  </span>
                 </Link>
               ))}
             </div>
             
             <div className="flex items-center gap-3 pl-4">
-              <button className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-brand-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50">
+              <button className={`flex items-center gap-2 text-sm font-bold transition-colors px-3 py-2 rounded-lg ${hoverBg} ${textColor}`}>
                 <LogIn size={18} />
                 Log In
               </button>
-              <button className="bg-gray-900 hover:bg-brand-600 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-gray-900/20 hover:-translate-y-0.5 hover:shadow-brand-500/30">
+              <button className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg hover:-translate-y-0.5 ${isScrolled || !isHome ? 'bg-gray-900 text-white shadow-gray-900/20' : 'bg-white text-brand-600 shadow-black/20'}`}>
                 Get Started
               </button>
             </div>
@@ -106,9 +110,9 @@ const Navbar: React.FC = () => {
             <button 
               onClick={() => setIsOpen(!isOpen)} 
               className={`p-2.5 transition-colors focus:outline-none rounded-xl backdrop-blur-sm ${
-                isOpen || isScrolled || !isHome 
+                isOpen
                   ? 'bg-gray-100 text-gray-900 hover:bg-gray-200' 
-                  : 'bg-white/20 text-gray-900 hover:bg-white/30'
+                  : (isScrolled || !isHome ? 'bg-gray-100 text-gray-900' : 'bg-white/20 text-white hover:bg-white/30')
               }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
