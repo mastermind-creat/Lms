@@ -2,6 +2,8 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import Partners from '../components/Partners';
+import Stats from '../components/Stats';
+import Categories from '../components/Categories';
 import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
@@ -23,6 +25,7 @@ const Home: React.FC = () => {
     <div className="bg-white">
       <Hero />
       <Partners />
+      <Stats />
       
       <CourseSection 
         title="Featured Courses" 
@@ -32,6 +35,8 @@ const Home: React.FC = () => {
       />
 
       <IlluminatedSeparator />
+      
+      <Categories />
 
       <CourseSection 
         title="Most Studied" 

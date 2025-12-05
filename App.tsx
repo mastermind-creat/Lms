@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -7,6 +7,7 @@ import AllCourses from './pages/AllCourses';
 import CourseDetails from './pages/CourseDetails';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
+import Loader from './components/Loader';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -18,6 +19,21 @@ const ScrollToTop = () => {
 };
 
 const App: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial loading time
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Router>
       <ScrollToTop />
