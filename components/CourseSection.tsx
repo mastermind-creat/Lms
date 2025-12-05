@@ -23,7 +23,7 @@ const CourseSection: React.FC<CourseSectionProps> = ({
   dark = false
 }) => {
   return (
-    <section className={`py-12 md:py-20 ${bgColor} relative overflow-hidden`}>
+    <section className={`py-12 md:py-20 ${bgColor} relative overflow-hidden transition-colors duration-300`}>
       {/* Decorative background glow */}
       {dark && (
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -34,20 +34,12 @@ const CourseSection: React.FC<CourseSectionProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-1">
               {dark && <Sparkles size={16} className="text-brand-400 animate-pulse" />}
-              <h2 className={`text-2xl md:text-3xl font-bold tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>
-                {dark ? (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-100 to-white">
-                    {title}
-                  </span>
-                ) : (
-                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900">
-                     {title}
-                   </span>
-                )}
+              <h2 className={`text-2xl md:text-3xl font-bold tracking-tight ${dark ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
+                {title}
               </h2>
             </div>
             {subtitle && (
-              <p className={`text-sm md:text-base max-w-2xl ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-sm md:text-base max-w-2xl ${dark ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
                 {subtitle}
               </p>
             )}
@@ -58,7 +50,7 @@ const CourseSection: React.FC<CourseSectionProps> = ({
               className={`hidden md:flex items-center gap-2 text-xs md:text-sm font-bold transition-all group px-4 py-2 rounded-full border ${
                 dark 
                   ? 'text-brand-300 border-brand-500/30 hover:bg-brand-500/10' 
-                  : 'text-brand-600 border-brand-100 hover:bg-brand-50'
+                  : 'text-brand-600 border-brand-100 hover:bg-brand-50 dark:text-brand-400 dark:border-brand-900 dark:hover:bg-brand-900/50'
               }`}
             >
               View All <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -86,7 +78,7 @@ const CourseSection: React.FC<CourseSectionProps> = ({
               className={`inline-flex items-center justify-center gap-2 w-full px-6 py-3 border rounded-xl text-sm font-bold transition-colors ${
                 dark 
                 ? 'border-gray-700 text-white hover:bg-gray-800' 
-                : 'border-gray-200 text-gray-900 hover:bg-gray-50'
+                : 'border-gray-200 text-gray-900 hover:bg-gray-50 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800'
               }`}
             >
               View All <ArrowRight size={16} />

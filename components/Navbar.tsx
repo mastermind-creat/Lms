@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn, Moon, Sun, Laptop } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -71,9 +72,12 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center relative">
           <Link to="/" className="flex items-center gap-2 group relative z-50">
             <div className={`transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'opacity-100' : 'brightness-0 invert opacity-90'}`}>
-               <img src="/logo.png" alt="ElimuTech Logo" className="h-8 md:h-10 w-auto object-contain" />
+               <img 
+                 src="/logo.png" 
+                 alt="ElimuTech" 
+                 className="h-8 md:h-10 w-auto object-contain" 
+               />
             </div>
-            <span className="sr-only">ElimuTech</span> 
           </Link>
 
           <div className="hidden md:flex items-center gap-2 lg:gap-6">

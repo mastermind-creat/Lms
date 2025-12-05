@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Twitter, Linkedin, Facebook, Instagram, Apple, Play, Send } from 'lucide-react';
 
@@ -34,7 +35,11 @@ const Footer: React.FC = () => {
           
           <div className="col-span-2 lg:col-span-2">
             <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-4">
-              <img src="/logo.png" alt="ElimuTech Logo" className="h-8 md:h-10 w-auto object-contain" />
+              <img 
+                src="/logo.png" 
+                alt="ElimuTech" 
+                className="h-8 md:h-10 w-auto object-contain dark:brightness-0 dark:invert" 
+              />
             </div>
             <p className="text-gray-500 dark:text-gray-400 text-[10px] md:text-sm leading-relaxed mb-4 md:mb-6 max-w-xs">
               ElimuTech is an online learning platform dedicated to providing accessible, high-quality digital education to students worldwide.
