@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, BookOpen } from 'lucide-react';
+import { Search, BookOpen, Filter } from 'lucide-react';
 import { courses } from '../data/courses';
 import CourseCard from '../components/CourseCard';
 
@@ -12,64 +12,81 @@ const AllCourses: React.FC = () => {
     : courses.filter(c => c.category === activeCategory || (activeCategory === "Development" && (c.category === "Web Dev" || c.category === "Technology")));
 
   return (
-    <div className="pt-24 md:pt-32 pb-20 min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+    <div className="pt-[72px] min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
         
-        {/* Minimal Header with Fade In */}
-        <div className="mb-6 md:mb-12 animate-fade-in-up">
-          <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight px-2 md:px-0">Course Catalog</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          All Courses
+        </h1>
+
+        <div className="flex flex-col lg:flex-row gap-8">
           
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center px-2 md:px-0">
-            {/* Categories as clean tabs */}
-            <div className="flex gap-1 overflow-x-auto pb-2 no-scrollbar w-full md:w-auto mask-gradient">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-[10px] md:text-sm font-medium transition-all duration-300 whitespace-nowrap shrink-0 ${
-                    activeCategory === cat 
-                      ? 'bg-gray-900 dark:bg-brand-600 text-white shadow-lg shadow-gray-900/20 dark:shadow-brand-900/20 transform scale-105' 
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {cat}
+          {/* Sidebar Filters (Desktop) */}
+          <div className="hidden lg:block w-64 flex-shrink-0 space-y-6">
+             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+               <h3 className="font-bold text-gray-900 dark:text-white mb-3">Categories</h3>
+               <div className="flex flex-col gap-2">
+                 {categories.map(cat => (
+                   <label key={cat} className="flex items-center gap-2 cursor-pointer group">
+                     <input 
+                       type="radio" 
+                       name="category"
+                       checked={activeCategory === cat}
+                       onChange={() => setActiveCategory(cat)}
+                       className="w-4 h-4 text-brand-900 focus:ring-brand-500 border-gray-300"
+                     />
+                     <span className={`text-sm ${activeCategory === cat ? 'text-brand-900 font-bold' : 'text-gray-600 dark:text-gray-400 group-hover:text-brand-900'}`}>
+                       {cat}
+                     </span>
+                   </label>
+                 ))}
+               </div>
+             </div>
+             
+             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+               <h3 className="font-bold text-gray-900 dark:text-white mb-3">Ratings</h3>
+               <div className="space-y-2">
+                 {[4.5, 4.0, 3.5, 3.0].map(rating => (
+                   <div key={rating} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                     <input type="radio" name="rating" className="w-4 h-4" />
+                     <span className="flex items-center gap-1">
+                       <span className="text-yellow-500 font-bold">★★★★★</span> {rating} & up
+                     </span>
+                   </div>
+                 ))}
+               </div>
+             </div>
+          </div>
+
+          {/* Course Grid */}
+          <div className="flex-grow">
+             {/* Mobile Filters */}
+             <div className="lg:hidden mb-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <button className="flex items-center gap-2 px-4 py-3 border border-gray-900 dark:border-white text-gray-900 dark:text-white font-bold text-sm whitespace-nowrap">
+                  <Filter size={16} /> Filter
                 </button>
-              ))}
-            </div>
+                {categories.map(cat => (
+                   <button 
+                     key={cat}
+                     onClick={() => setActiveCategory(cat)}
+                     className={`px-4 py-3 border text-sm font-bold whitespace-nowrap ${
+                       activeCategory === cat 
+                         ? 'bg-gray-900 text-white border-gray-900' 
+                         : 'border-gray-300 text-gray-700 bg-transparent'
+                     }`}
+                   >
+                     {cat}
+                   </button>
+                ))}
+             </div>
 
-            {/* Simple Search */}
-            <div className="relative w-full md:w-64 shrink-0 group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 group-hover:text-brand-500 dark:group-hover:text-brand-400 transition-colors" size={14} />
-              <input 
-                type="text" 
-                placeholder="Search..." 
-                className="w-full bg-gray-50 dark:bg-gray-800 border-none rounded-full py-2 pl-9 pr-4 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-gray-900 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-white shadow-sm"
-              />
-            </div>
+             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredCourses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+             </div>
           </div>
         </div>
-
-        {/* Responsive Grid: FORCED 4 COLUMNS ON MOBILE as requested */}
-        {/* Gap is reduced to 1.5 (6px) on mobile to fit content */}
-        <div className="grid grid-cols-4 gap-1.5 md:gap-6 min-h-[50vh]">
-          {filteredCourses.map((course, index) => (
-            <div 
-              key={course.id} 
-              className="animate-fade-in-up" 
-              style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
-            >
-              <CourseCard course={course} />
-            </div>
-          ))}
-        </div>
-        
-        {/* Empty State */}
-        {filteredCourses.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-32 text-gray-400 dark:text-gray-500 animate-fade-in">
-            <BookOpen size={48} strokeWidth={1} className="mb-4 opacity-50" />
-            <p className="text-sm font-medium">No courses found matching that category.</p>
-          </div>
-        )}
 
       </div>
     </div>

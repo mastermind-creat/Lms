@@ -7,11 +7,12 @@ import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
 import Benefits from '../components/Benefits';
+import ValueProps from '../components/ValueProps';
 import { courses } from '../data/courses';
 
 const IlluminatedSeparator = () => (
-  <div className="relative h-px w-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500/30 to-transparent w-1/3 mx-auto"></div>
+  <div className="relative h-[2px] w-full bg-gray-100 dark:bg-gray-800 overflow-hidden my-0">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500 to-transparent w-1/3 blur-sm animate-scroll" style={{ animationDuration: '3s' }}></div>
   </div>
 );
 
@@ -27,17 +28,21 @@ const Home: React.FC = () => {
       <Partners />
       <Stats />
       
+      <IlluminatedSeparator />
+
       <CourseSection 
         title="Featured Courses" 
         subtitle="Curriculum designed by Kenya's top tech leads."
         courses={featuredCourses}
         bgColor="bg-white dark:bg-gray-900"
-        dark={false} // Will inherit parent dark mode due to transparent bg
+        dark={false} 
       />
 
       <IlluminatedSeparator />
       
       <Categories />
+      
+      <ValueProps />
       
       <Benefits />
 
@@ -49,7 +54,6 @@ const Home: React.FC = () => {
         dark={false}
       />
 
-      {/* Dark/Live Section for New Courses - Always Dark */}
       <CourseSection 
         title="Fresh on ElimuTech" 
         subtitle="Latest curriculum updates to keep you ahead."
@@ -59,6 +63,8 @@ const Home: React.FC = () => {
       />
 
       <Testimonials />
+
+      <IlluminatedSeparator />
 
       <CourseSection 
         title="Top Picks for You" 

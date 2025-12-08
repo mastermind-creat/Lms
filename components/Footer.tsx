@@ -1,103 +1,77 @@
 import React from 'react';
-import { Twitter, Linkedin, Facebook, Instagram, Apple, Play, Send } from 'lucide-react';
+import { Globe, Send } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800 pt-8 pb-6 md:pt-16 md:pb-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-gray-900 text-white pt-12 pb-8 border-t border-gray-800">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
         
-        <div className="mb-12 md:mb-16 bg-brand-50 dark:bg-brand-900/10 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-10 border border-brand-100 dark:border-brand-900/30">
-          <div className="text-center lg:text-left">
-            <h3 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-2">Subscribe to our newsletter</h3>
-            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto lg:mx-0">
-              Get the latest course updates, tech news from Silicon Savannah, and exclusive offers delivered to your inbox.
-            </p>
+        {/* Top Section */}
+        <div className="flex flex-col lg:flex-row justify-between gap-8 mb-12 border-b border-gray-800 pb-8">
+           <div className="space-y-4 max-w-sm">
+             <h4 className="font-bold text-lg">Teach the world online</h4>
+             <p className="text-sm text-gray-300">
+               Create an online video course, reach students across the globe, and earn money.
+             </p>
+             <button className="px-6 py-2 border border-white font-bold hover:bg-white/10 transition-colors w-fit h-fit text-sm">
+               Teach on ElimuTech
+             </button>
+           </div>
+
+           {/* Newsletter Form */}
+           <div className="bg-gray-800 p-6 rounded-2xl w-full lg:w-auto">
+             <h4 className="font-bold text-white mb-2">Subscribe to our Newsletter</h4>
+             <p className="text-xs text-gray-400 mb-4">Get the latest updates, course discounts, and tech news.</p>
+             <form className="flex gap-2">
+               <input 
+                 type="email" 
+                 placeholder="Enter your email" 
+                 className="bg-gray-700 border-none rounded-lg px-4 py-2 text-sm text-white focus:ring-2 focus:ring-brand-500 outline-none w-full md:w-64 placeholder:text-gray-500"
+               />
+               <button type="submit" className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center">
+                 <Send size={18} />
+               </button>
+             </form>
+           </div>
+        </div>
+
+        {/* Links Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 text-xs md:text-sm">
+          <div className="flex flex-col gap-3">
+            <h5 className="font-bold text-gray-500 uppercase tracking-wider text-[10px] mb-1">Company</h5>
+            <a href="#" className="hover:text-brand-400 transition-colors">About us</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Contact us</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Careers</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Blog</a>
           </div>
-          <div className="w-full max-w-md">
-            <form className="flex flex-col sm:flex-row gap-2">
-              <input 
-                type="email" 
-                placeholder="Enter your email address" 
-                className="flex-grow px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
-              />
-              <button 
-                type="button"
-                className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20"
-              >
-                Subscribe <Send size={16} />
-              </button>
-            </form>
+          <div className="flex flex-col gap-3">
+             <h5 className="font-bold text-gray-500 uppercase tracking-wider text-[10px] mb-1">Community</h5>
+            <a href="#" className="hover:text-brand-400 transition-colors">Learners</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Partners</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Developers</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Affiliate</a>
+          </div>
+          <div className="flex flex-col gap-3">
+             <h5 className="font-bold text-gray-500 uppercase tracking-wider text-[10px] mb-1">More</h5>
+            <a href="#" className="hover:text-brand-400 transition-colors">Terms</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Privacy policy</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Cookie settings</a>
+            <a href="#" className="hover:text-brand-400 transition-colors">Accessibility</a>
+          </div>
+          <div className="flex flex-col gap-4 items-start md:items-end">
+             <button className="flex items-center gap-2 border border-gray-600 rounded px-4 py-1.5 font-bold hover:bg-white/5 text-sm">
+               <Globe size={16} /> English
+             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-12 mb-8 md:mb-12">
-          
-          <div className="col-span-2 lg:col-span-2">
-            <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-4">
-              <img 
-                src="/logo.png" 
-                alt="ElimuTech" 
-                className="h-8 md:h-10 w-auto object-contain dark:brightness-0 dark:invert" 
-              />
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 text-[10px] md:text-sm leading-relaxed mb-4 md:mb-6 max-w-xs">
-              ElimuTech is an online learning platform dedicated to providing accessible, high-quality digital education to students worldwide.
-            </p>
-            <div className="flex gap-3 md:gap-4 mb-4 md:mb-8">
-              <a href="#" className="text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"><Twitter size={14} className="md:w-5 md:h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"><Linkedin size={14} className="md:w-5 md:h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"><Facebook size={14} className="md:w-5 md:h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"><Instagram size={14} className="md:w-5 md:h-5" /></a>
-            </div>
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-800">
+          <div className="flex items-center gap-2">
+             <img src="/logo.png" alt="ElimuTech" className="h-6 w-auto brightness-0 invert" />
+             <span className="font-display font-bold text-lg">ElimuTech</span>
           </div>
-
-          <div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Platform</h4>
-            <ul className="space-y-2 md:space-y-4 text-[10px] md:text-sm text-gray-500 dark:text-gray-400">
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Browse Courses</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Mentorship</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Pricing</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">For Business</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Company</h4>
-            <ul className="space-y-2 md:space-y-4 text-[10px] md:text-sm text-gray-500 dark:text-gray-400">
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-brand-500 dark:hover:text-brand-400 transition-colors">Contact</a></li>
-            </ul>
-          </div>
-
-          <div className="col-span-2 md:col-span-1">
-             <h4 className="font-bold text-gray-900 dark:text-white mb-3 md:mb-6 text-xs md:text-base">Get the App</h4>
-             <div className="flex flex-row md:flex-col gap-2 md:gap-3">
-               <button className="flex-1 flex items-center gap-2 md:gap-3 bg-brand-900 dark:bg-white text-white dark:text-gray-900 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl hover:bg-brand-800 dark:hover:bg-gray-100 transition-colors text-left">
-                 <Apple size={16} className="md:w-5 md:h-5" />
-                 <div>
-                   <div className="text-[8px] md:text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500">Download on the</div>
-                   <div className="text-xs md:text-sm font-bold leading-none">App Store</div>
-                 </div>
-               </button>
-               <button className="flex-1 flex items-center gap-2 md:gap-3 bg-brand-900 dark:bg-white text-white dark:text-gray-900 px-3 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl hover:bg-brand-800 dark:hover:bg-gray-100 transition-colors text-left">
-                 <Play size={16} className="fill-current md:w-5 md:h-5" />
-                 <div>
-                   <div className="text-[8px] md:text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500">Get it on</div>
-                   <div className="text-xs md:text-sm font-bold leading-none">Google Play</div>
-                 </div>
-               </button>
-             </div>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-100 dark:border-gray-800 pt-4 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4 text-[10px] md:text-sm text-gray-400 dark:text-gray-500">
-          <p>© 2025 ElimuTech. All rights reserved.</p>
-          <div className="flex gap-4 md:gap-6">
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Service</a>
-          </div>
+          <p className="text-[10px] text-gray-500">© 2025 ElimuTech, Inc. All rights reserved.</p>
         </div>
       </div>
     </footer>

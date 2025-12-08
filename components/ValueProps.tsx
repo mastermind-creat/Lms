@@ -1,86 +1,60 @@
 import React from 'react';
-import { Briefcase, Wifi, Award, Users } from 'lucide-react';
+import { CheckCircle2, Zap } from 'lucide-react';
 
 const ValueProps: React.FC = () => {
   return (
-    <section className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-            Why ElimuTech?
-          </h2>
-          <p className="text-gray-500">
-            We've reimagined online learning for the African context. Low data usage, high impact content, and direct pathways to employment.
-          </p>
-        </div>
+    <section className="py-20 bg-gray-900 relative overflow-hidden">
+      {/* Background Decoration */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-900/20 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Large Card */}
-          <div className="md:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition-all">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Briefcase size={120} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+          
+          {/* Left Content */}
+          <div className="w-full md:w-1/2">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-900/50 text-brand-400 text-xs font-bold uppercase tracking-widest mb-6 border border-brand-800">
+              <Zap size={14} fill="currentColor" /> Why ElimuTech?
             </div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 bg-brand-100 rounded-2xl flex items-center justify-center text-brand-600 mb-6">
-                <Briefcase size={24} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Direct Job Linkages</h3>
-              <p className="text-gray-500 leading-relaxed max-w-md">
-                We don't just teach; we connect. Our partnership with Nairobi's top tech hubs ensures that top performers get interviews with companies like Safaricom and Cellulant immediately upon graduation.
-              </p>
-            </div>
-          </div>
-
-          {/* Tall Card */}
-          <div className="bg-gray-900 rounded-3xl p-8 shadow-sm border border-gray-800 text-white relative overflow-hidden group">
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-accent-500 rounded-full blur-3xl opacity-20"></div>
-            <div className="relative z-10 h-full flex flex-col justify-between">
-              <div>
-                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-6 backdrop-blur-sm">
-                   <Wifi size={24} />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Offline Mode</h3>
-                <p className="text-gray-400 leading-relaxed text-sm">
-                  Download lessons and learn on the go. Optimized for fluctuating connectivity across the region.
-                </p>
-              </div>
-              <div className="mt-8">
-                <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-accent-500 w-3/4 h-full rounded-full animate-pulse"></div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2 text-right">Download active...</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Small Card 1 */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 group hover:border-brand-200 transition-all">
-            <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-4">
-              <Award size={24} />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">NITA Certified</h3>
-            <p className="text-sm text-gray-500">
-              Our curriculum is recognized by the National Industrial Training Authority.
+            
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              The only platform you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-orange-500">master your future.</span>
+            </h2>
+            
+            <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+              We've stripped away the complexity. No confusing paths, no bloat. Just direct access to world-class education tailored for the African tech ecosystem.
             </p>
+
+            <div className="space-y-4">
+              {[
+                "Offline-first architecture for low-bandwidth areas",
+                "Direct integration with local payment systems (M-PESA)",
+                "Curriculum aligned with top Silicon Savannah employers"
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <CheckCircle2 className="text-brand-500 shrink-0" size={20} />
+                  <span className="font-medium text-gray-200">{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Small Card 2 */}
-          <div className="md:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1">
-              <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4">
-                <Users size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Community Mentorship</h3>
-              <p className="text-sm text-gray-500">
-                Join local study groups in Nairobi, Kisumu, and Mombasa. Learn together with peers in your city.
-              </p>
-            </div>
-            <div className="flex -space-x-4">
-               {[1,2,3,4].map(i => (
-                 <img key={i} className="w-12 h-12 rounded-full border-4 border-white" src={`https://picsum.photos/100/100?random=${i+50}`} alt="Mentor" />
-               ))}
-               <div className="w-12 h-12 rounded-full border-4 border-white bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600">
-                 +2k
+          {/* Right Visual */}
+          <div className="w-full md:w-1/2 flex justify-center items-center">
+            <div className="relative w-full max-w-sm aspect-square">
+               {/* Center Icon with Neumorphic effect */}
+               <div className="absolute inset-0 m-auto w-48 h-48 bg-gray-800 rounded-full flex items-center justify-center shadow-[20px_20px_60px_#0f172a,-20px_-20px_60px_#1e293b] animate-float">
+                 <img src="/icon.png" alt="Icon" className="w-24 h-24 object-contain" />
+               </div>
+               
+               {/* Orbiting Elements */}
+               <div className="absolute top-0 right-10 w-16 h-16 bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-delay:0.5s] border border-gray-700">
+                  <span className="text-2xl">🚀</span>
+               </div>
+               <div className="absolute bottom-10 left-0 w-16 h-16 bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center animate-bounce [animation-delay:1s] border border-gray-700">
+                  <span className="text-2xl">🎓</span>
+               </div>
+               <div className="absolute bottom-0 right-0 w-20 h-20 bg-brand-600 rounded-2xl shadow-lg flex items-center justify-center animate-bounce text-white font-bold">
+                  A+
                </div>
             </div>
           </div>
