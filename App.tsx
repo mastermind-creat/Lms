@@ -9,6 +9,7 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
+import StudentDashboard from './pages/StudentDashboard';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Loader from './components/Loader';
@@ -55,6 +56,7 @@ const App: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/dashboard" element={<StudentDashboard />} />
             </Routes>
           </main>
           <Chatbot />
