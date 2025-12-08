@@ -4,7 +4,7 @@ import {
   Bell, User, Settings, Menu, LogOut, CheckCircle, 
   Clock, Award, PlayCircle, MoreVertical, Search, Zap,
   Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
-  Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, Edit3, Save, X
+  Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, Edit3, Save, X, Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -447,10 +447,30 @@ const ProfileView = () => {
     name: "Jane Doe",
     email: "jane.doe@student.elimutech.ke",
     phone: "+254 712 345 678",
-    interest: "Web Development",
+    interests: ["Web Development", "UI/UX Design"],
     education: "Undergraduate",
-    bio: "Passionate learner aiming to become a full-stack developer in Nairobi's tech ecosystem."
+    bio: "Passionate learner aiming to become a full-stack developer in Nairobi's tech ecosystem.",
+    location: "Nairobi, Kenya"
   });
+
+  const availableInterests = [
+    "Web Development", "Data Science", "Mobile Development",
+    "UI/UX Design", "Digital Marketing", "Cybersecurity",
+    "Cloud Computing", "Finance & Fintech"
+  ];
+
+  const educationOptions = [
+    "High School", "Undergraduate", "Postgraduate", 
+    "Bootcamp", "Self-Taught", "Other"
+  ];
+
+  const toggleInterest = (interest: string) => {
+    if (formData.interests.includes(interest)) {
+      setFormData({ ...formData, interests: formData.interests.filter(i => i !== interest) });
+    } else {
+      setFormData({ ...formData, interests: [...formData.interests, interest] });
+    }
+  };
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -483,7 +503,7 @@ const ProfileView = () => {
              </div>
              
              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{formData.name}</h2>
-             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{formData.interest} Student</p>
+             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{formData.education} Student</p>
 
              <div className="w-full space-y-4 text-left">
                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
@@ -493,7 +513,7 @@ const ProfileView = () => {
                  <Smartphone size={16} className="text-brand-500" /> {formData.phone}
                </div>
                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                 <MapPin size={16} className="text-brand-500" /> Nairobi, Kenya
+                 <MapPin size={16} className="text-brand-500" /> {formData.location}
                </div>
              </div>
           </div>
@@ -501,27 +521,102 @@ const ProfileView = () => {
           {/* Form */}
           <div className={`${cardStyle} p-6 md:p-8 md:col-span-2`}>
              <form className="space-y-6">
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</label>
+                   <input 
+                     name="name"
+                     disabled={!isEditing}
+                     value={formData.name}
+                     onChange={handleChange}
+                     className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
+                   />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
-                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</label>
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email</label>
                      <input 
-                       name="name"
+                       name="email"
                        disabled={!isEditing}
-                       value={formData.name}
+                       value={formData.email}
+                       onChange={handleChange}
+                       className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Mobile</label>
+                     <input 
+                       name="phone"
+                       disabled={!isEditing}
+                       value={formData.phone}
+                       onChange={handleChange}
+                       className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
+                     />
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Location</label>
+                     <input 
+                       name="location"
+                       disabled={!isEditing}
+                       value={formData.location}
                        onChange={handleChange}
                        className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
                      />
                    </div>
                    <div className="space-y-2">
                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Education Level</label>
-                     <input 
-                       name="education"
-                       disabled={!isEditing}
-                       value={formData.education}
-                       onChange={handleChange}
-                       className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
-                     />
+                     {isEditing ? (
+                       <div className="relative">
+                        <select
+                           name="education"
+                           value={formData.education}
+                           onChange={handleChange}
+                           className="w-full p-3 rounded-xl border bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20 outline-none transition-all text-gray-900 dark:text-white appearance-none"
+                         >
+                           {educationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                         </select>
+                       </div>
+                     ) : (
+                       <input 
+                         disabled
+                         value={formData.education}
+                         className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-gray-900 border-transparent outline-none transition-all text-gray-900 dark:text-white"
+                       />
+                     )}
                    </div>
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Primary Interests</label>
+                   {isEditing ? (
+                     <div className="flex flex-wrap gap-2">
+                       {availableInterests.map(interest => (
+                         <button
+                           key={interest}
+                           type="button"
+                           onClick={() => toggleInterest(interest)}
+                           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${
+                             formData.interests.includes(interest)
+                               ? 'bg-brand-600 text-white border-brand-600'
+                               : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-brand-500'
+                           }`}
+                         >
+                           {interest}
+                         </button>
+                       ))}
+                     </div>
+                   ) : (
+                     <div className="flex flex-wrap gap-2">
+                       {formData.interests.map(interest => (
+                         <span key={interest} className="px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold">
+                           {interest}
+                         </span>
+                       ))}
+                     </div>
+                   )}
                 </div>
 
                 <div className="space-y-2">
@@ -552,6 +647,7 @@ const ProfileView = () => {
 
 const SettingsView = () => {
   const { theme, setTheme } = useTheme();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in-up">
@@ -600,7 +696,7 @@ const SettingsView = () => {
                    <p className="font-bold text-gray-900 dark:text-white">Password</p>
                    <p className="text-xs text-gray-500">Last changed 3 months ago</p>
                  </div>
-                 <button className="text-sm font-bold text-brand-600 dark:text-brand-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-colors">Update</button>
+                 <button onClick={() => setShowPasswordModal(true)} className="text-sm font-bold text-brand-600 dark:text-brand-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-colors">Update</button>
                </div>
                
                <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -611,6 +707,45 @@ const SettingsView = () => {
              </div>
           </div>
        </div>
+
+      {/* Password Reset Modal */}
+       {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowPasswordModal(false)}></div>
+          <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Change Password</h3>
+            <form onSubmit={(e) => { e.preventDefault(); setShowPasswordModal(false); }}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Password</label>
+                   <div className="relative">
+                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
+                   </div>
+                </div>
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">New Password</label>
+                   <div className="relative">
+                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
+                   </div>
+                </div>
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm New Password</label>
+                   <div className="relative">
+                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
+                   </div>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-8">
+                <button type="button" onClick={() => setShowPasswordModal(false)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-lg">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+       )}
     </div>
   );
 };
