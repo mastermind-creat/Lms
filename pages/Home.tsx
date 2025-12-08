@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Hero from '../components/Hero';
 import Partners from '../components/Partners';
@@ -7,6 +6,7 @@ import Categories from '../components/Categories';
 import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
+import Benefits from '../components/Benefits';
 import { courses } from '../data/courses';
 
 const IlluminatedSeparator = () => (
@@ -38,6 +38,8 @@ const Home: React.FC = () => {
       <IlluminatedSeparator />
       
       <Categories />
+      
+      <Benefits />
 
       <CourseSection 
         title="Most Studied" 

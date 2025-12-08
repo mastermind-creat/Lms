@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Monitor, Briefcase, PenTool, Laptop, Calculator, Wand2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import AllCourses from './pages/AllCourses';
 import CourseDetails from './pages/CourseDetails';
+import About from './pages/About';
+import Blog from './pages/Blog';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Loader from './components/Loader';
@@ -44,6 +45,8 @@ const App: React.FC = () => {
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<Blog />} />
               <Route path="/courses" element={<AllCourses />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
             </Routes>

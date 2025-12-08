@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CourseSection from './CourseSection';
 import { courses } from '../data/courses';

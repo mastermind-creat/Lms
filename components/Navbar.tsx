@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn, Moon, Sun, Laptop } from 'lucide-react';
+import { Menu, X, BookOpen, ChevronRight, Home, Zap, Users, CreditCard, LogIn, Moon, Sun, Laptop, Info, FileText } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
@@ -48,10 +47,9 @@ const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home size={16} /> },
+    { name: 'About', path: '/about', icon: <Info size={16} /> },
     { name: 'Courses', path: '/courses', icon: <BookOpen size={16} /> },
-    { name: 'Features', path: '#', icon: <Zap size={16} /> },
-    { name: 'Mentors', path: '#', icon: <Users size={16} /> },
-    { name: 'Pricing', path: '#', icon: <CreditCard size={16} /> },
+    { name: 'Blog', path: '/blog', icon: <FileText size={16} /> },
   ];
 
   const toggleTheme = () => {
@@ -71,7 +69,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center relative">
           <Link to="/" className="flex items-center gap-2 group relative z-50">
-            <div className={`transition-all duration-300 ${isScrolled || !isHome || isOpen ? 'opacity-100' : 'brightness-0 invert opacity-90'}`}>
+            <div className={`transition-all duration-300`}>
                <img 
                  src="/logo.png" 
                  alt="ElimuTech" 
