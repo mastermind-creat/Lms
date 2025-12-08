@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, ArrowRight, Phone, Briefcase, Globe, BookOpen, GraduationCap, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, Phone, Briefcase, Globe, BookOpen, GraduationCap, Eye, EyeOff, ChevronDown } from 'lucide-react';
 
 type Role = 'student' | 'instructor';
 
@@ -37,6 +37,26 @@ const StyledInput = ({ icon: Icon, isPassword = false, ...props }: any) => {
   );
 };
 
+// New Styled Select Component for consistent UI
+const StyledSelect = ({ icon: Icon, children, ...props }: any) => {
+  return (
+    <div className="relative flex items-center group">
+      <div className="absolute left-0 z-10 w-12 h-12 flex items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#171c2b]">
+        <Icon size={20} />
+      </div>
+      <select
+        {...props}
+        className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-3.5 pl-16 pr-12 text-gray-700 dark:text-gray-200 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all appearance-none cursor-pointer"
+      >
+        {children}
+      </select>
+      <div className="absolute right-4 pointer-events-none text-gray-400">
+        <ChevronDown size={20} />
+      </div>
+    </div>
+  );
+};
+
 const Signup: React.FC = () => {
   const [role, setRole] = useState<Role>('student');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +71,7 @@ const Signup: React.FC = () => {
 
   // Instructor Fields
   const [expertise, setExpertise] = useState('');
+  const [otherExpertise, setOtherExpertise] = useState('');
   const [experience, setExperience] = useState('');
   const [linkedin, setLinkedin] = useState('');
 
@@ -62,13 +83,46 @@ const Signup: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    const finalExpertise = expertise === 'Other' ? otherExpertise : expertise;
+
     // Simulate API Call
     setTimeout(() => {
         console.log("Signing up as", role);
+        console.log("Details:", { name, email, phone, role, finalExpertise, experience, interests, education });
         setIsLoading(false);
         navigate('/login');
     }, 2000);
   };
+
+  const interestOptions = [
+    "Web Development",
+    "Data Science",
+    "Mobile Development",
+    "UI/UX Design",
+    "Digital Marketing",
+    "Cybersecurity",
+    "Cloud Computing",
+    "Finance & Fintech"
+  ];
+
+  const educationOptions = [
+    "High School",
+    "Undergraduate",
+    "Postgraduate",
+    "Bootcamp / Certificate",
+    "Self-Taught",
+    "Other"
+  ];
+
+  const expertiseOptions = [
+    "Software Engineering",
+    "Data Science & Analytics",
+    "Product Design",
+    "Digital Marketing",
+    "Network Security",
+    "Business & Finance",
+    "Other"
+  ];
 
   return (
     <div className="min-h-screen pt-24 pb-20 flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4">
@@ -130,11 +184,26 @@ const Signup: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Primary Interest</label>
-                <StyledInput icon={BookOpen} type="text" value={interests} onChange={(e: any) => setInterests(e.target.value)} placeholder="e.g. Web Development" />
+                <StyledSelect 
+                  icon={BookOpen} 
+                  value={interests} 
+                  onChange={(e: any) => setInterests(e.target.value)} 
+                  required
+                >
+                  <option value="" disabled>Select Interest</option>
+                  {interestOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </StyledSelect>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Education Level</label>
-                <StyledInput icon={GraduationCap} type="text" value={education} onChange={(e: any) => setEducation(e.target.value)} placeholder="e.g. Undergraduate" />
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Education Level (Optional)</label>
+                <StyledSelect 
+                  icon={GraduationCap} 
+                  value={education} 
+                  onChange={(e: any) => setEducation(e.target.value)}
+                >
+                  <option value="" disabled>Select Level</option>
+                  {educationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </StyledSelect>
               </div>
             </div>
           )}
@@ -145,13 +214,36 @@ const Signup: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Area of Expertise</label>
-                  <StyledInput icon={Briefcase} type="text" value={expertise} onChange={(e: any) => setExpertise(e.target.value)} placeholder="e.g. Data Science" />
+                  <StyledSelect 
+                    icon={Briefcase} 
+                    value={expertise} 
+                    onChange={(e: any) => setExpertise(e.target.value)} 
+                    required
+                  >
+                    <option value="" disabled>Select Expertise</option>
+                    {expertiseOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  </StyledSelect>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Years of Experience</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Years of Experience (Optional)</label>
                   <StyledInput icon={GraduationCap} type="number" value={experience} onChange={(e: any) => setExperience(e.target.value)} placeholder="e.g. 5" />
                 </div>
               </div>
+              
+              {expertise === 'Other' && (
+                <div className="space-y-2 animate-fade-in">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">Specify Expertise</label>
+                  <StyledInput 
+                    icon={Briefcase} 
+                    type="text" 
+                    value={otherExpertise} 
+                    onChange={(e: any) => setOtherExpertise(e.target.value)} 
+                    placeholder="e.g. Blockchain Development" 
+                    required 
+                  />
+                </div>
+              )}
+
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-2">LinkedIn / Portfolio URL</label>
                 <StyledInput icon={Globe} type="url" value={linkedin} onChange={(e: any) => setLinkedin(e.target.value)} placeholder="https://..." />
