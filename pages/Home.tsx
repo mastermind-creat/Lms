@@ -10,8 +10,8 @@ import ValueProps from '../components/ValueProps';
 import { courses } from '../data/courses';
 
 const IlluminatedSeparator = () => (
-  <div className="relative h-[2px] w-full bg-gray-100 dark:bg-gray-800 overflow-hidden my-0">
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500 to-transparent w-1/3 blur-sm animate-scroll" style={{ animationDuration: '3s' }}></div>
+  <div className="relative h-[1px] w-full bg-gray-200 dark:bg-gray-800 overflow-hidden my-0">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-500 to-transparent w-1/3 blur-[2px] animate-scroll" style={{ animationDuration: '4s' }}></div>
   </div>
 );
 
@@ -24,7 +24,9 @@ const Home: React.FC = () => {
   return (
     <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
       <Hero />
+      <IlluminatedSeparator />
       <Partners />
+      <IlluminatedSeparator />
       <Stats />
       
       <IlluminatedSeparator />
@@ -39,8 +41,10 @@ const Home: React.FC = () => {
       <IlluminatedSeparator />
       
       <Categories />
+      <IlluminatedSeparator />
       
       <ValueProps />
+      <IlluminatedSeparator />
       
       <CourseSection 
         title="Most Studied" 
@@ -48,6 +52,7 @@ const Home: React.FC = () => {
         courses={popularCourses}
         bgColor="bg-gray-50/50 dark:bg-gray-800/30"
       />
+      <IlluminatedSeparator />
 
       <CourseSection 
         title="Fresh on ElimuTech" 
@@ -55,6 +60,7 @@ const Home: React.FC = () => {
         courses={newCourses}
         bgColor="bg-white dark:bg-gray-900"
       />
+      <IlluminatedSeparator />
 
       <Testimonials />
 
@@ -66,6 +72,7 @@ const Home: React.FC = () => {
         courses={recommendedCourses}
         bgColor="bg-gray-50/50 dark:bg-gray-800/30"
       />
+      <IlluminatedSeparator />
 
       <CallToAction />
     </div>

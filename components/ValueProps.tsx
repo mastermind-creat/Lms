@@ -38,22 +38,27 @@ const ValueProps: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Visual - Minimalist Neumorphic Icon */}
+          {/* Right Visual - Minimalist Neumorphic Icon with Premium Ripple Animation */}
           <div className="w-full md:w-1/2 flex justify-center items-center">
             <div className="relative w-full max-w-sm aspect-square">
+               
+               {/* Animated Ripples */}
+               <div className="absolute inset-0 m-auto w-64 h-64 bg-brand-500/5 rounded-full animate-ping-slow"></div>
+               <div className="absolute inset-0 m-auto w-56 h-56 bg-brand-500/10 rounded-full animate-pulse-slow"></div>
+
                {/* Center Icon with Neumorphic effect */}
-               <div className="absolute inset-0 m-auto w-48 h-48 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shadow-[20px_20px_60px_#d1d1d1,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0f172a,-20px_-20px_60px_#1e293b] animate-float transition-colors duration-300">
+               <div className="absolute inset-0 m-auto w-48 h-48 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shadow-[20px_20px_60px_#d1d1d1,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0f172a,-20px_-20px_60px_#1e293b] animate-float transition-colors duration-300 z-10">
                  <img src="/icon.png" alt="Icon" className="w-24 h-24 object-contain" />
                </div>
                
                {/* Orbiting Elements */}
-               <div className="absolute top-0 right-10 w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:0.5s] border border-gray-100 dark:border-gray-700">
+               <div className="absolute top-0 right-10 w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-xl flex items-center justify-center animate-bounce [animation-delay:0.5s] border border-gray-100 dark:border-gray-700 z-20">
                   <span className="text-2xl">🚀</span>
                </div>
-               <div className="absolute bottom-10 left-0 w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:1s] border border-gray-100 dark:border-gray-700">
+               <div className="absolute bottom-10 left-0 w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-xl flex items-center justify-center animate-bounce [animation-delay:1s] border border-gray-100 dark:border-gray-700 z-20">
                   <span className="text-2xl">🎓</span>
                </div>
-               <div className="absolute bottom-0 right-0 w-20 h-20 bg-brand-600 rounded-2xl shadow-lg flex items-center justify-center animate-bounce text-white font-bold">
+               <div className="absolute bottom-0 right-0 w-20 h-20 bg-brand-600 rounded-2xl shadow-xl shadow-brand-500/30 flex items-center justify-center animate-bounce text-white font-bold z-20">
                   A+
                </div>
             </div>
