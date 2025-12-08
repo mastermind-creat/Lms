@@ -1,5 +1,6 @@
 import React from 'react';
 import { Globe, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -13,9 +14,9 @@ const Footer: React.FC = () => {
              <p className="text-sm text-gray-600 dark:text-gray-300">
                Create an online video course, reach students across the globe, and earn money.
              </p>
-             <button className="px-6 py-2 border border-gray-900 dark:border-white font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-colors w-fit h-fit text-sm rounded-lg">
+             <Link to="/signup" className="px-6 py-2 border border-gray-900 dark:border-white font-bold hover:bg-gray-200 dark:hover:bg-white/10 transition-colors w-fit h-fit text-sm rounded-lg inline-block">
                Teach on ElimuTech
-             </button>
+             </Link>
            </div>
 
            {/* Newsletter Form */}
@@ -39,7 +40,6 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 text-xs md:text-sm">
           <div className="flex flex-col gap-3">
             <h5 className="font-bold text-gray-500 uppercase tracking-wider text-[10px] mb-1">Company</h5>
-            <a href="#" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">About us</a>
             <a href="#" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Contact us</a>
             <a href="#" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Careers</a>
             <a href="#" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Blog</a>

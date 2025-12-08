@@ -24,7 +24,6 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home size={18} /> },
     { name: 'Courses', path: '/courses', icon: <BookOpen size={18} /> },
-    { name: 'About Us', path: '/about', icon: <Info size={18} /> },
     { name: 'Contact Us', path: '/contact', icon: <Mail size={18} /> },
     { name: 'Support', path: '/contact', icon: <HelpCircle size={18} /> },
   ];
