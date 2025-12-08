@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight, X, Mail, Smartphone, CreditCard, Globe, Check } from 'lucide-react';
 import { courses } from '../data/courses';
 
@@ -15,6 +15,12 @@ const CourseDetails: React.FC = () => {
   const [processingState, setProcessingState] = useState<'idle' | 'processing' | 'paypal-redirect' | 'success'>('idle');
   
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Dynamic Back Link Logic
+  const backLink = location.state?.from || '/courses';
+  const backLabel = location.state?.label || 'Back to Courses';
+  const backState = location.state?.tab ? { tab: location.state.tab } : undefined;
 
   // Reset scroll on load
   useEffect(() => {
@@ -68,8 +74,12 @@ const CourseDetails: React.FC = () => {
     <div className="pt-24 pb-20 overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 animate-fade-in">
-        <Link to="/courses" className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-          <ArrowLeft size={16} className="mr-1" /> Back to Courses
+        <Link 
+          to={backLink} 
+          state={backState}
+          className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          <ArrowLeft size={16} className="mr-1" /> {backLabel}
         </Link>
       </div>
 

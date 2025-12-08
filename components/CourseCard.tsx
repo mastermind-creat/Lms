@@ -5,9 +5,10 @@ import { Course } from '../data/courses';
 
 interface CourseCardProps {
   course: Course;
+  linkState?: any; // Allow passing state to the link
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
   const [inCart, setInCart] = useState(false);
   const [inWishlist, setInWishlist] = useState(false);
 
@@ -27,6 +28,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   return (
     <Link 
       to={`/courses/${course.id}`} 
+      state={linkState}
       className="group flex flex-col w-full h-full bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors p-1 relative"
     >
       {/* Image */}

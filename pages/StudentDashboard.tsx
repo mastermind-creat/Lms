@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, BookOpen, Heart, Video, MessageCircle, 
   Bell, User, Settings, Menu, LogOut, CheckCircle, 
   Clock, Award, PlayCircle, MoreVertical, Search, Zap,
   Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
-  Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff
+  Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, MicOff, VideoOff, PhoneOff
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
@@ -18,9 +18,62 @@ const innerCardStyle = "bg-gray-50 dark:bg-gray-900 rounded-xl shadow-[inset_4px
 const iconButtonStyle = "p-3 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-[5px_5px_10px_#d1d5db,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] hover:text-brand-500 dark:hover:text-brand-400 active:shadow-[inset_5px_5px_10px_#d1d5db,inset_-5px_-5px_10px_#ffffff] dark:active:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#1e293b] transition-all";
 const btnPrimary = "px-6 py-3 rounded-xl bg-brand-600 text-white font-bold text-sm shadow-[4px_4px_10px_rgba(243,111,33,0.3)] hover:bg-brand-700 active:shadow-none hover:-translate-y-0.5 transition-all";
 
+// --- Shared Components ---
+
+const Toast = ({ message, onClose }: { message: string, onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 animate-fade-in-up">
+      <CheckCircle size={18} className="text-green-500" />
+      <span className="font-bold text-sm">{message}</span>
+    </div>
+  );
+};
+
+const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: () => void, roomName: string }) => {
+  const [loading, setLoading] = useState(true);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+       {/* Toolbar */}
+       <div className="p-4 bg-gray-900 flex justify-between items-center text-white border-b border-gray-800">
+          <div className="flex items-center gap-2">
+            <Video size={20} className="text-brand-500" />
+            <h3 className="font-bold">{roomName}</h3>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-full text-red-500">
+            <X size={24} />
+          </button>
+       </div>
+
+       <div className="flex-1 relative bg-black flex items-center justify-center">
+          {loading && (
+             <div className="absolute inset-0 flex flex-col items-center justify-center text-white gap-4">
+                <div className="w-12 h-12 border-4 border-gray-700 border-t-brand-500 rounded-full animate-spin"></div>
+                <p>Connecting to secure room...</p>
+             </div>
+          )}
+          
+          <iframe 
+            src={`https://meet.jit.si/${roomName.replace(/\s/g, '')}ElimuTechSecure`} 
+            className="w-full h-full border-none relative z-10" 
+            allow="camera; microphone; fullscreen; display-capture; autoplay"
+            onLoad={() => setLoading(false)}
+          ></iframe>
+       </div>
+    </div>
+  );
+};
+
 // --- Sub-Views ---
 
-const DashboardHome = ({ setActiveTab }: { setActiveTab: (tab: string) => void }) => {
+const DashboardHome = ({ setActiveTab, openJitsi }: { setActiveTab: (tab: string) => void, openJitsi: (room: string) => void }) => {
   const stats = [
     { title: 'Total Courses', value: '12', icon: BookOpen, color: 'text-blue-500' },
     { title: 'In Progress', value: '4', icon: Clock, color: 'text-brand-500' },
@@ -166,7 +219,10 @@ const DashboardHome = ({ setActiveTab }: { setActiveTab: (tab: string) => void }
               <h3 className="font-bold text-gray-900 dark:text-white mb-1">Weekly Design Review</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Starts in 35 minutes</p>
               
-              <button className="w-full py-2.5 rounded-xl border-2 border-red-500 text-red-500 font-bold text-sm hover:bg-red-500 hover:text-white transition-all">
+              <button 
+                onClick={() => openJitsi('Weekly Design Review')}
+                className="w-full py-2.5 rounded-xl border-2 border-red-500 text-red-500 font-bold text-sm hover:bg-red-500 hover:text-white transition-all"
+              >
                 Join Session
               </button>
            </div>
@@ -410,7 +466,10 @@ const WishlistView = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {wishlistItems.map((course) => (
              <div key={course.id} className={`${cardStyle} overflow-hidden p-2`}>
-                <CourseCard course={course} />
+                <CourseCard 
+                  course={course} 
+                  linkState={{ from: '/dashboard', label: 'Back to Wishlist', tab: 'Wishlist' }} 
+                />
              </div>
           ))}
         </div>
@@ -424,7 +483,7 @@ const WishlistView = () => {
   );
 };
 
-const LiveClassesView = () => {
+const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) => {
   const sessions = [
     { title: "Weekly Design Review", time: "10:00 AM", date: "Today", instructor: "Brian Kipkorir", attendees: 42, status: "live" },
     { title: "React State Management Q&A", time: "2:00 PM", date: "Tomorrow", instructor: "Wanjiku Kimani", attendees: 120, status: "upcoming" },
@@ -469,7 +528,10 @@ const LiveClassesView = () => {
                    <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-500">+{session.attendees}</div>
                 </div>
 
-                <button className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}>
+                <button 
+                  onClick={() => openJitsi(session.title)}
+                  className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}
+                >
                   {session.status === 'live' ? 'Join Now' : 'Set Reminder'}
                 </button>
              </div>
@@ -482,16 +544,23 @@ const LiveClassesView = () => {
 
 const MessagesView = () => {
   const [activeChat, setActiveChat] = useState(0);
+  const [showMobileChat, setShowMobileChat] = useState(false); // State to toggle view on mobile
+  
   const contacts = [
     { id: 0, name: "Kevin Omondi", role: "Instructor", online: true, lastMsg: "Great work on the assignment!", time: "10m", img: 12 },
     { id: 1, name: "Wanjiku Kimani", role: "Mentor", online: false, lastMsg: "Let's schedule a call.", time: "2h", img: 5 },
     { id: 2, name: "Student Support", role: "Admin", online: true, lastMsg: "Your ticket #4291 is resolved.", time: "1d", img: 3 },
   ];
 
+  const handleContactClick = (id: number) => {
+    setActiveChat(id);
+    setShowMobileChat(true);
+  };
+
   return (
     <div className={`h-[calc(100vh-140px)] ${cardStyle} flex overflow-hidden animate-fade-in-up`}>
        {/* Contact List */}
-       <div className="w-full md:w-80 border-r border-gray-100 dark:border-gray-700 flex flex-col">
+       <div className={`w-full md:w-80 border-r border-gray-100 dark:border-gray-700 flex flex-col ${showMobileChat ? 'hidden md:flex' : 'flex'}`}>
           <div className="p-4 border-b border-gray-100 dark:border-gray-700">
              <div className={innerCardStyle + " flex items-center px-3 py-2"}>
                <Search size={16} className="text-gray-400" />
@@ -502,7 +571,7 @@ const MessagesView = () => {
             {contacts.map((contact) => (
               <div 
                 key={contact.id} 
-                onClick={() => setActiveChat(contact.id)}
+                onClick={() => handleContactClick(contact.id)}
                 className={`p-4 flex gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${activeChat === contact.id ? 'bg-brand-50 dark:bg-brand-900/10 border-r-2 border-brand-500' : ''}`}
               >
                 <div className="relative">
@@ -522,9 +591,12 @@ const MessagesView = () => {
        </div>
 
        {/* Chat Window */}
-       <div className="hidden md:flex flex-1 flex-col bg-gray-50/50 dark:bg-gray-900/50">
+       <div className={`flex-1 flex-col bg-gray-50/50 dark:bg-gray-900/50 ${showMobileChat ? 'flex' : 'hidden md:flex'}`}>
           <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
             <div className="flex items-center gap-3">
+               <button onClick={() => setShowMobileChat(false)} className="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                 <ArrowLeft size={20} />
+               </button>
                <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-10 h-10 rounded-full" />
                <div>
                  <h3 className="font-bold text-gray-900 dark:text-white">{contacts[activeChat].name}</h3>
@@ -570,12 +642,15 @@ const MessagesView = () => {
   );
 };
 
-const NotificationsView = () => {
+const NotificationsView = ({ showToast }: { showToast: (msg: string) => void }) => {
+  const [selectedNotification, setSelectedNotification] = useState<any>(null);
+  const [isMarkingRead, setIsMarkingRead] = useState(false);
+  
   const notifications = [
-    { id: 1, title: "Assignment Graded", msg: "Your submission for 'React Hooks' has been graded. Score: 95%", time: "2h ago", type: "success", read: false },
-    { id: 2, title: "Live Class Starting", msg: "Weekly Design Review starts in 30 minutes.", time: "30m ago", type: "info", read: false },
-    { id: 3, title: "New Course Available", msg: "Advanced Python for Finance is now live!", time: "1d ago", type: "promo", read: true },
-    { id: 4, title: "Subscription Renewed", msg: "Your monthly subscription was successfully renewed.", time: "2d ago", type: "system", read: true },
+    { id: 1, title: "Assignment Graded", msg: "Your submission for 'React Hooks' has been graded. Score: 95%", details: "Excellent work on the custom hooks implementation. Your code structure is clean and reusable.", time: "2h ago", type: "success", read: false },
+    { id: 2, title: "Live Class Starting", msg: "Weekly Design Review starts in 30 minutes.", details: "Join us for a critique session of this week's UI challenges. Have your Figma links ready.", time: "30m ago", type: "info", read: false },
+    { id: 3, title: "New Course Available", msg: "Advanced Python for Finance is now live!", details: "Master algorithmic trading with our new comprehensive Python course.", time: "1d ago", type: "promo", read: true },
+    { id: 4, title: "Subscription Renewed", msg: "Your monthly subscription was successfully renewed.", details: "Receipt #INV-2025-001 available in settings.", time: "2d ago", type: "system", read: true },
   ];
 
   const getIcon = (type: string) => {
@@ -587,6 +662,15 @@ const NotificationsView = () => {
     }
   };
 
+  const handleMarkAsRead = () => {
+    setIsMarkingRead(true);
+    setTimeout(() => {
+      setIsMarkingRead(false);
+      setSelectedNotification(null);
+      showToast("Notification marked as read");
+    }, 1000);
+  };
+
   return (
     <div className="max-w-3xl mx-auto animate-fade-in-up">
       <div className="flex justify-between items-center mb-6">
@@ -596,7 +680,11 @@ const NotificationsView = () => {
 
       <div className="space-y-4">
         {notifications.map((item) => (
-          <div key={item.id} className={`${cardStyle} p-4 md:p-6 flex gap-4 ${!item.read ? 'border-l-4 border-l-brand-500' : ''}`}>
+          <div 
+            key={item.id} 
+            onClick={() => setSelectedNotification(item)}
+            className={`${cardStyle} p-4 md:p-6 flex gap-4 ${!item.read ? 'border-l-4 border-l-brand-500' : ''} cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors`}
+          >
              <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-900 shadow-inner flex items-center justify-center shrink-0">
                {getIcon(item.type)}
              </div>
@@ -607,10 +695,52 @@ const NotificationsView = () => {
                </div>
                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.msg}</p>
              </div>
-             <button className="text-gray-300 hover:text-red-500 transition-colors self-start"><X size={16} /></button>
+             <button className="text-gray-300 hover:text-red-500 transition-colors self-start" onClick={(e) => { e.stopPropagation(); /* delete logic */ }}>
+               <X size={16} />
+             </button>
           </div>
         ))}
       </div>
+
+      {/* Notification Detail Modal */}
+      {selectedNotification && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedNotification(null)}></div>
+          <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up">
+             <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0">
+                  {getIcon(selectedNotification.type)}
+                </div>
+                <div>
+                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedNotification.title}</h3>
+                   <p className="text-xs text-gray-500">{selectedNotification.time}</p>
+                </div>
+             </div>
+             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-6">
+               <p className="font-bold mb-2">{selectedNotification.msg}</p>
+               <p>{selectedNotification.details}</p>
+             </div>
+             
+             <div className="flex gap-3">
+               <button onClick={() => setSelectedNotification(null)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Close</button>
+               {!selectedNotification.read && (
+                 <button 
+                   onClick={handleMarkAsRead}
+                   disabled={isMarkingRead}
+                   className="flex-1 py-3 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-lg flex items-center justify-center gap-2"
+                 >
+                   {isMarkingRead ? (
+                     <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span>Processing...</span>
+                     </>
+                   ) : "Mark as Read"}
+                 </button>
+               )}
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -841,13 +971,20 @@ const PasswordInputWithToggle = ({ placeholder }: { placeholder: string }) => {
   );
 };
 
-const SettingsView = () => {
+const SettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
   const { theme, setTheme } = useTheme();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
+  const handleSaveSettings = () => {
+    showToast("Settings saved successfully");
+  };
+
   return (
     <div className="max-w-3xl mx-auto animate-fade-in-up">
-       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Settings</h1>
+       <div className="flex justify-between items-center mb-8">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+         <button onClick={handleSaveSettings} className="hidden md:block text-brand-600 font-bold hover:underline text-sm">Save Changes</button>
+       </div>
 
        <div className="space-y-8">
           {/* Appearance */}
@@ -910,7 +1047,7 @@ const SettingsView = () => {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowPasswordModal(false)}></div>
           <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Change Password</h3>
-            <form onSubmit={(e) => { e.preventDefault(); setShowPasswordModal(false); }}>
+            <form onSubmit={(e) => { e.preventDefault(); setShowPasswordModal(false); showToast("Password updated successfully"); }}>
               <div className="space-y-4">
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Password</label>
@@ -940,8 +1077,24 @@ const SettingsView = () => {
 // --- Main Component ---
 
 const StudentDashboard: React.FC = () => {
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Dashboard');
+  // Restore tab from location state if present, else default to Dashboard
+  const [activeTab, setActiveTab] = useState(location.state?.tab || 'Dashboard');
+  
+  // States for Modals
+  const [jitsiOpen, setJitsiOpen] = useState(false);
+  const [activeRoom, setActiveRoom] = useState("");
+  const [toastMsg, setToastMsg] = useState("");
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+  };
+
+  const openJitsi = (room: string) => {
+    setActiveRoom(room);
+    setJitsiOpen(true);
+  };
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
@@ -960,12 +1113,12 @@ const StudentDashboard: React.FC = () => {
       case 'Analytics': return <AnalyticsView />;
       case 'My Courses': return <MyCoursesView />;
       case 'Wishlist': return <WishlistView />;
-      case 'Live Classes': return <LiveClassesView />;
+      case 'Live Classes': return <LiveClassesView openJitsi={openJitsi} />;
       case 'Messages': return <MessagesView />;
-      case 'Notifications': return <NotificationsView />;
+      case 'Notifications': return <NotificationsView showToast={showToast} />;
       case 'Profile': return <ProfileView />;
-      case 'Settings': return <SettingsView />;
-      default: return <DashboardHome setActiveTab={setActiveTab} />;
+      case 'Settings': return <SettingsView showToast={showToast} />;
+      default: return <DashboardHome setActiveTab={setActiveTab} openJitsi={openJitsi} />;
     }
   };
 
@@ -1071,6 +1224,12 @@ const StudentDashboard: React.FC = () => {
 
         </main>
       </div>
+
+      {/* Jitsi Meeting Modal */}
+      <JitsiModal isOpen={jitsiOpen} onClose={() => setJitsiOpen(false)} roomName={activeRoom} />
+
+      {/* Global Toast */}
+      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg("")} />}
     </div>
   );
 };
