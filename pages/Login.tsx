@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Smartphone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Smartphone, Eye, EyeOff, User } from 'lucide-react';
 
 // Extracted Component to fix focus loss bug and add visibility toggle
 const StyledInput = ({ icon: Icon, isPassword = false, ...props }: any) => {
@@ -37,41 +37,70 @@ const StyledInput = ({ icon: Icon, isPassword = false, ...props }: any) => {
 
 const Login: React.FC = () => {
   const [step, setStep] = useState<'credentials' | 'otp'>('credentials');
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState(''); // Can be email or phone
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Helper to check if input looks like a phone number
+  const isPhone = (input: string) => {
+    // Basic check: looks for digits and optional + sign, no @ symbol
+    return /^[+]?[\d\s-]{9,}$/.test(input) && !input.includes('@');
+  };
 
   const handleCredentialsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
+    if (!identifier || !password) return;
+
+    setIsLoading(true);
+
+    // Simulate API call delay for "Cinematic" loading effect
+    setTimeout(() => {
+      setIsLoading(false);
       setStep('otp');
-    }
+    }, 1500);
   };
 
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/');
+    setIsLoading(true);
+
+    // Simulate verification delay
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate('/');
+    }, 1500);
   };
 
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="w-full max-w-md p-8 m-4 rounded-[2rem] bg-gray-100 dark:bg-gray-900 shadow-[20px_20px_60px_#d1d1d1,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0b0c15,-20px_-20px_60px_#171c2b] transition-all">
         
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 animate-fade-in-up">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-            {step === 'credentials' ? 'Welcome Back' : 'Security Verification'}
+            {step === 'credentials' ? 'Welcome Back' : 'Security Check'}
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            {step === 'credentials' ? 'Sign in to continue learning' : `Enter the code sent to ${email}`}
+            {step === 'credentials' 
+              ? 'Sign in to access your courses' 
+              : `Enter the code sent to your ${isPhone(identifier) ? 'phone' : 'email'}`
+            }
           </p>
         </div>
 
         {step === 'credentials' ? (
-          <form onSubmit={handleCredentialsSubmit} className="space-y-6 animate-fade-in">
+          <form onSubmit={handleCredentialsSubmit} className="space-y-6 animate-fade-in [animation-delay:200ms]">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-600 dark:text-gray-300 ml-2">Email</label>
-              <StyledInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="john@example.com" required />
+              <label className="text-sm font-bold text-gray-600 dark:text-gray-300 ml-2">Email or Phone Number</label>
+              <StyledInput 
+                icon={isPhone(identifier) ? Smartphone : Mail} 
+                type="text" 
+                value={identifier} 
+                onChange={(e: any) => setIdentifier(e.target.value)} 
+                placeholder="john@example.com or +254..." 
+                required 
+              />
             </div>
 
             <div className="space-y-2">
@@ -89,9 +118,17 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-4 rounded-xl font-bold text-brand-600 dark:text-brand-400 bg-gray-100 dark:bg-gray-900 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#171c2b] hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] dark:hover:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#171c2b] active:scale-95 transition-all flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-4 rounded-xl font-bold text-brand-600 dark:text-brand-400 bg-gray-100 dark:bg-gray-900 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#171c2b] hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] dark:hover:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#171c2b] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Verify Credentials <ArrowRight size={20} />
+              {isLoading ? (
+                <>
+                  <div className="loader border-brand-500 dark:border-brand-400 border-t-transparent"></div>
+                  <span>Verifying...</span>
+                </>
+              ) : (
+                <>Verify Credentials <ArrowRight size={20} /></>
+              )}
             </button>
           </form>
         ) : (
@@ -116,22 +153,31 @@ const Login: React.FC = () => {
 
             <div className="text-center text-sm">
               <p className="text-gray-500">Didn't receive code?</p>
-              <button type="button" className="text-brand-600 font-bold hover:underline mt-1">Resend OTP</button>
+              <button type="button" className="text-brand-600 font-bold hover:underline mt-1">Resend to {isPhone(identifier) ? 'Mobile' : 'Email'}</button>
             </div>
 
             <div className="flex gap-4">
               <button
                 type="button"
                 onClick={() => setStep('credentials')}
+                disabled={isLoading}
                 className="w-1/3 py-4 rounded-xl font-bold text-gray-500 bg-transparent hover:text-gray-700 transition-colors"
               >
                 Back
               </button>
               <button
                 type="submit"
-                className="w-2/3 py-4 rounded-xl font-bold text-white bg-brand-600 shadow-xl hover:bg-brand-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+                disabled={isLoading}
+                className="w-2/3 py-4 rounded-xl font-bold text-white bg-brand-600 shadow-xl hover:bg-brand-700 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Log In <ArrowRight size={20} />
+                 {isLoading ? (
+                  <>
+                    <div className="loader"></div>
+                    <span>Logging In...</span>
+                  </>
+                ) : (
+                  <>Log In <ArrowRight size={20} /></>
+                )}
               </button>
             </div>
           </form>

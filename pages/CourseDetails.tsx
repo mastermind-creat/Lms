@@ -1,16 +1,37 @@
-import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight, X, Mail } from 'lucide-react';
 import { courses } from '../data/courses';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const course = courses.find(c => c.id === Number(id));
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const navigate = useNavigate();
 
   // Reset scroll on load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  const handleEnrollClick = () => {
+    // In a real app, check if logged in. If not, show modal.
+    // For this demo, we assume user is NOT logged in to show the Guest feature.
+    setShowCheckoutModal(true);
+  };
+
+  const handleGuestCheckout = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    // Simulate checkout processing
+    setTimeout(() => {
+        setIsProcessing(false);
+        setShowCheckoutModal(false);
+        alert(`Guest checkout initiated for ${course?.title}. Receipt will be sent to ${guestEmail}`);
+    }, 2000);
+  };
 
   if (!course) {
     return (
@@ -68,7 +89,10 @@ const CourseDetails: React.FC = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-gray-900 dark:bg-brand-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-brand-500 hover:-translate-y-1 transition-all shadow-xl shadow-gray-900/10 dark:shadow-brand-900/20 flex items-center justify-center gap-2 group">
+                <button 
+                  onClick={handleEnrollClick}
+                  className="bg-gray-900 dark:bg-brand-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-brand-500 hover:-translate-y-1 transition-all shadow-xl shadow-gray-900/10 dark:shadow-brand-900/20 flex items-center justify-center gap-2 group"
+                >
                   Enroll Now - {course.price}
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -171,6 +195,77 @@ const CourseDetails: React.FC = () => {
 
         </div>
       </div>
+
+      {/* Guest Checkout Modal */}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowCheckoutModal(false)}></div>
+          <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Start Learning</h3>
+              <button onClick={() => setShowCheckoutModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="bg-brand-50 dark:bg-brand-900/20 p-4 rounded-xl flex gap-4 items-center">
+                <img src={course.image} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-white text-sm">{course.title}</h4>
+                  <p className="text-brand-600 font-bold">{course.price}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="w-full py-3 rounded-xl bg-gray-100 dark:bg-gray-800 font-bold text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Log In to Account
+                </button>
+                <div className="relative flex items-center py-2">
+                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                  <span className="flex-shrink-0 mx-4 text-gray-400 text-xs">OR CONTINUE AS GUEST</span>
+                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                </div>
+                
+                <form onSubmit={handleGuestCheckout} className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Email for Receipt</label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                      <input 
+                        type="email" 
+                        required
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                        placeholder="john@example.com"
+                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+                      />
+                    </div>
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isProcessing}
+                    className="w-full py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
+                  >
+                     {isProcessing ? (
+                       <>
+                        <div className="loader w-4 h-4 border-white/30 border-t-white"></div>
+                        <span>Processing...</span>
+                       </>
+                     ) : (
+                       <>Proceed to Payment <ArrowRight size={16} /></>
+                     )}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

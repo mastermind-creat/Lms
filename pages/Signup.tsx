@@ -39,6 +39,7 @@ const StyledInput = ({ icon: Icon, isPassword = false, ...props }: any) => {
 
 const Signup: React.FC = () => {
   const [role, setRole] = useState<Role>('student');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // Common Fields
@@ -59,21 +60,27 @@ const Signup: React.FC = () => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signing up as", role);
-    navigate('/login');
+    setIsLoading(true);
+
+    // Simulate API Call
+    setTimeout(() => {
+        console.log("Signing up as", role);
+        setIsLoading(false);
+        navigate('/login');
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen pt-24 pb-20 flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4">
       <div className="w-full max-w-2xl p-6 md:p-10 rounded-[2.5rem] bg-gray-100 dark:bg-gray-900 shadow-[20px_20px_60px_#d1d1d1,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0b0c15,-20px_-20px_60px_#171c2b] transition-all">
         
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 animate-fade-in-up">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Join ElimuTech</h1>
           <p className="text-gray-500 dark:text-gray-400">Create an account to start your journey</p>
         </div>
 
         {/* Role Toggle */}
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-10 animate-fade-in-up [animation-delay:100ms]">
           <div className="bg-gray-200 dark:bg-gray-800 p-1.5 rounded-full flex shadow-inner">
             <button
               type="button"
@@ -100,7 +107,7 @@ const Signup: React.FC = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-6">
+        <form onSubmit={handleSignup} className="space-y-6 animate-fade-in-up [animation-delay:200ms]">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -166,9 +173,17 @@ const Signup: React.FC = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full py-4 rounded-xl font-bold text-brand-600 dark:text-brand-400 bg-gray-100 dark:bg-gray-900 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#171c2b] hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] dark:hover:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#171c2b] active:scale-95 transition-all flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-4 rounded-xl font-bold text-brand-600 dark:text-brand-400 bg-gray-100 dark:bg-gray-900 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#171c2b] hover:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] dark:hover:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#171c2b] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Create Account <ArrowRight size={20} />
+              {isLoading ? (
+                <>
+                  <div className="loader border-brand-500 dark:border-brand-400 border-t-transparent"></div>
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <>Create Account <ArrowRight size={20} /></>
+              )}
             </button>
           </div>
         </form>
