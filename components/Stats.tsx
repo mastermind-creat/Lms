@@ -28,28 +28,24 @@ const Stats: React.FC = () => {
 
   const stats = [
     {
-      icon: <Users className="w-4 h-4 md:w-10 md:h-10 text-brand-900 dark:text-brand-300" />,
+      icon: <Users className="w-5 h-5 md:w-8 md:h-8" />,
       value: 7520,
-      label: "Expert Instructors",
-      color: "bg-brand-50 dark:bg-brand-900/20"
+      label: "Expert Instructors"
     },
     {
-      icon: <Globe className="w-4 h-4 md:w-10 md:h-10 text-brand-500 dark:text-brand-400" />,
+      icon: <Globe className="w-5 h-5 md:w-8 md:h-8" />,
       value: 54252,
-      label: "Foreign Followers",
-      color: "bg-orange-50 dark:bg-orange-900/20"
+      label: "Foreign Followers"
     },
     {
-      icon: <BookOpen className="w-4 h-4 md:w-10 md:h-10 text-brand-600 dark:text-brand-400" />,
+      icon: <BookOpen className="w-5 h-5 md:w-8 md:h-8" />,
       value: 97220,
-      label: "Students Enrolled",
-      color: "bg-brand-50 dark:bg-brand-900/20"
+      label: "Students Enrolled"
     },
     {
-      icon: <Award className="w-4 h-4 md:w-10 md:h-10 text-brand-900 dark:text-brand-200" />,
+      icon: <Award className="w-5 h-5 md:w-8 md:h-8" />,
       value: 20,
-      label: "Years of Experience",
-      color: "bg-brand-100 dark:bg-brand-900/40"
+      label: "Years of Experience"
     }
   ];
 
@@ -63,9 +59,7 @@ const Stats: React.FC = () => {
               icon={stat.icon} 
               value={stat.value} 
               label={stat.label} 
-              color={stat.color}
               isVisible={isVisible}
-              delay={index * 200}
             />
           ))}
         </div>
@@ -78,10 +72,8 @@ const StatItem: React.FC<{
   icon: React.ReactNode; 
   value: number; 
   label: string; 
-  color: string;
-  isVisible: boolean;
-  delay: number;
-}> = ({ icon, value, label, color, isVisible, delay }) => {
+  isVisible: boolean; 
+}> = ({ icon, value, label, isVisible }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -108,7 +100,8 @@ const StatItem: React.FC<{
 
   return (
     <div className="flex flex-col items-center text-center p-1 md:p-4">
-      <div className={`w-10 h-10 md:w-20 md:h-20 rounded-xl md:rounded-full flex items-center justify-center mb-2 md:mb-6 transition-transform duration-500 hover:scale-110 ${color}`}>
+      {/* Neumorphic Icon Container */}
+      <div className="w-12 h-12 md:w-20 md:h-20 flex items-center justify-center text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] mb-3 md:mb-6 transition-transform duration-500 hover:scale-110 hover:text-brand-500">
         {icon}
       </div>
       <h3 className="text-sm md:text-4xl font-bold text-gray-900 dark:text-white mb-0.5 md:mb-2 font-display">

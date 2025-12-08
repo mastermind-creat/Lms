@@ -6,7 +6,6 @@ import Categories from '../components/Categories';
 import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
-import Benefits from '../components/Benefits';
 import ValueProps from '../components/ValueProps';
 import { courses } from '../data/courses';
 
@@ -35,7 +34,6 @@ const Home: React.FC = () => {
         subtitle="Curriculum designed by Kenya's top tech leads."
         courses={featuredCourses}
         bgColor="bg-white dark:bg-gray-900"
-        dark={false} 
       />
 
       <IlluminatedSeparator />
@@ -44,22 +42,20 @@ const Home: React.FC = () => {
       
       <ValueProps />
       
-      <Benefits />
+      {/* Benefits section removed as requested */}
 
       <CourseSection 
         title="Most Studied" 
         subtitle="Join thousands of students learning these trending skills."
         courses={popularCourses}
         bgColor="bg-gray-50/50 dark:bg-gray-800/30"
-        dark={false}
       />
 
       <CourseSection 
         title="Fresh on ElimuTech" 
         subtitle="Latest curriculum updates to keep you ahead."
         courses={newCourses}
-        bgColor="bg-gray-900"
-        dark={true}
+        bgColor="bg-white dark:bg-gray-900"
       />
 
       <Testimonials />
@@ -70,8 +66,7 @@ const Home: React.FC = () => {
         title="Top Picks for You" 
         subtitle="Highly rated courses to boost your career trajectory."
         courses={recommendedCourses}
-        bgColor="bg-white dark:bg-gray-900"
-        dark={false}
+        bgColor="bg-gray-50/50 dark:bg-gray-800/30"
       />
 
       <CallToAction />

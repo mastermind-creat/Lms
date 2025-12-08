@@ -71,7 +71,6 @@ const Testimonials: React.FC = () => {
 
   const activeData = testimonials[activeTab];
 
-  // Responsive items per page
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setVisibleItems(3);
@@ -83,15 +82,12 @@ const Testimonials: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Reset index on tab change
   useEffect(() => {
     setCurrentIndex(0);
   }, [activeTab]);
 
-  // Max index for scrolling
   const maxIndex = Math.max(0, activeData.length - visibleItems);
 
-  // Auto-play
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex(prev => (prev >= maxIndex ? 0 : prev + 1));
@@ -107,7 +103,6 @@ const Testimonials: React.FC = () => {
     setCurrentIndex(prev => (prev <= 0 ? maxIndex : prev - 1));
   };
 
-  // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.targetTouches[0].clientX;
   };
@@ -119,30 +114,26 @@ const Testimonials: React.FC = () => {
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
     const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) nextSlide();
-    if (isRightSwipe) prevSlide();
-
+    if (distance > 50) nextSlide();
+    if (distance < -50) prevSlide();
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
   return (
-    <section className="py-12 md:py-24 bg-gray-900 relative overflow-hidden select-none">
+    <section className="py-12 md:py-24 bg-white dark:bg-gray-900 relative overflow-hidden select-none transition-colors duration-300">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-[100px] animate-pulse-slow"></div>
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-accent-500/10 rounded-full blur-[80px] animate-float"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-100 dark:bg-brand-500/10 rounded-full blur-[100px] animate-pulse-slow opacity-50 dark:opacity-100"></div>
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-accent-100 dark:bg-accent-500/10 rounded-full blur-[80px] animate-float opacity-50 dark:opacity-100"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-8 md:mb-16">
-          <h2 className="text-xl md:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tight">
+          <h2 className="text-xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 tracking-tight">
             Community Voices
           </h2>
           
           {/* Tabs */}
-          <div className="inline-flex bg-gray-800/50 p-1 rounded-full border border-gray-700 backdrop-blur-sm">
+          <div className="inline-flex bg-gray-100 dark:bg-gray-800/50 p-1 rounded-full border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
             {(['students', 'mentors'] as const).map((tab) => (
               <button
                 key={tab}
@@ -150,7 +141,7 @@ const Testimonials: React.FC = () => {
                 className={`px-4 py-1.5 md:px-8 md:py-2.5 rounded-full text-xs md:text-sm font-bold capitalize transition-all duration-300 ${
                   activeTab === tab 
                     ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/20' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
                 }`}
               >
                 {tab}
@@ -161,22 +152,20 @@ const Testimonials: React.FC = () => {
 
         {/* Carousel Container */}
         <div className="relative group">
-          {/* Controls - Hidden on mobile */}
           <button 
             onClick={prevSlide}
-            className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-30"
+            className="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 z-20 bg-white/80 dark:bg-gray-800/80 hover:bg-brand-600 dark:hover:bg-brand-600 hover:text-white text-gray-800 dark:text-white p-3 rounded-full backdrop-blur-md border border-gray-200 dark:border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-lg"
           >
             <ChevronLeft size={24} />
           </button>
           
           <button 
             onClick={nextSlide}
-            className="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 z-20 bg-gray-800/80 hover:bg-brand-600 text-white p-3 rounded-full backdrop-blur-md border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+            className="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 z-20 bg-white/80 dark:bg-gray-800/80 hover:bg-brand-600 dark:hover:bg-brand-600 hover:text-white text-gray-800 dark:text-white p-3 rounded-full backdrop-blur-md border border-gray-200 dark:border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-lg"
           >
             <ChevronRight size={24} />
           </button>
 
-          {/* Slides Wrapper */}
           <div 
             className="overflow-hidden"
             onTouchStart={handleTouchStart}
@@ -193,12 +182,12 @@ const Testimonials: React.FC = () => {
                   className="flex-shrink-0 px-1 md:px-3"
                   style={{ width: `${100 / visibleItems}%` }}
                 >
-                  <div className="bg-gray-800/40 backdrop-blur-md border border-gray-700/50 p-4 md:p-8 rounded-2xl md:rounded-3xl h-full flex flex-col hover:bg-gray-800/60 transition-colors duration-300">
+                  <div className="bg-white dark:bg-gray-800/40 backdrop-blur-md border border-gray-200 dark:border-gray-700/50 p-4 md:p-8 rounded-2xl md:rounded-3xl h-full flex flex-col hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors duration-300 shadow-sm dark:shadow-none">
                     <div className="mb-3 md:mb-6 text-brand-500">
                       <Quote size={20} className="md:w-8 md:h-8 opacity-50" />
                     </div>
                     
-                    <p className="text-gray-300 text-xs md:text-lg leading-relaxed mb-4 md:mb-8 italic flex-grow line-clamp-4 md:line-clamp-none">
+                    <p className="text-gray-700 dark:text-gray-300 text-xs md:text-lg leading-relaxed mb-4 md:mb-8 italic flex-grow line-clamp-4 md:line-clamp-none">
                       "{item.quote}"
                     </p>
                     
@@ -208,12 +197,12 @@ const Testimonials: React.FC = () => {
                         <img 
                           src={item.image} 
                           alt={item.name} 
-                          className="w-8 h-8 md:w-12 md:h-12 rounded-full object-cover border-2 border-gray-700 relative z-10"
+                          className="w-8 h-8 md:w-12 md:h-12 rounded-full object-cover border-2 border-white dark:border-gray-700 relative z-10"
                         />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-bold text-white text-xs md:text-base truncate">{item.name}</h4>
-                        <p className="text-[10px] md:text-sm text-brand-400 font-medium truncate">{item.role}</p>
+                        <h4 className="font-bold text-gray-900 dark:text-white text-xs md:text-base truncate">{item.name}</h4>
+                        <p className="text-[10px] md:text-sm text-brand-600 dark:text-brand-400 font-medium truncate">{item.role}</p>
                       </div>
                       <div className="ml-auto flex gap-0.5">
                          {[...Array(5)].map((_, i) => (
@@ -235,7 +224,7 @@ const Testimonials: React.FC = () => {
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`h-1 md:h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex ? 'w-4 md:w-8 bg-brand-500' : 'w-1.5 md:w-2 bg-gray-700 hover:bg-gray-600'
+                idx === currentIndex ? 'w-4 md:w-8 bg-brand-500' : 'w-1.5 md:w-2 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
