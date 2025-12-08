@@ -5,7 +5,8 @@ import {
   Clock, Award, PlayCircle, MoreVertical, Search, Zap,
   Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
-  Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, MicOff, VideoOff, PhoneOff
+  Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
+  FileText, Youtube, Download, ExternalLink, CheckSquare, Square
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -73,7 +74,208 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
 
 // --- Sub-Views ---
 
-const DashboardHome = ({ setActiveTab, openJitsi }: { setActiveTab: (tab: string) => void, openJitsi: (room: string) => void }) => {
+const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () => void }) => {
+  const [activeModule, setActiveModule] = useState<number | null>(0);
+
+  // Mock Modules Data with Resources
+  const modules = [
+    {
+      id: 1,
+      title: "Introduction & Environment Setup",
+      duration: "45 min",
+      completed: true,
+      resources: [
+        { type: "pdf", title: "Course Syllabus.pdf", size: "1.2 MB" },
+        { type: "video", title: "Setting up VS Code for Success", duration: "12:30" }
+      ]
+    },
+    {
+      id: 2,
+      title: "Core Concepts Deep Dive",
+      duration: "1h 20m",
+      completed: true,
+      resources: [
+        { type: "link", title: "Official Documentation Reference" },
+        { type: "pdf", title: "Cheatsheet - v1.0.pdf", size: "0.5 MB" }
+      ]
+    },
+    {
+      id: 3,
+      title: "Building the User Interface",
+      duration: "2h 15m",
+      completed: false, // In Progress
+      resources: [
+        { type: "video", title: "Live Coding Session: Header Component", duration: "45:00" },
+        { type: "file", title: "Starter_Code.zip", size: "15 MB" }
+      ]
+    },
+    {
+      id: 4,
+      title: "API Integration & State Management",
+      duration: "3h 10m",
+      completed: false,
+      resources: []
+    }
+  ];
+
+  return (
+    <div className="animate-fade-in-up pb-12">
+      <button onClick={onBack} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bold mb-6 transition-colors">
+        <ArrowLeft size={20} /> Back to Courses
+      </button>
+
+      {/* Course Header */}
+      <div className={`${cardStyle} p-6 md:p-8 mb-8 relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        
+        <div className="flex flex-col md:flex-row gap-8 relative z-10">
+          <div className="w-full md:w-64 aspect-video rounded-xl overflow-hidden shadow-lg shrink-0">
+             <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
+          </div>
+          
+          <div className="flex-1">
+             <div className="flex items-start justify-between mb-4">
+               <div>
+                 <span className="inline-block px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold mb-2">
+                   {course.progress === 100 ? "Completed" : "In Progress"}
+                 </span>
+                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{course.title}</h1>
+                 <p className="text-gray-500 dark:text-gray-400 text-sm">Instructor: <span className="font-bold text-gray-900 dark:text-white">{course.instructor}</span></p>
+               </div>
+               {course.progress === 100 && (
+                 <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform">
+                   <Award size={18} /> Get Certificate
+                 </button>
+               )}
+             </div>
+
+             <div className="space-y-2">
+               <div className="flex justify-between text-sm font-bold">
+                 <span className="text-gray-600 dark:text-gray-300">{course.progress}% Complete</span>
+                 <span className="text-gray-400">{modules.filter(m => m.completed).length}/{modules.length} Modules</span>
+               </div>
+               <div className="h-3 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                 <div className="h-full bg-brand-500 rounded-full transition-all duration-1000 ease-out" style={{ width: `${course.progress}%` }}></div>
+               </div>
+             </div>
+             
+             <div className="mt-6 flex gap-3">
+               <button className={btnPrimary + " flex items-center gap-2"}>
+                 <PlayCircle size={18} /> Continue Learning
+               </button>
+               <button className="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                 <MessageCircle size={18} /> Course Forum
+               </button>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content: Syllabus */}
+        <div className="lg:col-span-2 space-y-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <BookOpen className="text-brand-500" size={20} /> Course Content
+          </h2>
+
+          <div className="space-y-4">
+             {modules.map((module, index) => (
+               <div key={module.id} className={`${cardStyle} overflow-hidden`}>
+                 {/* Module Header */}
+                 <div 
+                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    onClick={() => setActiveModule(activeModule === index ? null : index)}
+                 >
+                    <div className="flex items-center gap-4">
+                       <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${module.completed ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-400 dark:bg-gray-800'}`}>
+                         {module.completed ? <CheckCircle size={18} /> : <span className="text-xs font-bold">{index + 1}</span>}
+                       </div>
+                       <div>
+                         <h3 className={`font-bold ${module.completed ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}`}>{module.title}</h3>
+                         <p className="text-xs text-gray-500">{module.duration}</p>
+                       </div>
+                    </div>
+                    <ChevronRight size={20} className={`text-gray-400 transition-transform duration-300 ${activeModule === index ? 'rotate-90' : ''}`} />
+                 </div>
+
+                 {/* Module Content & Resources */}
+                 {activeModule === index && (
+                   <div className="bg-gray-50 dark:bg-gray-900/50 p-4 border-t border-gray-100 dark:border-gray-700 animate-fade-in">
+                      <div className="mb-4 pl-12">
+                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                           In this module, we cover the fundamentals necessary to get started. Make sure to download the attached resources.
+                         </p>
+                      </div>
+
+                      {module.resources.length > 0 && (
+                        <div className="pl-12 space-y-2">
+                           <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Resources</h4>
+                           {module.resources.map((res: any, idx) => (
+                             <div key={idx} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-brand-300 dark:hover:border-brand-700 transition-colors group cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                   {res.type === 'pdf' && <FileText size={18} className="text-red-500" />}
+                                   {res.type === 'video' && <Youtube size={18} className="text-red-600" />}
+                                   {res.type === 'link' && <ExternalLink size={18} className="text-blue-500" />}
+                                   {res.type === 'file' && <Download size={18} className="text-brand-500" />}
+                                   <div>
+                                      <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{res.title}</p>
+                                      {res.size && <p className="text-[10px] text-gray-400">{res.size}</p>}
+                                      {res.duration && <p className="text-[10px] text-gray-400">{res.duration}</p>}
+                                   </div>
+                                </div>
+                                <button className="p-2 text-gray-400 hover:text-brand-500">
+                                   <Download size={16} />
+                                </button>
+                             </div>
+                           ))}
+                        </div>
+                      )}
+                   </div>
+                 )}
+               </div>
+             ))}
+          </div>
+        </div>
+
+        {/* Sidebar: Instructor & Tools */}
+        <div className="space-y-6">
+           <div className={`${cardStyle} p-6`}>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-4">About the Instructor</h3>
+              <div className="flex items-center gap-4 mb-4">
+                <img src={`https://i.pravatar.cc/150?u=${course.instructor}`} alt="" className="w-12 h-12 rounded-full" />
+                <div>
+                   <p className="font-bold text-gray-900 dark:text-white">{course.instructor}</p>
+                   <p className="text-xs text-gray-500">Senior Engineer @ Safaricom</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-sm mb-4">
+                Expert in FinTech integrations with over 10 years of experience building payment systems across Africa.
+              </p>
+              <button className="w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                View Profile
+              </button>
+           </div>
+           
+           <div className={`${cardStyle} p-6`}>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-4">Course Tools</h3>
+              <div className="space-y-2">
+                 <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="flex items-center gap-2"><FileText size={16} /> Course Notes</span>
+                    <ExternalLink size={14} className="text-gray-400" />
+                 </button>
+                 <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="flex items-center gap-2"><MessageCircle size={16} /> Discussion Group</span>
+                    <ExternalLink size={14} className="text-gray-400" />
+                 </button>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DashboardHome = ({ setActiveTab, openJitsi, onCourseClick }: { setActiveTab: (tab: string) => void, openJitsi: (room: string) => void, onCourseClick: (course: any) => void }) => {
   const stats = [
     { title: 'Total Courses', value: '12', icon: BookOpen, color: 'text-blue-500' },
     { title: 'In Progress', value: '4', icon: Clock, color: 'text-brand-500' },
@@ -140,7 +342,11 @@ const DashboardHome = ({ setActiveTab, openJitsi }: { setActiveTab: (tab: string
           </div>
 
           {continueLearning.map((course) => (
-            <div key={course.id} className={`p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center ${cardStyle} hover:scale-[1.01] transition-transform cursor-pointer group`}>
+            <div 
+              key={course.id} 
+              onClick={() => onCourseClick(course)}
+              className={`p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center ${cardStyle} hover:scale-[1.01] transition-transform cursor-pointer group`}
+            >
                 <div className="relative w-full md:w-48 aspect-video rounded-xl overflow-hidden shadow-md">
                   <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -405,7 +611,7 @@ const AnalyticsView = () => {
   );
 };
 
-const MyCoursesView = () => {
+const MyCoursesView = ({ onCourseClick }: { onCourseClick: (course: any) => void }) => {
   const myCourses = [
     { ...courses[0], progress: 65, totalLessons: 24, completedLessons: 15 },
     { ...courses[2], progress: 32, totalLessons: 40, completedLessons: 12 },
@@ -419,7 +625,11 @@ const MyCoursesView = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {myCourses.map((course) => (
-          <div key={course.id} className={`${cardStyle} flex flex-col h-full overflow-hidden group`}>
+          <div 
+             key={course.id} 
+             onClick={() => onCourseClick(course)}
+             className={`${cardStyle} flex flex-col h-full overflow-hidden group cursor-pointer hover:border-brand-300 dark:hover:border-brand-700 hover:-translate-y-1 transition-all`}
+          >
             <div className="relative aspect-video">
               <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -439,7 +649,7 @@ const MyCoursesView = () => {
                     <span className={course.progress === 100 ? "text-green-500" : "text-brand-500"}>{course.progress}%</span>
                  </div>
                  <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${course.progress === 100 ? 'bg-green-500' : 'bg-brand-500'}`} style={{ width: `${course.progress}%` }}></div>
+                    <div className={`h-full rounded-full ${course.progress === 100 ? 'bg-green-100 text-green-500' : 'bg-brand-500'}`} style={{ width: `${course.progress}%` }}></div>
                  </div>
                </div>
                
@@ -484,20 +694,40 @@ const WishlistView = () => {
 };
 
 const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) => {
-  const sessions = [
+  const [viewMode, setViewMode] = useState<'upcoming' | 'past'>('upcoming');
+
+  const upcomingSessions = [
     { title: "Weekly Design Review", time: "10:00 AM", date: "Today", instructor: "Brian Kipkorir", attendees: 42, status: "live" },
     { title: "React State Management Q&A", time: "2:00 PM", date: "Tomorrow", instructor: "Wanjiku Kimani", attendees: 120, status: "upcoming" },
     { title: "Cybersecurity Basics Workshop", time: "4:00 PM", date: "Fri, Oct 24", instructor: "Maria Garcia", attendees: 85, status: "upcoming" },
     { title: "Data Science Career Talk", time: "6:00 PM", date: "Sat, Oct 25", instructor: "Dr. Zainab Ahmed", attendees: 200, status: "upcoming" },
   ];
 
+  const pastSessions = [
+    { title: "Intro to Figma for Devs", time: "10:00 AM", date: "Yesterday", instructor: "Brian Kipkorir", attendees: 150, status: "ended" },
+    { title: "Understanding React Hooks", time: "2:00 PM", date: "Mon, Oct 20", instructor: "Wanjiku Kimani", attendees: 310, status: "ended" },
+    { title: "Python Data Structures", time: "4:00 PM", date: "Fri, Oct 17", instructor: "Dr. Zainab Ahmed", attendees: 180, status: "ended" },
+  ];
+
+  const sessions = viewMode === 'upcoming' ? upcomingSessions : pastSessions;
+
   return (
     <div className="animate-fade-in-up">
       <div className="flex justify-between items-center mb-6">
          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Live Classes</h1>
          <div className="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <button className="px-4 py-1.5 bg-brand-600 text-white text-xs font-bold rounded-lg shadow-sm">Upcoming</button>
-            <button className="px-4 py-1.5 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 text-xs font-bold rounded-lg transition-colors">Past</button>
+            <button 
+              onClick={() => setViewMode('upcoming')}
+              className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'upcoming' ? 'bg-brand-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+            >
+              Upcoming
+            </button>
+            <button 
+              onClick={() => setViewMode('past')}
+              className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${viewMode === 'past' ? 'bg-brand-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+            >
+              Past
+            </button>
          </div>
       </div>
 
@@ -505,8 +735,8 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
         {sessions.map((session, index) => (
           <div key={index} className={`${cardStyle} p-6 flex flex-col md:flex-row items-center gap-6 group hover:border-brand-200 dark:hover:border-brand-800 transition-colors`}>
              <div className="flex flex-col items-center justify-center w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-inner shrink-0">
-               <span className="text-xs font-bold text-gray-400 uppercase">{session.date === 'Today' || session.date === 'Tomorrow' ? '' : session.date.split(',')[0]}</span>
-               <span className="text-xl font-bold text-gray-900 dark:text-white">{session.date === 'Today' || session.date === 'Tomorrow' ? session.date : session.date.split(' ')[2]}</span>
+               <span className="text-xs font-bold text-gray-400 uppercase">{session.date === 'Today' || session.date === 'Tomorrow' || session.date === 'Yesterday' ? '' : session.date.split(',')[0]}</span>
+               <span className="text-xl font-bold text-gray-900 dark:text-white">{session.date === 'Today' || session.date === 'Tomorrow' || session.date === 'Yesterday' ? session.date : session.date.split(' ')[2]}</span>
                <span className="text-[10px] text-gray-400">{session.time}</span>
              </div>
 
@@ -514,6 +744,11 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
                {session.status === 'live' && (
                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wider mb-2 animate-pulse">
                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 dark:bg-red-500"></span> Live Now
+                 </span>
+               )}
+               {session.status === 'ended' && (
+                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wider mb-2">
+                   Ended
                  </span>
                )}
                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{session.title}</h3>
@@ -529,10 +764,14 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
                 </div>
 
                 <button 
-                  onClick={() => openJitsi(session.title)}
-                  className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}
+                  onClick={() => session.status !== 'ended' ? openJitsi(session.title) : null}
+                  className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : session.status === 'ended' ? 'bg-white dark:bg-gray-800 border-2 border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/10' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}
                 >
-                  {session.status === 'live' ? 'Join Now' : 'Set Reminder'}
+                  {session.status === 'live' ? 'Join Now' : session.status === 'ended' ? (
+                     <>
+                        <PlayCircle size={18} /> Watch Recording
+                     </>
+                  ) : 'Set Reminder'}
                 </button>
              </div>
           </div>
@@ -1086,6 +1325,9 @@ const StudentDashboard: React.FC = () => {
   const [jitsiOpen, setJitsiOpen] = useState(false);
   const [activeRoom, setActiveRoom] = useState("");
   const [toastMsg, setToastMsg] = useState("");
+  
+  // State for Course Details View
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -1095,6 +1337,17 @@ const StudentDashboard: React.FC = () => {
     setActiveRoom(room);
     setJitsiOpen(true);
   };
+
+  const handleCourseClick = (course: any) => {
+    setSelectedCourse(course);
+  };
+
+  // Clear selected course when switching main tabs
+  useEffect(() => {
+    if (activeTab !== 'Dashboard' && activeTab !== 'My Courses') {
+      setSelectedCourse(null);
+    }
+  }, [activeTab]);
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
@@ -1109,16 +1362,21 @@ const StudentDashboard: React.FC = () => {
   ];
 
   const renderContent = () => {
+    // If a course is selected, show detail view regardless of tab (for Dashboard/MyCourses context)
+    if (selectedCourse) {
+      return <EnrolledCourseDetailView course={selectedCourse} onBack={() => setSelectedCourse(null)} />;
+    }
+
     switch(activeTab) {
       case 'Analytics': return <AnalyticsView />;
-      case 'My Courses': return <MyCoursesView />;
+      case 'My Courses': return <MyCoursesView onCourseClick={handleCourseClick} />;
       case 'Wishlist': return <WishlistView />;
       case 'Live Classes': return <LiveClassesView openJitsi={openJitsi} />;
       case 'Messages': return <MessagesView />;
       case 'Notifications': return <NotificationsView showToast={showToast} />;
       case 'Profile': return <ProfileView />;
       case 'Settings': return <SettingsView showToast={showToast} />;
-      default: return <DashboardHome setActiveTab={setActiveTab} openJitsi={openJitsi} />;
+      default: return <DashboardHome setActiveTab={setActiveTab} openJitsi={openJitsi} onCourseClick={handleCourseClick} />;
     }
   };
 
@@ -1167,9 +1425,10 @@ const StudentDashboard: React.FC = () => {
                 onClick={() => {
                   setActiveTab(item.name);
                   setIsSidebarOpen(false);
+                  setSelectedCourse(null); // Reset detail view on nav change
                 }}
                 className={`w-full flex items-center justify-between p-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
-                  activeTab === item.name ? activeNavItemStyle : normalNavItemStyle
+                  activeTab === item.name && !selectedCourse ? activeNavItemStyle : normalNavItemStyle
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -1196,7 +1455,7 @@ const StudentDashboard: React.FC = () => {
         <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full">
           {/* Header Mobile Toggle */}
           <div className="lg:hidden flex items-center justify-between mb-6">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{activeTab}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{selectedCourse ? 'Course Details' : activeTab}</h1>
             <button 
               onClick={() => setIsSidebarOpen(true)}
               className={iconButtonStyle}
