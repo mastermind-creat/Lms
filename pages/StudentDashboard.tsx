@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, BookOpen, Heart, Video, MessageCircle, 
-  Bell, User, Settings, Menu, X, LogOut, CheckCircle, 
-  Clock, Award, PlayCircle, MoreVertical, Search, Zap
+  Bell, User, Settings, Menu, LogOut, CheckCircle, 
+  Clock, Award, PlayCircle, MoreVertical, Search, Zap,
+  Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
+  Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, Edit3, Save, X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { courses } from '../data/courses';
+import CourseCard from '../components/CourseCard';
+import { useTheme } from '../context/ThemeContext';
 
-const StudentDashboard: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Dashboard');
+// --- Shared Styles ---
+const cardStyle = "bg-white dark:bg-gray-800 rounded-2xl shadow-[6px_6px_12px_#e5e7eb,-6px_-6px_12px_#ffffff] dark:shadow-[6px_6px_12px_#0b0c15,-6px_-6px_12px_#1e293b] transition-colors duration-300 border border-gray-100 dark:border-gray-700";
+const innerCardStyle = "bg-gray-50 dark:bg-gray-900 rounded-xl shadow-[inset_4px_4px_8px_#d1d5db,inset_-4px_-4px_8px_#ffffff] dark:shadow-[inset_4px_4px_8px_#0b0c15,inset_-4px_-4px_8px_#1e293b]";
+const iconButtonStyle = "p-3 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-[5px_5px_10px_#d1d5db,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] hover:text-brand-500 dark:hover:text-brand-400 active:shadow-[inset_5px_5px_10px_#d1d5db,inset_-5px_-5px_10px_#ffffff] dark:active:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#1e293b] transition-all";
+const btnPrimary = "px-6 py-3 rounded-xl bg-brand-600 text-white font-bold text-sm shadow-[4px_4px_10px_rgba(243,111,33,0.3)] hover:bg-brand-700 active:shadow-none hover:-translate-y-0.5 transition-all";
 
-  const menuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard },
-    { name: 'My Courses', icon: BookOpen },
-    { name: 'Wishlist', icon: Heart },
-    { name: 'Live Classes', icon: Video },
-    { name: 'Messages', icon: MessageCircle, badge: 3 },
-    { name: 'Notifications', icon: Bell, badge: 5 },
-    { name: 'Profile', icon: User },
-    { name: 'Settings', icon: Settings },
-  ];
+// --- Sub-Views ---
 
+const DashboardHome = ({ setActiveTab }: { setActiveTab: (tab: string) => void }) => {
   const stats = [
     { title: 'Total Courses', value: '12', icon: BookOpen, color: 'text-blue-500' },
     { title: 'In Progress', value: '4', icon: Clock, color: 'text-brand-500' },
@@ -47,11 +46,607 @@ const StudentDashboard: React.FC = () => {
     }
   ];
 
-  // Neumorphic Styles
-  const cardStyle = "bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-[6px_6px_12px_#d1d1d1,-6px_-6px_12px_#ffffff] dark:shadow-[6px_6px_12px_#0b0c15,-6px_-6px_12px_#1e293b] transition-colors duration-300";
-  const iconButtonStyle = "p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] hover:text-brand-500 dark:hover:text-brand-400 active:shadow-[inset_5px_5px_10px_#d1d1d1,inset_-5px_-5px_10px_#ffffff] dark:active:shadow-[inset_5px_5px_10px_#0b0c15,inset_-5px_-5px_10px_#1e293b] transition-all";
-  const activeNavItemStyle = "text-brand-600 dark:text-brand-400 shadow-[inset_4px_4px_8px_#d1d1d1,inset_-4px_-4px_8px_#ffffff] dark:shadow-[inset_4px_4px_8px_#0b0c15,inset_-4px_-4px_8px_#1e293b]";
-  const normalNavItemStyle = "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:shadow-[4px_4px_8px_#d1d1d1,-4px_-4px_8px_#ffffff] dark:hover:shadow-[4px_4px_8px_#0b0c15,-4px_-4px_8px_#1e293b]";
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            Welcome back, Jane! 👋
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base">
+            You've completed <span className="text-brand-500 font-bold">80%</span> of your weekly goal. Keep it up!
+          </p>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {stats.map((stat, index) => (
+          <div key={index} className={`p-4 md:p-6 flex flex-col items-start gap-4 ${cardStyle}`}>
+            <div className={`p-3 rounded-xl bg-gray-50 dark:bg-gray-900 ${stat.color} shadow-inner`}>
+              <stat.icon size={24} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</h3>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stat.title}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Continue Learning */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <Zap className="text-brand-500" size={20} fill="currentColor" /> Continue Learning
+            </h2>
+            <button onClick={() => setActiveTab('My Courses')} className="text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline">View All</button>
+          </div>
+
+          {continueLearning.map((course) => (
+            <div key={course.id} className={`p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center ${cardStyle} hover:scale-[1.01] transition-transform cursor-pointer group`}>
+                <div className="relative w-full md:w-48 aspect-video rounded-xl overflow-hidden shadow-md">
+                  <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <PlayCircle size={32} className="text-white drop-shadow-lg" fill="rgba(255,255,255,0.2)" />
+                  </div>
+                </div>
+                
+                <div className="flex-1 w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">{course.title}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">By {course.instructor}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex justify-between text-xs font-bold mb-1.5">
+                      <span className="text-gray-500 dark:text-gray-400">Next: {course.nextLesson}</span>
+                      <span className="text-brand-600 dark:text-brand-400">{course.progress}%</span>
+                    </div>
+                    <div className="h-2.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-brand-500 rounded-full relative"
+                        style={{ width: `${course.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <button className={btnPrimary}>
+                    Resume Lesson
+                  </button>
+                </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Widgets */}
+        <div className="space-y-8">
+           {/* Recent Activity */}
+           <div className={`p-6 ${cardStyle}`}>
+             <h3 className="font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
+             <div className="space-y-4 relative">
+               <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+               {[
+                 { text: "Finished 'Intro to React'", time: "2h ago", icon: CheckCircle, color: "text-green-500" },
+                 { text: "Joined 'Design Systems' Live", time: "5h ago", icon: Video, color: "text-red-500" },
+                 { text: "Earned 'CSS Master' Badge", time: "1d ago", icon: Award, color: "text-yellow-500" },
+                 { text: "Posted in 'Help' Forum", time: "2d ago", icon: MessageCircle, color: "text-blue-500" },
+               ].map((item, i) => (
+                 <div key={i} className="flex gap-4 relative">
+                   <div className={`w-6 h-6 rounded-full bg-white dark:bg-gray-800 border-4 border-gray-100 dark:border-gray-900 z-10 flex items-center justify-center ${item.color}`}>
+                     <item.icon size={12} />
+                   </div>
+                   <div>
+                     <p className="text-sm font-bold text-gray-700 dark:text-gray-200">{item.text}</p>
+                     <p className="text-xs text-gray-400">{item.time}</p>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           </div>
+
+           {/* Upcoming Live Class */}
+           <div className={`p-6 ${cardStyle} relative overflow-hidden group`}>
+              <div className="absolute top-0 right-0 p-3">
+                <span className="flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+              </div>
+              
+              <div className="w-12 h-12 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-xl flex items-center justify-center mb-4 shadow-sm">
+                <Video size={24} />
+              </div>
+              
+              <h3 className="font-bold text-gray-900 dark:text-white mb-1">Weekly Design Review</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Starts in 35 minutes</p>
+              
+              <button className="w-full py-2.5 rounded-xl border-2 border-red-500 text-red-500 font-bold text-sm hover:bg-red-500 hover:text-white transition-all">
+                Join Session
+              </button>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MyCoursesView = () => {
+  const myCourses = [
+    { ...courses[0], progress: 65, totalLessons: 24, completedLessons: 15 },
+    { ...courses[2], progress: 32, totalLessons: 40, completedLessons: 12 },
+    { ...courses[5], progress: 10, totalLessons: 18, completedLessons: 2 },
+    { ...courses[7], progress: 100, totalLessons: 12, completedLessons: 12 },
+  ];
+
+  return (
+    <div className="animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">My Courses</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {myCourses.map((course) => (
+          <div key={course.id} className={`${cardStyle} flex flex-col h-full overflow-hidden group`}>
+            <div className="relative aspect-video">
+              <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                 <button className="bg-white/20 backdrop-blur-md border border-white/50 text-white rounded-full p-3 hover:scale-110 transition-transform">
+                    <PlayCircle size={32} />
+                 </button>
+              </div>
+            </div>
+            
+            <div className="p-5 flex flex-col flex-1">
+               <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-2">{course.title}</h3>
+               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">By {course.instructor}</p>
+               
+               <div className="mt-auto">
+                 <div className="flex justify-between text-xs font-bold mb-2">
+                    <span className="text-gray-500 dark:text-gray-400">{course.completedLessons}/{course.totalLessons} Lessons</span>
+                    <span className={course.progress === 100 ? "text-green-500" : "text-brand-500"}>{course.progress}%</span>
+                 </div>
+                 <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${course.progress === 100 ? 'bg-green-500' : 'bg-brand-500'}`} style={{ width: `${course.progress}%` }}></div>
+                 </div>
+               </div>
+               
+               {course.progress === 100 && (
+                 <button className="mt-4 w-full py-2 border border-brand-200 dark:border-brand-900 text-brand-600 dark:text-brand-400 text-xs font-bold rounded-lg hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors flex items-center justify-center gap-2">
+                   <Award size={14} /> Download Certificate
+                 </button>
+               )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const WishlistView = () => {
+  const wishlistItems = courses.slice(1, 5); // Mock Data
+
+  return (
+    <div className="animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">My Wishlist</h1>
+      {wishlistItems.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {wishlistItems.map((course) => (
+             <div key={course.id} className={`${cardStyle} overflow-hidden p-2`}>
+                <CourseCard course={course} />
+             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+          <Heart size={48} className="mb-4 text-gray-400" />
+          <p className="text-xl font-bold">Your wishlist is empty</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const LiveClassesView = () => {
+  const sessions = [
+    { title: "Weekly Design Review", time: "10:00 AM", date: "Today", instructor: "Brian Kipkorir", attendees: 42, status: "live" },
+    { title: "React State Management Q&A", time: "2:00 PM", date: "Tomorrow", instructor: "Wanjiku Kimani", attendees: 120, status: "upcoming" },
+    { title: "Cybersecurity Basics Workshop", time: "4:00 PM", date: "Fri, Oct 24", instructor: "Maria Garcia", attendees: 85, status: "upcoming" },
+    { title: "Data Science Career Talk", time: "6:00 PM", date: "Sat, Oct 25", instructor: "Dr. Zainab Ahmed", attendees: 200, status: "upcoming" },
+  ];
+
+  return (
+    <div className="animate-fade-in-up">
+      <div className="flex justify-between items-center mb-6">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Live Classes</h1>
+         <div className="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <button className="px-4 py-1.5 bg-brand-600 text-white text-xs font-bold rounded-lg shadow-sm">Upcoming</button>
+            <button className="px-4 py-1.5 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 text-xs font-bold rounded-lg transition-colors">Past</button>
+         </div>
+      </div>
+
+      <div className="space-y-4">
+        {sessions.map((session, index) => (
+          <div key={index} className={`${cardStyle} p-6 flex flex-col md:flex-row items-center gap-6 group hover:border-brand-200 dark:hover:border-brand-800 transition-colors`}>
+             <div className="flex flex-col items-center justify-center w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-inner shrink-0">
+               <span className="text-xs font-bold text-gray-400 uppercase">{session.date === 'Today' || session.date === 'Tomorrow' ? '' : session.date.split(',')[0]}</span>
+               <span className="text-xl font-bold text-gray-900 dark:text-white">{session.date === 'Today' || session.date === 'Tomorrow' ? session.date : session.date.split(' ')[2]}</span>
+               <span className="text-[10px] text-gray-400">{session.time}</span>
+             </div>
+
+             <div className="flex-1 text-center md:text-left">
+               {session.status === 'live' && (
+                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-wider mb-2 animate-pulse">
+                   <span className="w-1.5 h-1.5 rounded-full bg-red-600 dark:bg-red-500"></span> Live Now
+                 </span>
+               )}
+               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{session.title}</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400">with {session.instructor}</p>
+             </div>
+
+             <div className="flex items-center gap-6">
+                <div className="hidden md:flex -space-x-2">
+                   {[1,2,3].map(i => (
+                     <img key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src={`https://i.pravatar.cc/100?img=${i+20}`} alt="User" />
+                   ))}
+                   <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-500">+{session.attendees}</div>
+                </div>
+
+                <button className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}>
+                  {session.status === 'live' ? 'Join Now' : 'Set Reminder'}
+                </button>
+             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const MessagesView = () => {
+  const [activeChat, setActiveChat] = useState(0);
+  const contacts = [
+    { id: 0, name: "Kevin Omondi", role: "Instructor", online: true, lastMsg: "Great work on the assignment!", time: "10m", img: 12 },
+    { id: 1, name: "Wanjiku Kimani", role: "Mentor", online: false, lastMsg: "Let's schedule a call.", time: "2h", img: 5 },
+    { id: 2, name: "Student Support", role: "Admin", online: true, lastMsg: "Your ticket #4291 is resolved.", time: "1d", img: 3 },
+  ];
+
+  return (
+    <div className={`h-[calc(100vh-140px)] ${cardStyle} flex overflow-hidden animate-fade-in-up`}>
+       {/* Contact List */}
+       <div className="w-full md:w-80 border-r border-gray-100 dark:border-gray-700 flex flex-col">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+             <div className={innerCardStyle + " flex items-center px-3 py-2"}>
+               <Search size={16} className="text-gray-400" />
+               <input type="text" placeholder="Search messages" className="bg-transparent border-none outline-none text-sm ml-2 w-full text-gray-700 dark:text-gray-200" />
+             </div>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {contacts.map((contact) => (
+              <div 
+                key={contact.id} 
+                onClick={() => setActiveChat(contact.id)}
+                className={`p-4 flex gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${activeChat === contact.id ? 'bg-brand-50 dark:bg-brand-900/10 border-r-2 border-brand-500' : ''}`}
+              >
+                <div className="relative">
+                  <img src={`https://i.pravatar.cc/150?img=${contact.img}`} alt={contact.name} className="w-10 h-10 rounded-full bg-gray-200" />
+                  {contact.online && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <h4 className={`text-sm font-bold ${activeChat === contact.id ? 'text-brand-700 dark:text-brand-400' : 'text-gray-900 dark:text-white'}`}>{contact.name}</h4>
+                    <span className="text-[10px] text-gray-400">{contact.time}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{contact.lastMsg}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+       </div>
+
+       {/* Chat Window */}
+       <div className="hidden md:flex flex-1 flex-col bg-gray-50/50 dark:bg-gray-900/50">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+            <div className="flex items-center gap-3">
+               <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-10 h-10 rounded-full" />
+               <div>
+                 <h3 className="font-bold text-gray-900 dark:text-white">{contacts[activeChat].name}</h3>
+                 <span className="text-xs text-brand-600 dark:text-brand-400 font-medium">{contacts[activeChat].role}</span>
+               </div>
+            </div>
+            <button className={iconButtonStyle}><MoreVertical size={18} /></button>
+          </div>
+
+          <div className="flex-1 p-6 overflow-y-auto space-y-4">
+             <div className="flex justify-center"><span className="text-[10px] text-gray-400 uppercase tracking-widest">Today</span></div>
+             <div className="flex gap-3">
+                <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-8 h-8 rounded-full self-end" />
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-none shadow-sm max-w-sm text-sm text-gray-700 dark:text-gray-200">
+                  Hello Jane! How is the API integration project coming along?
+                </div>
+             </div>
+             <div className="flex gap-3 flex-row-reverse">
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold self-end">ME</div>
+                <div className="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-md max-w-sm text-sm">
+                  Hi Kevin! Making good progress. Just stuck on the STK push callback handling.
+                </div>
+             </div>
+             <div className="flex gap-3">
+                <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-8 h-8 rounded-full self-end" />
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-none shadow-sm max-w-sm text-sm text-gray-700 dark:text-gray-200">
+                  {contacts[activeChat].lastMsg}
+                </div>
+             </div>
+          </div>
+
+          <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+             <div className="flex gap-2">
+               <button className="p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"><Paperclip size={20} /></button>
+               <div className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center px-4">
+                 <input type="text" placeholder="Type a message..." className="bg-transparent border-none outline-none w-full text-sm text-gray-900 dark:text-white" />
+               </div>
+               <button className="p-3 bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors"><Send size={20} /></button>
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+};
+
+const NotificationsView = () => {
+  const notifications = [
+    { id: 1, title: "Assignment Graded", msg: "Your submission for 'React Hooks' has been graded. Score: 95%", time: "2h ago", type: "success", read: false },
+    { id: 2, title: "Live Class Starting", msg: "Weekly Design Review starts in 30 minutes.", time: "30m ago", type: "info", read: false },
+    { id: 3, title: "New Course Available", msg: "Advanced Python for Finance is now live!", time: "1d ago", type: "promo", read: true },
+    { id: 4, title: "Subscription Renewed", msg: "Your monthly subscription was successfully renewed.", time: "2d ago", type: "system", read: true },
+  ];
+
+  const getIcon = (type: string) => {
+    switch(type) {
+      case 'success': return <CheckCircle size={20} className="text-green-500" />;
+      case 'info': return <Video size={20} className="text-blue-500" />;
+      case 'promo': return <Zap size={20} className="text-yellow-500" />;
+      default: return <Bell size={20} className="text-gray-500" />;
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto animate-fade-in-up">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Notifications</h1>
+        <button className="text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline">Mark all as read</button>
+      </div>
+
+      <div className="space-y-4">
+        {notifications.map((item) => (
+          <div key={item.id} className={`${cardStyle} p-4 md:p-6 flex gap-4 ${!item.read ? 'border-l-4 border-l-brand-500' : ''}`}>
+             <div className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-900 shadow-inner flex items-center justify-center shrink-0">
+               {getIcon(item.type)}
+             </div>
+             <div className="flex-1">
+               <div className="flex justify-between items-start">
+                 <h4 className={`text-base font-bold ${!item.read ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{item.title}</h4>
+                 <span className="text-xs text-gray-400">{item.time}</span>
+               </div>
+               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{item.msg}</p>
+             </div>
+             <button className="text-gray-300 hover:text-red-500 transition-colors self-start"><X size={16} /></button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ProfileView = () => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "Jane Doe",
+    email: "jane.doe@student.elimutech.ke",
+    phone: "+254 712 345 678",
+    interest: "Web Development",
+    education: "Undergraduate",
+    bio: "Passionate learner aiming to become a full-stack developer in Nairobi's tech ecosystem."
+  });
+
+  const handleChange = (e: any) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto animate-fade-in-up">
+       <div className="flex justify-between items-center mb-8">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+         <button 
+           onClick={() => setIsEditing(!isEditing)}
+           className={`flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm transition-all ${isEditing ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-brand-600 text-white shadow-lg shadow-brand-500/30'}`}
+         >
+           {isEditing ? <><X size={16} /> Cancel</> : <><Edit3 size={16} /> Edit Profile</>}
+         </button>
+       </div>
+
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Sidebar Info */}
+          <div className={`${cardStyle} p-6 flex flex-col items-center text-center h-fit`}>
+             <div className="relative mb-6">
+               <div className="w-32 h-32 rounded-full p-1 bg-white dark:bg-gray-700 shadow-[inset_4px_4px_8px_rgba(0,0,0,0.1)]">
+                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="Profile" className="w-full h-full rounded-full object-cover" />
+               </div>
+               {isEditing && (
+                 <button className="absolute bottom-0 right-0 p-2 bg-brand-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform">
+                   <Camera size={16} />
+                 </button>
+               )}
+             </div>
+             
+             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{formData.name}</h2>
+             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{formData.interest} Student</p>
+
+             <div className="w-full space-y-4 text-left">
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Mail size={16} className="text-brand-500" /> <span className="truncate">{formData.email}</span>
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Smartphone size={16} className="text-brand-500" /> {formData.phone}
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <MapPin size={16} className="text-brand-500" /> Nairobi, Kenya
+               </div>
+             </div>
+          </div>
+
+          {/* Form */}
+          <div className={`${cardStyle} p-6 md:p-8 md:col-span-2`}>
+             <form className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</label>
+                     <input 
+                       name="name"
+                       disabled={!isEditing}
+                       value={formData.name}
+                       onChange={handleChange}
+                       className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Education Level</label>
+                     <input 
+                       name="education"
+                       disabled={!isEditing}
+                       value={formData.education}
+                       onChange={handleChange}
+                       className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white`}
+                     />
+                   </div>
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Bio</label>
+                   <textarea 
+                     name="bio"
+                     rows={4}
+                     disabled={!isEditing}
+                     value={formData.bio}
+                     onChange={handleChange}
+                     className={`w-full p-3 rounded-xl border ${isEditing ? 'bg-white dark:bg-gray-800 border-brand-500 ring-2 ring-brand-500/20' : 'bg-gray-50 dark:bg-gray-900 border-transparent'} outline-none transition-all text-gray-900 dark:text-white resize-none`}
+                   />
+                </div>
+
+                {isEditing && (
+                  <div className="pt-4 flex justify-end">
+                    <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition-colors flex items-center gap-2">
+                       <Save size={18} /> Save Changes
+                    </button>
+                  </div>
+                )}
+             </form>
+          </div>
+       </div>
+    </div>
+  );
+};
+
+const SettingsView = () => {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div className="max-w-3xl mx-auto animate-fade-in-up">
+       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-8">Settings</h1>
+
+       <div className="space-y-8">
+          {/* Appearance */}
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Moon size={20} className="text-brand-500" /> Appearance
+             </h3>
+             <div className="flex items-center justify-between">
+               <span className="text-gray-600 dark:text-gray-300 font-medium">Dark Mode</span>
+               <button 
+                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                 className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 ${theme === 'dark' ? 'bg-brand-500' : 'bg-gray-200'}`}
+               >
+                 <div className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`}></div>
+               </button>
+             </div>
+          </div>
+
+          {/* Notifications */}
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Bell size={20} className="text-brand-500" /> Notifications
+             </h3>
+             <div className="space-y-6">
+                {["Email Notifications", "SMS Alerts (M-PESA)", "Course Updates", "Marketing Emails"].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">{item}</span>
+                    <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-gray-300" />
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          {/* Account Security */}
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Shield size={20} className="text-brand-500" /> Security
+             </h3>
+             <div className="space-y-4">
+               <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                 <div>
+                   <p className="font-bold text-gray-900 dark:text-white">Password</p>
+                   <p className="text-xs text-gray-500">Last changed 3 months ago</p>
+                 </div>
+                 <button className="text-sm font-bold text-brand-600 dark:text-brand-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-colors">Update</button>
+               </div>
+               
+               <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                  <button className="flex items-center gap-2 text-red-500 font-bold text-sm hover:text-red-600 transition-colors">
+                    <Trash2 size={16} /> Delete Account
+                  </button>
+               </div>
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+};
+
+// --- Main Component ---
+
+const StudentDashboard: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('Dashboard');
+
+  const menuItems = [
+    { name: 'Dashboard', icon: LayoutDashboard },
+    { name: 'My Courses', icon: BookOpen },
+    { name: 'Wishlist', icon: Heart },
+    { name: 'Live Classes', icon: Video },
+    { name: 'Messages', icon: MessageCircle, badge: 3 },
+    { name: 'Notifications', icon: Bell, badge: 4 },
+    { name: 'Profile', icon: User },
+    { name: 'Settings', icon: Settings },
+  ];
+
+  const renderContent = () => {
+    switch(activeTab) {
+      case 'My Courses': return <MyCoursesView />;
+      case 'Wishlist': return <WishlistView />;
+      case 'Live Classes': return <LiveClassesView />;
+      case 'Messages': return <MessagesView />;
+      case 'Notifications': return <NotificationsView />;
+      case 'Profile': return <ProfileView />;
+      case 'Settings': return <SettingsView />;
+      default: return <DashboardHome setActiveTab={setActiveTab} />;
+    }
+  };
+
+  const activeNavItemStyle = "text-brand-600 dark:text-brand-400 shadow-[inset_4px_4px_8px_#d1d5db,inset_-4px_-4px_8px_#ffffff] dark:shadow-[inset_4px_4px_8px_#0b0c15,inset_-4px_-4px_8px_#1e293b] bg-gray-50 dark:bg-gray-900";
+  const normalNavItemStyle = "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:shadow-[4px_4px_8px_#d1d5db,-4px_-4px_8px_#ffffff] dark:hover:shadow-[4px_4px_8px_#0b0c15,-4px_-4px_8px_#1e293b]";
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-[72px] transition-colors duration-300">
@@ -72,9 +667,9 @@ const StudentDashboard: React.FC = () => {
           }`}
         >
           {/* User Profile Summary */}
-          <div className={`flex flex-col items-center text-center p-6 ${cardStyle}`}>
+          <div className={`flex flex-col items-center text-center p-6 ${cardStyle} cursor-pointer hover:scale-[1.02] transition-transform`} onClick={() => { setActiveTab('Profile'); setIsSidebarOpen(false); }}>
             <div className="relative mb-3">
-              <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 p-1 shadow-[inset_3px_3px_6px_rgba(0,0,0,0.2),inset_-3px_-3px_6px_rgba(255,255,255,0.1)]">
+              <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 p-1 shadow-inner">
                 <img 
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" 
                   alt="Student" 
@@ -114,17 +709,17 @@ const StudentDashboard: React.FC = () => {
           </nav>
 
           {/* Logout */}
-          <button className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-sm font-bold text-red-500 ${normalNavItemStyle}`}>
+          <Link to="/login" className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-sm font-bold text-red-500 ${normalNavItemStyle}`}>
             <LogOut size={18} />
             <span>Log Out</span>
-          </button>
+          </Link>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
+        <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full">
           {/* Header Mobile Toggle */}
           <div className="lg:hidden flex items-center justify-between mb-6">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{activeTab}</h1>
             <button 
               onClick={() => setIsSidebarOpen(true)}
               className={iconButtonStyle}
@@ -132,154 +727,24 @@ const StudentDashboard: React.FC = () => {
               <Menu size={20} />
             </button>
           </div>
-
-          {/* Dashboard Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-12 animate-fade-in-up">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                Welcome back, Jane! 👋
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base">
-                You've completed <span className="text-brand-500 font-bold">80%</span> of your weekly goal. Keep it up!
-              </p>
-            </div>
-            
+          
+          {/* Header Desktop - only Search/Bell */}
+          <div className="hidden lg:flex justify-end mb-8">
             <div className="flex items-center gap-4">
-               <div className={`hidden md:flex items-center px-4 py-2 rounded-xl text-gray-500 dark:text-gray-400 w-64 ${cardStyle} shadow-[inset_4px_4px_8px_#d1d1d1,inset_-4px_-4px_8px_#ffffff] dark:shadow-[inset_4px_4px_8px_#0b0c15,inset_-4px_-4px_8px_#1e293b]`}>
+               <div className={`hidden md:flex items-center px-4 py-2.5 rounded-xl text-gray-500 dark:text-gray-400 w-64 bg-gray-50 dark:bg-gray-900 shadow-[inset_2px_2px_4px_#d1d5db,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#0b0c15,inset_-2px_-2px_4px_#1e293b]`}>
                  <Search size={18} />
-                 <input type="text" placeholder="Search activity..." className="bg-transparent border-none outline-none ml-2 w-full text-sm" />
+                 <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none ml-2 w-full text-sm" />
                </div>
-               <button className={iconButtonStyle}>
+               <button onClick={() => setActiveTab('Notifications')} className={`${iconButtonStyle} relative`}>
                  <Bell size={20} />
+                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
                </button>
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12 animate-fade-in-up [animation-delay:100ms]">
-            {stats.map((stat, index) => (
-              <div key={index} className={`p-4 md:p-6 flex flex-col items-start gap-4 ${cardStyle}`}>
-                <div className={`p-3 rounded-xl bg-gray-100 dark:bg-gray-800 ${stat.color} shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b]`}>
-                  <stat.icon size={24} />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</h3>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{stat.title}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Content Area */}
+          {renderContent()}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Continue Learning - Takes up 2 cols */}
-            <div className="lg:col-span-2 space-y-6 animate-fade-in-up [animation-delay:200ms]">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Zap className="text-brand-500" size={20} fill="currentColor" /> Continue Learning
-                </h2>
-                <Link to="/courses" className="text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline">View All</Link>
-              </div>
-
-              {continueLearning.map((course) => (
-                <div key={course.id} className={`p-4 md:p-6 flex flex-col md:flex-row gap-6 items-center ${cardStyle} hover:scale-[1.01] hover:shadow-[8px_8px_16px_#d1d1d1,-8px_-8px_16px_#ffffff] dark:hover:shadow-[8px_8px_16px_#0b0c15,-8px_-8px_16px_#1e293b] transition-all cursor-pointer group`}>
-                   <div className="relative w-full md:w-48 aspect-video rounded-xl overflow-hidden shadow-inner">
-                     <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
-                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                       <PlayCircle size={32} className="text-white drop-shadow-lg" fill="rgba(255,255,255,0.2)" />
-                     </div>
-                   </div>
-                   
-                   <div className="flex-1 w-full">
-                     <div className="flex justify-between items-start mb-2">
-                       <div>
-                         <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">{course.title}</h3>
-                         <p className="text-xs text-gray-500 dark:text-gray-400">By {course.instructor}</p>
-                       </div>
-                       <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                         <MoreVertical size={20} />
-                       </button>
-                     </div>
-
-                     <div className="mb-4">
-                       <div className="flex justify-between text-xs font-bold mb-1.5">
-                         <span className="text-gray-500 dark:text-gray-400">Next: {course.nextLesson}</span>
-                         <span className="text-brand-600 dark:text-brand-400">{course.progress}%</span>
-                       </div>
-                       <div className="h-2.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
-                         <div 
-                           className="h-full bg-brand-500 rounded-full relative"
-                           style={{ width: `${course.progress}%` }}
-                         >
-                           <div className="absolute inset-0 bg-white/30 w-full animate-scroll"></div>
-                         </div>
-                       </div>
-                     </div>
-
-                     <button className="w-full md:w-auto px-6 py-2 rounded-lg bg-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors">
-                       Resume Lesson
-                     </button>
-                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Sidebar Widgets */}
-            <div className="space-y-8 animate-fade-in-up [animation-delay:300ms]">
-               {/* Quick Activity */}
-               <div className={`p-6 ${cardStyle}`}>
-                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
-                 <div className="space-y-4 relative">
-                   {/* Timeline Line */}
-                   <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
-                   
-                   {[
-                     { text: "Finished 'Intro to React'", time: "2h ago", icon: CheckCircle, color: "text-green-500" },
-                     { text: "Joined 'Design Systems' Live", time: "5h ago", icon: Video, color: "text-red-500" },
-                     { text: "Earned 'CSS Master' Badge", time: "1d ago", icon: Award, color: "text-yellow-500" },
-                     { text: "Posted in 'Help' Forum", time: "2d ago", icon: MessageCircle, color: "text-blue-500" },
-                   ].map((item, i) => (
-                     <div key={i} className="flex gap-4 relative">
-                       <div className={`w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 border-4 border-gray-50 dark:border-gray-900 z-10 flex items-center justify-center ${item.color}`}>
-                         <item.icon size={12} />
-                       </div>
-                       <div>
-                         <p className="text-sm font-bold text-gray-700 dark:text-gray-200">{item.text}</p>
-                         <p className="text-xs text-gray-400">{item.time}</p>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-               </div>
-
-               {/* Upcoming Live Class */}
-               <div className={`p-6 ${cardStyle} relative overflow-hidden group`}>
-                  <div className="absolute top-0 right-0 p-3">
-                    <span className="flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                    </span>
-                  </div>
-                  
-                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 text-red-500 rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                    <Video size={24} />
-                  </div>
-                  
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">Weekly Design Review</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Starts in 35 minutes</p>
-                  
-                  <div className="flex -space-x-2 mb-6">
-                    {[1,2,3,4].map(i => (
-                      <img key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800" src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
-                    ))}
-                    <div className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-600 dark:text-gray-300">+42</div>
-                  </div>
-
-                  <button className="w-full py-2.5 rounded-xl border-2 border-red-500 text-red-500 font-bold text-sm hover:bg-red-500 hover:text-white transition-all">
-                    Join Session
-                  </button>
-               </div>
-            </div>
-          </div>
         </main>
       </div>
     </div>
