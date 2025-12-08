@@ -42,8 +42,6 @@ const Home: React.FC = () => {
       
       <ValueProps />
       
-      {/* Benefits section removed as requested */}
-
       <CourseSection 
         title="Most Studied" 
         subtitle="Join thousands of students learning these trending skills."

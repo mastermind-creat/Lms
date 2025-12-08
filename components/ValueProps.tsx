@@ -10,7 +10,7 @@ const ValueProps: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
           
-          {/* Left Content */}
+          {/* Left Content - Directly on Section Background */}
           <div className="w-full md:w-1/2">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest mb-6 border border-brand-200 dark:border-brand-800">
               <Zap size={14} fill="currentColor" /> Why ElimuTech?
@@ -38,19 +38,19 @@ const ValueProps: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Visual */}
+          {/* Right Visual - Minimalist Neumorphic Icon */}
           <div className="w-full md:w-1/2 flex justify-center items-center">
             <div className="relative w-full max-w-sm aspect-square">
                {/* Center Icon with Neumorphic effect */}
-               <div className="absolute inset-0 m-auto w-48 h-48 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center shadow-[20px_20px_60px_#bebebe,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0f172a,-20px_-20px_60px_#1e293b] animate-float transition-colors duration-300">
+               <div className="absolute inset-0 m-auto w-48 h-48 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center shadow-[20px_20px_60px_#d1d1d1,-20px_-20px_60px_#ffffff] dark:shadow-[20px_20px_60px_#0f172a,-20px_-20px_60px_#1e293b] animate-float transition-colors duration-300">
                  <img src="/icon.png" alt="Icon" className="w-24 h-24 object-contain" />
                </div>
                
                {/* Orbiting Elements */}
-               <div className="absolute top-0 right-10 w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#bebebe,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:0.5s] border border-gray-200 dark:border-gray-700">
+               <div className="absolute top-0 right-10 w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:0.5s] border border-gray-100 dark:border-gray-700">
                   <span className="text-2xl">🚀</span>
                </div>
-               <div className="absolute bottom-10 left-0 w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#bebebe,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:1s] border border-gray-200 dark:border-gray-700">
+               <div className="absolute bottom-10 left-0 w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-[5px_5px_10px_#d1d1d1,-5px_-5px_10px_#ffffff] dark:shadow-[5px_5px_10px_#0b0c15,-5px_-5px_10px_#1e293b] flex items-center justify-center animate-bounce [animation-delay:1s] border border-gray-100 dark:border-gray-700">
                   <span className="text-2xl">🎓</span>
                </div>
                <div className="absolute bottom-0 right-0 w-20 h-20 bg-brand-600 rounded-2xl shadow-lg flex items-center justify-center animate-bounce text-white font-bold">
