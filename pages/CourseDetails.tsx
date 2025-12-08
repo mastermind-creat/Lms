@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight, X, Mail } from 'lucide-react';
+import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight, X, Mail, Smartphone, CreditCard, Globe, Check } from 'lucide-react';
 import { courses } from '../data/courses';
 
 const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const course = courses.find(c => c.id === Number(id));
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  
+  // Payment States
+  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa');
   const [guestEmail, setGuestEmail] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [processingState, setProcessingState] = useState<'idle' | 'processing' | 'paypal-redirect' | 'success'>('idle');
+  
   const navigate = useNavigate();
 
   // Reset scroll on load
@@ -18,19 +23,36 @@ const CourseDetails: React.FC = () => {
 
   const handleEnrollClick = () => {
     // In a real app, check if logged in. If not, show modal.
-    // For this demo, we assume user is NOT logged in to show the Guest feature.
     setShowCheckoutModal(true);
   };
 
   const handleGuestCheckout = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsProcessing(true);
-    // Simulate checkout processing
-    setTimeout(() => {
-        setIsProcessing(false);
-        setShowCheckoutModal(false);
-        alert(`Guest checkout initiated for ${course?.title}. Receipt will be sent to ${guestEmail}`);
-    }, 2000);
+    
+    if (paymentMethod === 'card') {
+        // Simulate PayPal Redirect
+        setProcessingState('paypal-redirect');
+        setTimeout(() => {
+            setProcessingState('processing'); // Back from PayPal, processing final order
+            setTimeout(() => {
+                setProcessingState('success');
+            }, 2000);
+        }, 2000);
+    } else {
+        // M-PESA STK Push simulation
+        setProcessingState('processing');
+        setTimeout(() => {
+            setProcessingState('success');
+        }, 3000);
+    }
+  };
+
+  const closeAndReset = () => {
+    setShowCheckoutModal(false);
+    setProcessingState('idle');
+    setPaymentMethod('mpesa');
+    setGuestEmail('');
+    setPhoneNumber('');
   };
 
   if (!course) {
@@ -196,72 +218,151 @@ const CourseDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Guest Checkout Modal */}
+      {/* Checkout Modal */}
       {showCheckoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowCheckoutModal(false)}></div>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeAndReset}></div>
           <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Start Learning</h3>
-              <button onClick={() => setShowCheckoutModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
             
-            <div className="p-6 space-y-6">
-              <div className="bg-brand-50 dark:bg-brand-900/20 p-4 rounded-xl flex gap-4 items-center">
-                <img src={course.image} alt="" className="w-16 h-16 rounded-lg object-cover" />
-                <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white text-sm">{course.title}</h4>
-                  <p className="text-brand-600 font-bold">{course.price}</p>
+            {/* Success State */}
+            {processingState === 'success' ? (
+              <div className="p-8 flex flex-col items-center text-center animate-fade-in">
+                <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 text-green-500 rounded-full flex items-center justify-center mb-6">
+                  <Check size={40} strokeWidth={3} />
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-3">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Payment Successful!</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-8">
+                  You are now enrolled in <strong>{course.title}</strong>. A receipt has been sent to your email.
+                </p>
                 <button 
-                  onClick={() => navigate('/login')}
-                  className="w-full py-3 rounded-xl bg-gray-100 dark:bg-gray-800 font-bold text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  onClick={closeAndReset}
+                  className="w-full py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 transition-colors"
                 >
-                  Log In to Account
+                  Start Learning
                 </button>
-                <div className="relative flex items-center py-2">
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
-                  <span className="flex-shrink-0 mx-4 text-gray-400 text-xs">OR CONTINUE AS GUEST</span>
-                  <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+            ) : processingState === 'paypal-redirect' ? (
+              /* PayPal Loading State */
+              <div className="p-8 flex flex-col items-center text-center animate-fade-in">
+                <div className="w-16 h-16 mb-6 relative">
+                   <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+                   <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Redirecting to PayPal...</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Please do not close this window.</p>
+              </div>
+            ) : (
+              /* Standard Form */
+              <>
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Secure Checkout</h3>
+                  <button onClick={closeAndReset} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                    <X size={20} className="text-gray-500" />
+                  </button>
                 </div>
                 
-                <form onSubmit={handleGuestCheckout} className="space-y-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Email for Receipt</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                      <input 
-                        type="email" 
-                        required
-                        value={guestEmail}
-                        onChange={(e) => setGuestEmail(e.target.value)}
-                        placeholder="john@example.com"
-                        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500"
-                      />
+                <div className="p-6 space-y-6">
+                  <div className="bg-brand-50 dark:bg-brand-900/20 p-4 rounded-xl flex gap-4 items-center">
+                    <img src={course.image} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                    <div>
+                      <h4 className="font-bold text-gray-900 dark:text-white text-sm line-clamp-1">{course.title}</h4>
+                      <p className="text-brand-600 font-bold">{course.price}</p>
                     </div>
                   </div>
-                  <button 
-                    type="submit"
-                    disabled={isProcessing}
-                    className="w-full py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
-                  >
-                     {isProcessing ? (
-                       <>
-                        <div className="loader w-4 h-4 border-white/30 border-t-white"></div>
-                        <span>Processing...</span>
-                       </>
-                     ) : (
-                       <>Proceed to Payment <ArrowRight size={16} /></>
-                     )}
-                  </button>
-                </form>
-              </div>
-            </div>
+
+                  <div className="flex flex-col gap-4">
+                    {/* Payment Method Selector */}
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('mpesa')}
+                        className={`flex-1 py-3 rounded-xl font-bold text-sm flex flex-col items-center gap-1 border transition-all ${
+                          paymentMethod === 'mpesa' 
+                            ? 'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-400' 
+                            : 'bg-transparent border-gray-200 dark:border-gray-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        <Smartphone size={20} />
+                        M-PESA
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('card')}
+                        className={`flex-1 py-3 rounded-xl font-bold text-sm flex flex-col items-center gap-1 border transition-all ${
+                          paymentMethod === 'card' 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-700 dark:text-blue-400' 
+                            : 'bg-transparent border-gray-200 dark:border-gray-700 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        <div className="flex gap-1">
+                           <span className="font-bold italic text-blue-800 dark:text-blue-400">Pay</span>
+                           <span className="font-bold italic text-sky-500">Pal</span>
+                        </div>
+                        <span className="text-[10px] font-normal">or Card</span>
+                      </button>
+                    </div>
+                    
+                    <form onSubmit={handleGuestCheckout} className="space-y-4">
+                      
+                      {paymentMethod === 'mpesa' ? (
+                        <div className="animate-fade-in">
+                          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">M-PESA Phone Number</label>
+                          <div className="relative">
+                            <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500" size={16} />
+                            <input 
+                              type="tel" 
+                              required
+                              value={phoneNumber}
+                              onChange={(e) => setPhoneNumber(e.target.value)}
+                              placeholder="2547..."
+                              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-green-500 transition-all"
+                            />
+                          </div>
+                          <p className="text-[10px] text-gray-400 mt-1 ml-1">You will receive an STK prompt on your phone.</p>
+                        </div>
+                      ) : (
+                        <div className="animate-fade-in">
+                          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Email for Receipt</label>
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={16} />
+                            <input 
+                              type="email" 
+                              required
+                              value={guestEmail}
+                              onChange={(e) => setGuestEmail(e.target.value)}
+                              placeholder="john@example.com"
+                              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <button 
+                        type="submit"
+                        disabled={processingState !== 'idle'}
+                        className={`w-full py-3 rounded-xl text-white font-bold transition-all flex items-center justify-center gap-2 ${
+                          paymentMethod === 'mpesa' 
+                            ? 'bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/20' 
+                            : 'bg-[#0070BA] hover:bg-[#003087] shadow-lg shadow-blue-500/20'
+                        }`}
+                      >
+                         {processingState === 'processing' ? (
+                           <>
+                            <div className="loader w-4 h-4 border-white/30 border-t-white"></div>
+                            <span>Processing...</span>
+                           </>
+                         ) : (
+                           <>
+                            {paymentMethod === 'mpesa' ? 'Pay Now' : 'Pay with PayPal'} 
+                            <ArrowRight size={16} />
+                           </>
+                         )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

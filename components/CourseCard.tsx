@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { Star, ShoppingCart, Heart, Check } from 'lucide-react';
 import { Course } from '../data/courses';
 
 interface CourseCardProps {
@@ -8,10 +8,26 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const [inCart, setInCart] = useState(false);
+  const [inWishlist, setInWishlist] = useState(false);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to course details
+    e.stopPropagation();
+    setInCart(!inCart);
+    // In a real app, dispatch to Redux/Context here
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setInWishlist(!inWishlist);
+  };
+
   return (
     <Link 
       to={`/courses/${course.id}`} 
-      className="group flex flex-col w-full h-full bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors p-1"
+      className="group flex flex-col w-full h-full bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors p-1 relative"
     >
       {/* Image */}
       <div className="relative aspect-video w-full overflow-hidden border border-gray-200 dark:border-gray-700 rounded-sm mb-2">
@@ -25,6 +41,32 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
              Bestseller
            </div>
         )}
+        
+        {/* Overlay Actions */}
+        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+           <button 
+             onClick={handleToggleWishlist}
+             className={`p-2 rounded-full shadow-md transition-colors ${
+               inWishlist 
+                 ? 'bg-red-500 text-white' 
+                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+             }`}
+             title="Add to Wishlist"
+           >
+             <Heart size={16} fill={inWishlist ? "currentColor" : "none"} />
+           </button>
+           <button 
+             onClick={handleAddToCart}
+             className={`p-2 rounded-full shadow-md transition-colors ${
+               inCart 
+                 ? 'bg-green-500 text-white' 
+                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+             }`}
+             title="Add to Cart"
+           >
+             {inCart ? <Check size={16} /> : <ShoppingCart size={16} />}
+           </button>
+        </div>
       </div>
 
       {/* Content */}
