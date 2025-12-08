@@ -4,7 +4,8 @@ import {
   Bell, User, Settings, Menu, LogOut, CheckCircle, 
   Clock, Award, PlayCircle, MoreVertical, Search, Zap,
   Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
-  Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, Edit3, Save, X, Lock
+  Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
+  Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -170,6 +171,179 @@ const DashboardHome = ({ setActiveTab }: { setActiveTab: (tab: string) => void }
               </button>
            </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const AnalyticsView = () => {
+  // Mock Data for Charts
+  const learningData = [20, 45, 30, 60, 40, 75, 50]; // Mon-Sun
+  const maxVal = Math.max(...learningData);
+  const points = learningData.map((val, i) => `${(i / (learningData.length - 1)) * 100},${100 - (val / maxVal) * 80}`).join(" ");
+  
+  const skills = [
+    { name: "React", val: 80, color: "bg-blue-500" },
+    { name: "UI/UX", val: 65, color: "bg-purple-500" },
+    { name: "Python", val: 40, color: "bg-green-500" },
+    { name: "Fintech", val: 90, color: "bg-brand-500" }
+  ];
+
+  return (
+    <div className="animate-fade-in-up space-y-8">
+      <div className="flex justify-between items-end">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Analytics Overview</h1>
+         <div className="hidden md:flex gap-2">
+           <select className="bg-gray-50 dark:bg-gray-800 border-none rounded-xl text-xs font-bold px-4 py-2 text-gray-600 dark:text-gray-300 shadow-sm cursor-pointer outline-none">
+             <option>Last 7 Days</option>
+             <option>Last Month</option>
+             <option>Last Year</option>
+           </select>
+         </div>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <div className={`${cardStyle} p-6 flex flex-col`}>
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-600 rounded-xl">
+                 <Clock size={24} />
+              </div>
+              <span className="flex items-center text-green-500 text-xs font-bold gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
+                <TrendingUp size={12} /> +12%
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">24.5h</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Learning Time</p>
+         </div>
+
+         <div className={`${cardStyle} p-6 flex flex-col`}>
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-xl">
+                 <CheckCircle size={24} />
+              </div>
+              <span className="flex items-center text-green-500 text-xs font-bold gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
+                <TrendingUp size={12} /> +5%
+              </span>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">92%</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Avg. Quiz Score</p>
+         </div>
+
+         <div className={`${cardStyle} p-6 flex flex-col`}>
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-xl">
+                 <Award size={24} />
+              </div>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">6</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Certificates Earned</p>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Main Chart - Learning Activity */}
+        <div className={`${cardStyle} p-6 lg:col-span-2 flex flex-col`}>
+           <h3 className="font-bold text-gray-900 dark:text-white mb-6">Learning Activity</h3>
+           <div className="flex-1 min-h-[300px] w-full relative">
+             <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+               <defs>
+                 <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                   <stop offset="0%" stopColor="#F36F21" stopOpacity="0.3" />
+                   <stop offset="100%" stopColor="#F36F21" stopOpacity="0" />
+                 </linearGradient>
+               </defs>
+               
+               {/* Grid Lines */}
+               {[0, 25, 50, 75, 100].map(y => (
+                 <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="text-gray-400" />
+               ))}
+
+               {/* Area Path */}
+               <path 
+                 d={`M0,100 L0,${100 - (learningData[0] / maxVal) * 80} ${learningData.map((val, i) => `L${(i / (learningData.length - 1)) * 100},${100 - (val / maxVal) * 80}`).join(" ")} L100,100 Z`} 
+                 fill="url(#chartGradient)" 
+               />
+
+               {/* Line Path */}
+               <polyline 
+                 points={points} 
+                 fill="none" 
+                 stroke="#F36F21" 
+                 strokeWidth="1" 
+                 vectorEffect="non-scaling-stroke"
+                 strokeLinecap="round"
+                 strokeLinejoin="round"
+               />
+
+               {/* Points */}
+               {learningData.map((val, i) => (
+                 <circle 
+                    key={i}
+                    cx={(i / (learningData.length - 1)) * 100}
+                    cy={100 - (val / maxVal) * 80}
+                    r="1.5"
+                    className="fill-brand-500 stroke-white dark:stroke-gray-800 hover:scale-150 transition-transform origin-center cursor-pointer"
+                    strokeWidth="0.5"
+                    vectorEffect="non-scaling-stroke"
+                 />
+               ))}
+             </svg>
+             
+             {/* X-Axis Labels */}
+             <div className="flex justify-between mt-4 text-xs text-gray-400 font-medium">
+               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                 <span key={day}>{day}</span>
+               ))}
+             </div>
+           </div>
+        </div>
+
+        {/* Side Charts */}
+        <div className="space-y-8">
+           {/* Skills Distribution */}
+           <div className={`${cardStyle} p-6`}>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-6">Skill Proficiency</h3>
+              <div className="space-y-5">
+                 {skills.map(skill => (
+                   <div key={skill.name}>
+                     <div className="flex justify-between text-xs font-bold mb-2">
+                       <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                       <span className="text-gray-500">{skill.val}%</span>
+                     </div>
+                     <div className="h-2.5 w-full bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden shadow-inner">
+                        <div className={`h-full rounded-full ${skill.color}`} style={{ width: `${skill.val}%` }}></div>
+                     </div>
+                   </div>
+                 ))}
+              </div>
+           </div>
+
+           {/* Completion Donut */}
+           <div className={`${cardStyle} p-6 flex flex-col items-center`}>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-4 w-full text-left">Course Completion</h3>
+              <div className="relative w-40 h-40">
+                 <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="50%" cy="50%" r="45%" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-100 dark:text-gray-900" />
+                    <circle 
+                      cx="50%" cy="50%" r="45%" 
+                      stroke="#10B981" 
+                      strokeWidth="8" 
+                      fill="transparent" 
+                      strokeDasharray="283"
+                      strokeDashoffset={283 - (283 * 0.75)} 
+                      strokeLinecap="round"
+                    />
+                 </svg>
+                 <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">75%</span>
+                    <span className="text-[10px] text-gray-400 uppercase tracking-wider">Overall</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+
       </div>
     </div>
   );
@@ -645,6 +819,28 @@ const ProfileView = () => {
   );
 };
 
+// Helper component for Password Visibility Toggle
+const PasswordInputWithToggle = ({ placeholder }: { placeholder: string }) => {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+      <input 
+        type={show ? "text" : "password"} 
+        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-sm outline-none focus:ring-2 focus:ring-brand-500 transition-all text-gray-900 dark:text-white" 
+        placeholder={placeholder} 
+      />
+      <button 
+        type="button"
+        onClick={() => setShow(!show)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-500 transition-colors"
+      >
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+};
+
 const SettingsView = () => {
   const { theme, setTheme } = useTheme();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -718,24 +914,15 @@ const SettingsView = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Password</label>
-                   <div className="relative">
-                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
-                   </div>
+                   <PasswordInputWithToggle placeholder="••••••••" />
                 </div>
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">New Password</label>
-                   <div className="relative">
-                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
-                   </div>
+                   <PasswordInputWithToggle placeholder="••••••••" />
                 </div>
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm New Password</label>
-                   <div className="relative">
-                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                     <input type="password" className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="••••••••" />
-                   </div>
+                   <PasswordInputWithToggle placeholder="••••••••" />
                 </div>
               </div>
               <div className="flex gap-3 mt-8">
@@ -758,6 +945,7 @@ const StudentDashboard: React.FC = () => {
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
+    { name: 'Analytics', icon: BarChart2 },
     { name: 'My Courses', icon: BookOpen },
     { name: 'Wishlist', icon: Heart },
     { name: 'Live Classes', icon: Video },
@@ -769,6 +957,7 @@ const StudentDashboard: React.FC = () => {
 
   const renderContent = () => {
     switch(activeTab) {
+      case 'Analytics': return <AnalyticsView />;
       case 'My Courses': return <MyCoursesView />;
       case 'Wishlist': return <WishlistView />;
       case 'Live Classes': return <LiveClassesView />;
