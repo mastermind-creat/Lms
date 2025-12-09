@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   LayoutDashboard, BookOpen, Heart, Video, MessageCircle, 
   Bell, User, Settings, Menu, LogOut, CheckCircle, 
@@ -7,7 +7,7 @@ import {
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
   Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
   FileText, Youtube, Download, ExternalLink, CheckSquare, Square,
-  Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt
+  Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt, Printer, AlertTriangle
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -32,6 +32,104 @@ const Toast = ({ message, onClose }: { message: string, onClose: () => void }) =
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 animate-fade-in-up">
       <CheckCircle size={18} className="text-green-500" />
       <span className="font-bold text-sm">{message}</span>
+    </div>
+  );
+};
+
+const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClose: () => void, transaction: any }) => {
+  if (!isOpen || !transaction) return null;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:p-0">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm print:hidden" onClick={onClose}></div>
+      <div className="relative bg-white text-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-scale-up print:shadow-none print:w-full print:max-w-none print:rounded-none print:animate-none">
+        
+        {/* Invoice Header */}
+        <div className="bg-brand-600 text-white p-8 flex justify-between items-start print:bg-white print:text-black print:border-b print:border-gray-300">
+          <div>
+            <div className="flex items-center gap-2 mb-2 print:mb-4">
+              <img src="/logo.png" alt="Logo" className="h-8 w-auto brightness-0 invert print:filter-none print:invert-0" />
+              <span className="font-bold text-2xl tracking-tight">ElimuTech</span>
+            </div>
+            <p className="text-brand-100 text-sm print:text-gray-500">The Future of Learning</p>
+          </div>
+          <div className="text-right">
+            <h2 className="text-3xl font-bold opacity-50 print:opacity-100 print:text-gray-900">INVOICE</h2>
+            <p className="font-mono text-brand-100 print:text-gray-600">#{transaction.id}</p>
+          </div>
+        </div>
+
+        {/* Invoice Details */}
+        <div className="p-8">
+          <div className="flex flex-col md:flex-row justify-between gap-8 mb-12">
+            <div>
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Billed To</h3>
+              <p className="font-bold text-lg">Jane Doe</p>
+              <p className="text-gray-500 text-sm">jane.doe@student.elimutech.ke</p>
+              <p className="text-gray-500 text-sm">Nairobi, Kenya</p>
+            </div>
+            <div className="md:text-right">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Payment Details</h3>
+              <p className="text-sm"><span className="font-bold">Date:</span> {transaction.date}</p>
+              <p className="text-sm"><span className="font-bold">Method:</span> {transaction.method}</p>
+              <p className="text-sm"><span className="font-bold">Status:</span> <span className="text-green-600 font-bold">{transaction.status}</span></p>
+            </div>
+          </div>
+
+          {/* Line Items */}
+          <div className="border rounded-xl overflow-hidden mb-8">
+            <table className="w-full text-left">
+              <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                <tr>
+                  <th className="px-6 py-4">Description</th>
+                  <th className="px-6 py-4 text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <tr>
+                  <td className="px-6 py-4">
+                    <p className="font-bold text-gray-800">{transaction.course}</p>
+                    <p className="text-xs text-gray-500">Lifetime Access • Certificate Included</p>
+                  </td>
+                  <td className="px-6 py-4 text-right font-mono font-bold">KES {transaction.amount.toLocaleString()}</td>
+                </tr>
+              </tbody>
+              <tfoot className="bg-gray-50">
+                <tr>
+                  <td className="px-6 py-4 font-bold text-right text-gray-600">Total</td>
+                  <td className="px-6 py-4 text-right font-bold text-xl text-brand-600">KES {transaction.amount.toLocaleString()}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          {/* Footer Notes */}
+          <div className="text-center text-sm text-gray-500 mb-8">
+            <p>Thank you for choosing ElimuTech!</p>
+            <p className="text-xs mt-1">If you have any questions about this invoice, please contact support@elimutech.ke</p>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4 print:hidden">
+            <button 
+              onClick={handlePrint}
+              className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+            >
+              <Printer size={18} /> Print / Save PDF
+            </button>
+            <button 
+              onClick={onClose}
+              className="flex-1 py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -170,7 +268,8 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
 const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () => void }) => {
   const [activeModule, setActiveModule] = useState<number | null>(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  // Default to false, can be passed via props in real app
+  const [reviewSubmitted, setReviewSubmitted] = useState(course.reviewSubmitted || false); 
 
   // Mock Modules Data with Resources
   const modules = [
@@ -225,6 +324,25 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
         <ArrowLeft size={20} /> Back to Courses
       </button>
 
+      {/* Review Reminder Banner */}
+      {course.progress === 100 && !reviewSubmitted && (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 mb-6 rounded-r-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex gap-3">
+            <AlertTriangle className="text-yellow-600 dark:text-yellow-500 shrink-0" size={24} />
+            <div>
+              <h4 className="font-bold text-gray-900 dark:text-white text-sm">Review Pending</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300">You've completed this course! Please rate your experience to get your certificate.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => setShowReviewModal(true)}
+            className="whitespace-nowrap px-4 py-2 bg-yellow-500 text-white text-xs font-bold rounded-lg hover:bg-yellow-600 transition-colors shadow-sm"
+          >
+            Rate Now
+          </button>
+        </div>
+      )}
+
       {/* Course Header */}
       <div className={`${cardStyle} p-6 md:p-8 mb-8 relative overflow-hidden`}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
@@ -235,30 +353,32 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
           </div>
           
           <div className="flex-1">
-             <div className="flex items-start justify-between mb-4">
+             <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
                <div>
                  <span className="inline-block px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold mb-2">
                    {course.progress === 100 ? "Completed" : "In Progress"}
                  </span>
-                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{course.title}</h1>
+                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">{course.title}</h1>
                  <p className="text-gray-500 dark:text-gray-400 text-sm">Instructor: <span className="font-bold text-gray-900 dark:text-white">{course.instructor}</span></p>
                </div>
+               
+               {/* Actions - Now visible on mobile too */}
                {course.progress === 100 && (
-                 <div className="flex gap-2">
+                 <div className="flex flex-wrap gap-2">
                    {!reviewSubmitted ? (
                      <button 
                        onClick={() => setShowReviewModal(true)}
-                       className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform"
+                       className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform shadow-sm"
                      >
-                       <Star size={18} /> Leave Review
+                       <Star size={18} /> Review
                      </button>
                    ) : (
-                     <span className="hidden md:flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-500 rounded-xl font-bold text-sm">
+                     <span className="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-500 rounded-xl font-bold text-sm">
                        <CheckCircle size={18} /> Reviewed
                      </span>
                    )}
-                   <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform">
-                     <Award size={18} /> Get Certificate
+                   <button className="flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform shadow-sm">
+                     <Award size={18} /> Certificate
                    </button>
                  </div>
                )}
@@ -274,11 +394,11 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
                </div>
              </div>
              
-             <div className="mt-6 flex gap-3">
-               <button className={btnPrimary + " flex items-center gap-2"}>
+             <div className="mt-6 flex flex-col sm:flex-row gap-3">
+               <button className={btnPrimary + " flex items-center justify-center gap-2 w-full sm:w-auto"}>
                  <PlayCircle size={18} /> Continue Learning
                </button>
-               <button className="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-200">
+               <button className="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 text-gray-700 dark:text-gray-200 w-full sm:w-auto">
                  <MessageCircle size={18} /> Course Forum
                </button>
              </div>
@@ -734,6 +854,8 @@ const AnalyticsView = () => {
 };
 
 const PaymentsView = () => {
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+
   const transactions = [
     { id: "INV-001", course: "M-PESA Integration & API", date: "Oct 22, 2025", amount: 5000, method: "M-PESA", status: "Success" },
     { id: "INV-002", course: "Frontend Dev with React", date: "Sep 15, 2025", amount: 8500, method: "Card", status: "Success" },
@@ -821,9 +943,14 @@ const PaymentsView = () => {
                        </td>
                        <td className="px-6 py-4 text-right font-bold">KES {t.amount.toLocaleString()}</td>
                        <td className="px-6 py-4 text-right">
-                          <button className="text-brand-600 dark:text-brand-400 hover:text-brand-700 p-2 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-lg transition-colors">
-                             <Download size={18} />
-                          </button>
+                          {t.status === 'Success' && (
+                             <button 
+                               onClick={() => setSelectedInvoice(t)}
+                               className="text-brand-600 dark:text-brand-400 hover:text-brand-700 p-2 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-lg transition-colors"
+                             >
+                                <Download size={18} />
+                             </button>
+                          )}
                        </td>
                     </tr>
                   ))}
@@ -831,6 +958,12 @@ const PaymentsView = () => {
             </table>
          </div>
       </div>
+
+      <InvoiceModal 
+        isOpen={!!selectedInvoice} 
+        onClose={() => setSelectedInvoice(null)} 
+        transaction={selectedInvoice} 
+      />
     </div>
   );
 };
@@ -839,11 +972,11 @@ const MyCoursesView = ({ onCourseClick }: { onCourseClick: (course: any) => void
   const [filter, setFilter] = useState<'in-progress' | 'completed'>('in-progress');
 
   const myCourses = [
-    { ...courses[0], progress: 65, totalLessons: 24, completedLessons: 15 },
-    { ...courses[2], progress: 32, totalLessons: 40, completedLessons: 12 },
-    { ...courses[5], progress: 10, totalLessons: 18, completedLessons: 2 },
-    { ...courses[7], progress: 100, totalLessons: 12, completedLessons: 12 },
-    { ...courses[3], progress: 100, totalLessons: 15, completedLessons: 15 }, // Mock completed course
+    { ...courses[0], progress: 65, totalLessons: 24, completedLessons: 15, reviewSubmitted: false },
+    { ...courses[2], progress: 32, totalLessons: 40, completedLessons: 12, reviewSubmitted: false },
+    { ...courses[5], progress: 10, totalLessons: 18, completedLessons: 2, reviewSubmitted: false },
+    { ...courses[7], progress: 100, totalLessons: 12, completedLessons: 12, reviewSubmitted: false }, // Pending Review
+    { ...courses[3], progress: 100, totalLessons: 15, completedLessons: 15, reviewSubmitted: true }, // Reviewed
   ];
 
   const filteredCourses = myCourses.filter(course => 
@@ -882,6 +1015,14 @@ const MyCoursesView = ({ onCourseClick }: { onCourseClick: (course: any) => void
             >
               <div className="relative aspect-video">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                
+                {/* Pending Review Badge */}
+                {course.progress === 100 && !course.reviewSubmitted && (
+                  <div className="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-md flex items-center gap-1 animate-pulse">
+                    <AlertTriangle size={12} /> Review Pending
+                  </div>
+                )}
+
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                    <button className="bg-white/20 backdrop-blur-md border border-white/50 text-white rounded-full p-3 hover:scale-110 transition-transform">
                       {course.progress === 100 ? <Award size={32} /> : <PlayCircle size={32} />}
