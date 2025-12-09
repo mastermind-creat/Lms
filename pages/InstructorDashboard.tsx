@@ -6,7 +6,7 @@ import {
   TrendingUp, CreditCard, ChevronRight, Upload, X, 
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
   MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
-  Youtube, Link as LinkIcon, File, Eye
+  Youtube, Link as LinkIcon, File, Eye, Filter, Clock
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -20,15 +20,17 @@ const inputStyle = "w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 da
 
 // --- Mock Data ---
 const initialCourses = [
-  { id: 1, title: "Advanced React Patterns", students: 124, price: 6000, status: "Published", rating: 4.8 },
-  { id: 2, title: "Python for Data Science", students: 85, price: 8000, status: "Draft", rating: 0 },
-  { id: 3, title: "UI/UX Principles", students: 210, price: 5000, status: "Published", rating: 4.9 },
+  { id: 1, title: "Advanced React Patterns", students: 124, price: 6000, status: "Published", rating: 4.8, image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=200&q=80" },
+  { id: 2, title: "Python for Data Science", students: 85, price: 8000, status: "Draft", rating: 0, image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=200&q=80" },
+  { id: 3, title: "UI/UX Principles", students: 210, price: 5000, status: "Published", rating: 4.9, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=200&q=80" },
 ];
 
 const initialStudents = [
   { id: 1, name: "Jane Doe", course: "Advanced React Patterns", progress: 65, grade: "A" },
   { id: 2, name: "John Smith", course: "UI/UX Principles", progress: 90, grade: "A+" },
   { id: 3, name: "Alice Johnson", course: "Advanced React Patterns", progress: 15, grade: "-" },
+  { id: 4, name: "Robert Mugo", course: "Python for Data Science", progress: 45, grade: "B" },
+  { id: 5, name: "Sarah Hassan", course: "UI/UX Principles", progress: 100, grade: "A" },
 ];
 
 // --- Sub-Components ---
@@ -561,9 +563,18 @@ const EarningsView = () => {
 const LiveClassManager = () => {
   const [topic, setTopic] = useState("");
   const [date, setDate] = useState("");
+  const [activeFilter, setActiveFilter] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  
+  // Use dates relative to now to demonstrate filtering
+  const now = Date.now();
+  const oneDay = 24 * 60 * 60 * 1000;
+  const thirtyMins = 30 * 60 * 1000;
+
   const [classes, setClasses] = useState([
-    { id: 1, topic: "Weekly Design Review", date: "2025-10-25T10:00", link: "https://meet.jit.si/ElimuTech-Review" },
-    { id: 2, topic: "React Q&A Session", date: "2025-10-28T14:00", link: "https://meet.jit.si/ElimuTech-React" }
+    { id: 1, topic: "Weekly Design Review", date: new Date(now + oneDay).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Review" },
+    { id: 2, topic: "React Q&A Session", date: new Date(now - thirtyMins).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-React" },
+    { id: 3, topic: "Intro to Figma", date: new Date(now - oneDay * 2).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Figma" },
+    { id: 4, topic: "Cybersecurity Basics", date: new Date(now + oneDay * 3).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Cyber" }
   ]);
 
   const scheduleClass = () => {
@@ -580,9 +591,39 @@ const LiveClassManager = () => {
     setDate("");
   };
 
+  const getStatus = (dateStr: string) => {
+    const classTime = new Date(dateStr).getTime();
+    const currentTime = Date.now();
+    const duration = 60 * 60 * 1000; // Assume 1 hour class duration
+    
+    if (classTime > currentTime) return 'upcoming';
+    if (classTime <= currentTime && classTime + duration > currentTime) return 'ongoing';
+    return 'completed';
+  };
+
+  const filteredClasses = classes.filter(c => getStatus(c.date) === activeFilter);
+
   return (
     <div className="animate-fade-in-up">
-       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Live Classes</h1>
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Live Classes</h1>
+          
+          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+            {(['upcoming', 'ongoing', 'completed'] as const).map(filter => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-4 py-2 rounded-lg text-xs font-bold capitalize transition-all ${
+                  activeFilter === filter 
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
+       </div>
        
        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Schedule Form */}
@@ -615,26 +656,43 @@ const LiveClassManager = () => {
 
           {/* List */}
           <div className="lg:col-span-2 space-y-4">
-             {classes.map(cls => (
-               <div key={cls.id} className={`${cardStyle} p-6 flex flex-col md:flex-row justify-between items-center gap-4`}>
-                 <div>
-                   <h3 className="font-bold text-gray-900 dark:text-white text-lg">{cls.topic}</h3>
-                   <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                     <Calendar size={14} /> {new Date(cls.date).toLocaleString()}
-                   </p>
-                   <a href={cls.link} target="_blank" rel="noreferrer" className="text-brand-600 text-xs mt-1 block hover:underline truncate max-w-xs">{cls.link}</a>
-                 </div>
-                 <div className="flex gap-2">
-                   <a href={cls.link} target="_blank" rel="noreferrer" className={btnPrimary}>
-                     Start Class
-                   </a>
-                   <label className={btnSecondary + " cursor-pointer flex items-center gap-2"}>
-                     <Upload size={16} /> Upload Recording
-                     <input type="file" className="hidden" />
-                   </label>
-                 </div>
+             {filteredClasses.length === 0 ? (
+               <div className="text-center py-12 opacity-50">
+                 <Video size={48} className="mx-auto mb-2" />
+                 <p className="font-bold">No {activeFilter} classes found</p>
                </div>
-             ))}
+             ) : (
+               filteredClasses.map(cls => (
+                 <div key={cls.id} className={`${cardStyle} p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-l-4 ${activeFilter === 'ongoing' ? 'border-l-red-500' : 'border-l-transparent'}`}>
+                   <div>
+                     <div className="flex items-center gap-2 mb-1">
+                       {activeFilter === 'ongoing' && (
+                         <span className="flex h-2 w-2 relative">
+                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                           <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                         </span>
+                       )}
+                       <h3 className="font-bold text-gray-900 dark:text-white text-lg">{cls.topic}</h3>
+                     </div>
+                     <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                       <Calendar size={14} /> {new Date(cls.date).toLocaleString()}
+                     </p>
+                     <a href={cls.link} target="_blank" rel="noreferrer" className="text-brand-600 text-xs mt-1 block hover:underline truncate max-w-xs">{cls.link}</a>
+                   </div>
+                   <div className="flex gap-2">
+                     <a href={cls.link} target="_blank" rel="noreferrer" className={activeFilter === 'completed' ? btnSecondary : btnPrimary}>
+                       {activeFilter === 'completed' ? 'View Recording' : 'Start Class'}
+                     </a>
+                     {activeFilter === 'completed' && (
+                       <label className={btnSecondary + " cursor-pointer flex items-center gap-2 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 border border-brand-200 dark:border-brand-800"}>
+                         <Upload size={16} /> Upload Recording
+                         <input type="file" className="hidden" />
+                       </label>
+                     )}
+                   </div>
+                 </div>
+               ))
+             )}
           </div>
        </div>
     </div>
@@ -644,6 +702,7 @@ const LiveClassManager = () => {
 const InstructorDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState("All");
   const navigate = useNavigate();
 
   const menuItems = [
@@ -671,63 +730,144 @@ const InstructorDashboard: React.FC = () => {
       case 'My Courses':
         return (
           <div className="animate-fade-in-up">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">My Courses</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {initialCourses.map(course => (
-                <div key={course.id} className={`${cardStyle} p-5 flex flex-col group`}>
-                   <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-xl mb-4 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                      <span className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-bold ${course.status === 'Published' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'}`}>
-                        {course.status}
-                      </span>
-                   </div>
-                   <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{course.title}</h3>
-                   <p className="text-sm text-gray-500 mb-4">{course.students} Students Enrolled</p>
-                   <div className="mt-auto flex gap-2">
-                     <button className="flex-1 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Edit</button>
-                     <button className="flex-1 py-2 rounded-lg bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition-colors">Manage</button>
-                   </div>
-                </div>
-              ))}
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Manage Courses</h1>
+            <div className={`${cardStyle} overflow-hidden`}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                  <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+                    <tr>
+                      <th className="px-6 py-4">Course Info</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Students</th>
+                      <th className="px-6 py-4">Price</th>
+                      <th className="px-6 py-4">Rating</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                    {initialCourses.map((course) => (
+                      <tr key={course.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                             <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-200">
+                               <img src={course.image} alt="" className="w-full h-full object-cover" />
+                             </div>
+                             <span className="font-bold text-gray-900 dark:text-white">{course.title}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${course.status === 'Published' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-500' : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500'}`}>
+                            {course.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 flex items-center gap-2">
+                           <Users size={16} className="text-gray-400" /> {course.students}
+                        </td>
+                        <td className="px-6 py-4 font-bold text-brand-600 dark:text-brand-400">
+                           KES {course.price.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 flex items-center gap-1">
+                           <Star size={16} className="text-yellow-400 fill-current" /> {course.rating > 0 ? course.rating : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => setActiveTab('Create Course')}
+                              className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 rounded-lg transition-colors" title="Edit"
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors" title="Manage">
+                              <Settings size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         );
       case 'Students':
+        // Filter Students Logic
+        const filteredStudents = initialStudents.filter(s => 
+          selectedCourseFilter === "All" || s.course === selectedCourseFilter
+        );
+
         return (
           <div className="animate-fade-in-up">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Students</h1>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Manage Students</h1>
+              
+              <div className="flex items-center gap-3">
+                 <div className="flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                   <Filter size={16} className="text-gray-500" />
+                   <select 
+                     value={selectedCourseFilter}
+                     onChange={(e) => setSelectedCourseFilter(e.target.value)}
+                     className="bg-transparent border-none outline-none text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer"
+                   >
+                     <option value="All">All Courses</option>
+                     {initialCourses.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
+                   </select>
+                 </div>
+                 <button className="p-2 bg-brand-600 text-white rounded-xl shadow-md hover:bg-brand-700">
+                   <Download size={18} />
+                 </button>
+              </div>
+            </div>
+
             <div className={`${cardStyle} overflow-hidden`}>
-               <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                 <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
-                   <tr>
-                     <th className="px-6 py-4">Name</th>
-                     <th className="px-6 py-4">Course</th>
-                     <th className="px-6 py-4">Progress</th>
-                     <th className="px-6 py-4">Grade</th>
-                     <th className="px-6 py-4 text-right">Action</th>
-                   </tr>
-                 </thead>
-                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                   {initialStudents.map((s) => (
-                     <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                       <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{s.name}</td>
-                       <td className="px-6 py-4">{s.course}</td>
-                       <td className="px-6 py-4">
-                         <div className="flex items-center gap-2">
-                           <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                             <div className="h-full bg-brand-500" style={{ width: `${s.progress}%` }}></div>
-                           </div>
-                           <span className="text-xs">{s.progress}%</span>
-                         </div>
-                       </td>
-                       <td className="px-6 py-4 font-bold">{s.grade}</td>
-                       <td className="px-6 py-4 text-right">
-                         <button className="text-brand-600 font-bold hover:underline">Message</button>
-                       </td>
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                   <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+                     <tr>
+                       <th className="px-6 py-4">Name</th>
+                       <th className="px-6 py-4">Course Enrolled</th>
+                       <th className="px-6 py-4">Progress</th>
+                       <th className="px-6 py-4">Grade</th>
+                       <th className="px-6 py-4 text-right">Action</th>
                      </tr>
-                   ))}
-                 </tbody>
-               </table>
+                   </thead>
+                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                     {filteredStudents.length > 0 ? filteredStudents.map((s) => (
+                       <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                         <td className="px-6 py-4">
+                           <div className="flex items-center gap-3">
+                             <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/20 text-brand-600 flex items-center justify-center font-bold">
+                               {s.name.charAt(0)}
+                             </div>
+                             <span className="font-bold text-gray-900 dark:text-white">{s.name}</span>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4">{s.course}</td>
+                         <td className="px-6 py-4">
+                           <div className="flex items-center gap-2">
+                             <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                               <div className="h-full bg-brand-500" style={{ width: `${s.progress}%` }}></div>
+                             </div>
+                             <span className="text-xs">{s.progress}%</span>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4">
+                            <span className={`font-bold ${s.grade.startsWith('A') ? 'text-green-500' : 'text-gray-500'}`}>{s.grade}</span>
+                         </td>
+                         <td className="px-6 py-4 text-right">
+                           <button onClick={() => setActiveTab('Messages')} className="text-brand-600 font-bold hover:underline text-xs bg-brand-50 dark:bg-brand-900/10 px-3 py-1.5 rounded-lg">Message</button>
+                         </td>
+                       </tr>
+                     )) : (
+                       <tr>
+                         <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                           No students found for this filter.
+                         </td>
+                       </tr>
+                     )}
+                   </tbody>
+                 </table>
+               </div>
             </div>
           </div>
         );
