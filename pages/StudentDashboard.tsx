@@ -7,7 +7,7 @@ import {
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
   Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
   FileText, Youtube, Download, ExternalLink, CheckSquare, Square,
-  Star, ThumbsUp, ThumbsDown
+  Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -733,57 +733,192 @@ const AnalyticsView = () => {
   );
 };
 
+const PaymentsView = () => {
+  const transactions = [
+    { id: "INV-001", course: "M-PESA Integration & API", date: "Oct 22, 2025", amount: 5000, method: "M-PESA", status: "Success" },
+    { id: "INV-002", course: "Frontend Dev with React", date: "Sep 15, 2025", amount: 8500, method: "Card", status: "Success" },
+    { id: "INV-003", course: "Mobile App Dev with Flutter", date: "Aug 10, 2025", amount: 14000, method: "M-PESA", status: "Success" },
+    { id: "INV-004", course: "Cybersecurity Essentials", date: "Jul 05, 2025", amount: 9500, method: "PayPal", status: "Success" },
+    { id: "INV-005", course: "Python for Finance", date: "Jun 20, 2025", amount: 12000, method: "M-PESA", status: "Failed" },
+  ];
+
+  const totalSpent = transactions
+    .filter(t => t.status === "Success")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  return (
+    <div className="animate-fade-in-up space-y-8">
+      <div className="flex justify-between items-end">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Billing & Payments</h1>
+        <button className={btnPrimary + " flex items-center gap-2"}>
+          <Download size={18} /> Download All Invoices
+        </button>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className={`${cardStyle} p-6 flex items-center gap-4`}>
+           <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 flex items-center justify-center">
+             <DollarSign size={24} />
+           </div>
+           <div>
+             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Total Spent</p>
+             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">KES {totalSpent.toLocaleString()}</h3>
+           </div>
+        </div>
+
+        <div className={`${cardStyle} p-6 flex items-center gap-4`}>
+           <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center">
+             <BookOpen size={24} />
+           </div>
+           <div>
+             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Courses Purchased</p>
+             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{transactions.filter(t => t.status === 'Success').length}</h3>
+           </div>
+        </div>
+
+        <div className={`${cardStyle} p-6 flex items-center gap-4`}>
+           <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center">
+             <Receipt size={24} />
+           </div>
+           <div>
+             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Last Payment</p>
+             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Oct 22, 2025</h3>
+           </div>
+        </div>
+      </div>
+
+      {/* Transactions List */}
+      <div className={`${cardStyle} overflow-hidden`}>
+         <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white">Transaction History</h3>
+         </div>
+         <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+               <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+                  <tr>
+                    <th className="px-6 py-4">Course</th>
+                    <th className="px-6 py-4">Date</th>
+                    <th className="px-6 py-4">Method</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 text-right">Amount</th>
+                    <th className="px-6 py-4 text-right">Invoice</th>
+                  </tr>
+               </thead>
+               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {transactions.map((t) => (
+                    <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                       <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{t.course} <span className="block text-xs font-normal text-gray-400 md:hidden">{t.id}</span></td>
+                       <td className="px-6 py-4">{t.date}</td>
+                       <td className="px-6 py-4 flex items-center gap-2">
+                         {t.method === 'M-PESA' ? <Smartphone size={16} className="text-green-500" /> : <CreditCard size={16} className="text-blue-500" />}
+                         {t.method}
+                       </td>
+                       <td className="px-6 py-4">
+                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${t.status === 'Success' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-500' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-500'}`}>
+                           {t.status}
+                         </span>
+                       </td>
+                       <td className="px-6 py-4 text-right font-bold">KES {t.amount.toLocaleString()}</td>
+                       <td className="px-6 py-4 text-right">
+                          <button className="text-brand-600 dark:text-brand-400 hover:text-brand-700 p-2 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-lg transition-colors">
+                             <Download size={18} />
+                          </button>
+                       </td>
+                    </tr>
+                  ))}
+               </tbody>
+            </table>
+         </div>
+      </div>
+    </div>
+  );
+};
+
 const MyCoursesView = ({ onCourseClick }: { onCourseClick: (course: any) => void }) => {
+  const [filter, setFilter] = useState<'in-progress' | 'completed'>('in-progress');
+
   const myCourses = [
     { ...courses[0], progress: 65, totalLessons: 24, completedLessons: 15 },
     { ...courses[2], progress: 32, totalLessons: 40, completedLessons: 12 },
     { ...courses[5], progress: 10, totalLessons: 18, completedLessons: 2 },
     { ...courses[7], progress: 100, totalLessons: 12, completedLessons: 12 },
+    { ...courses[3], progress: 100, totalLessons: 15, completedLessons: 15 }, // Mock completed course
   ];
+
+  const filteredCourses = myCourses.filter(course => 
+    filter === 'in-progress' ? course.progress < 100 : course.progress === 100
+  );
 
   return (
     <div className="animate-fade-in-up">
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">My Courses</h1>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">My Courses</h1>
+         
+         {/* Toggle */}
+         <div className="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <button 
+              onClick={() => setFilter('in-progress')}
+              className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${filter === 'in-progress' ? 'bg-brand-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+            >
+              <Clock size={16} /> In Progress
+            </button>
+            <button 
+              onClick={() => setFilter('completed')}
+              className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${filter === 'completed' ? 'bg-green-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+            >
+              <CheckCircle size={16} /> Completed
+            </button>
+         </div>
+      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {myCourses.map((course) => (
-          <div 
-             key={course.id} 
-             onClick={() => onCourseClick(course)}
-             className={`${cardStyle} flex flex-col h-full overflow-hidden group cursor-pointer hover:border-brand-300 dark:hover:border-brand-700 hover:-translate-y-1 transition-all`}
-          >
-            <div className="relative aspect-video">
-              <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <button className="bg-white/20 backdrop-blur-md border border-white/50 text-white rounded-full p-3 hover:scale-110 transition-transform">
-                    <PlayCircle size={32} />
-                 </button>
+      {filteredCourses.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredCourses.map((course) => (
+            <div 
+               key={course.id} 
+               onClick={() => onCourseClick(course)}
+               className={`${cardStyle} flex flex-col h-full overflow-hidden group cursor-pointer hover:border-brand-300 dark:hover:border-brand-700 hover:-translate-y-1 transition-all`}
+            >
+              <div className="relative aspect-video">
+                <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                   <button className="bg-white/20 backdrop-blur-md border border-white/50 text-white rounded-full p-3 hover:scale-110 transition-transform">
+                      {course.progress === 100 ? <Award size={32} /> : <PlayCircle size={32} />}
+                   </button>
+                </div>
+              </div>
+              
+              <div className="p-5 flex flex-col flex-1">
+                 <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-2">{course.title}</h3>
+                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">By {course.instructor}</p>
+                 
+                 <div className="mt-auto">
+                   <div className="flex justify-between text-xs font-bold mb-2">
+                      <span className="text-gray-500 dark:text-gray-400">{course.completedLessons}/{course.totalLessons} Lessons</span>
+                      <span className={course.progress === 100 ? "text-green-500" : "text-brand-500"}>{course.progress}%</span>
+                   </div>
+                   <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${course.progress === 100 ? 'bg-green-100 text-green-500' : 'bg-brand-500'}`} style={{ width: `${course.progress}%` }}></div>
+                   </div>
+                 </div>
+                 
+                 {course.progress === 100 && (
+                   <button className="mt-4 w-full py-2 border border-brand-200 dark:border-brand-900 text-brand-600 dark:text-brand-400 text-xs font-bold rounded-lg hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors flex items-center justify-center gap-2">
+                     <Award size={14} /> Download Certificate
+                   </button>
+                 )}
               </div>
             </div>
-            
-            <div className="p-5 flex flex-col flex-1">
-               <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-2">{course.title}</h3>
-               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">By {course.instructor}</p>
-               
-               <div className="mt-auto">
-                 <div className="flex justify-between text-xs font-bold mb-2">
-                    <span className="text-gray-500 dark:text-gray-400">{course.completedLessons}/{course.totalLessons} Lessons</span>
-                    <span className={course.progress === 100 ? "text-green-500" : "text-brand-500"}>{course.progress}%</span>
-                 </div>
-                 <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${course.progress === 100 ? 'bg-green-100 text-green-500' : 'bg-brand-500'}`} style={{ width: `${course.progress}%` }}></div>
-                 </div>
-               </div>
-               
-               {course.progress === 100 && (
-                 <button className="mt-4 w-full py-2 border border-brand-200 dark:border-brand-900 text-brand-600 dark:text-brand-400 text-xs font-bold rounded-lg hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors flex items-center justify-center gap-2">
-                   <Award size={14} /> Download Certificate
-                 </button>
-               )}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+          <BookOpen size={48} className="mb-4 text-gray-400" />
+          <p className="text-xl font-bold">No courses found in this category</p>
+          <button className="mt-4 text-brand-600 font-bold hover:underline">Browse Catalog</button>
+        </div>
+      )}
     </div>
   );
 };
@@ -1480,6 +1615,7 @@ const StudentDashboard: React.FC = () => {
     { name: 'Live Classes', icon: Video },
     { name: 'Messages', icon: MessageCircle, badge: 3 },
     { name: 'Notifications', icon: Bell, badge: 4 },
+    { name: 'Payments', icon: CreditCard },
     { name: 'Profile', icon: User },
     { name: 'Settings', icon: Settings },
   ];
@@ -1497,6 +1633,7 @@ const StudentDashboard: React.FC = () => {
       case 'Live Classes': return <LiveClassesView openJitsi={openJitsi} />;
       case 'Messages': return <MessagesView />;
       case 'Notifications': return <NotificationsView showToast={showToast} />;
+      case 'Payments': return <PaymentsView />;
       case 'Profile': return <ProfileView />;
       case 'Settings': return <SettingsView showToast={showToast} />;
       default: return <DashboardHome setActiveTab={setActiveTab} openJitsi={openJitsi} onCourseClick={handleCourseClick} />;
