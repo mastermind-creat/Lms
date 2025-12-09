@@ -7,7 +7,8 @@ import {
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
   Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
   FileText, Youtube, Download, ExternalLink, CheckSquare, Square,
-  Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt, Printer, AlertTriangle
+  Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt, Printer, AlertTriangle,
+  MoreHorizontal, Flag, Ban, Upload, Image as ImageIcon, File
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -29,7 +30,7 @@ const Toast = ({ message, onClose }: { message: string, onClose: () => void }) =
   }, [onClose]);
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 animate-fade-in-up">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-[60] flex items-center gap-3 animate-fade-in-up">
       <CheckCircle size={18} className="text-green-500" />
       <span className="font-bold text-sm">{message}</span>
     </div>
@@ -44,9 +45,40 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:p-0">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:p-0 print:block print:inset-auto print:absolute print:top-0 print:left-0 print:w-full print:h-full print:bg-white print:z-[9999]">
+      {/* Hide everything else when printing handled via CSS usually, but we can also use specific classes */}
+      <style>
+        {`
+          @media print {
+            body > *:not(.invoice-modal-root) {
+              display: none !important;
+            }
+            .invoice-modal-root {
+              display: flex !important;
+              position: absolute !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 100% !important;
+              align-items: flex-start !important;
+              padding: 0 !important;
+              background: white !important;
+            }
+            .invoice-content {
+              box-shadow: none !important;
+              width: 100% !important;
+              max-width: none !important;
+              border-radius: 0 !important;
+            }
+            .no-print {
+              display: none !important;
+            }
+          }
+        `}
+      </style>
+      
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm print:hidden" onClick={onClose}></div>
-      <div className="relative bg-white text-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-scale-up print:shadow-none print:w-full print:max-w-none print:rounded-none print:animate-none">
+      <div className="invoice-modal-root relative bg-white text-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-scale-up invoice-content">
         
         {/* Invoice Header */}
         <div className="bg-brand-600 text-white p-8 flex justify-between items-start print:bg-white print:text-black print:border-b print:border-gray-300">
@@ -74,7 +106,7 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
             </div>
             <div className="md:text-right">
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Payment Details</h3>
-              <p className="text-sm"><span className="font-bold">Date:</span> {transaction.date}</p>
+              <p className="text-sm"><span className="font-bold">Date:</span> {new Date(transaction.date).toLocaleDateString()}</p>
               <p className="text-sm"><span className="font-bold">Method:</span> {transaction.method}</p>
               <p className="text-sm"><span className="font-bold">Status:</span> <span className="text-green-600 font-bold">{transaction.status}</span></p>
             </div>
@@ -114,7 +146,7 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
           </div>
 
           {/* Actions */}
-          <div className="flex gap-4 print:hidden">
+          <div className="flex gap-4 no-print">
             <button 
               onClick={handlePrint}
               className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
@@ -126,6 +158,156 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
               className="flex-1 py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 transition-colors"
             >
               Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const InstructorProfileModal = ({ isOpen, onClose, instructor }: { isOpen: boolean, onClose: () => void, instructor: string }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <div className="flex justify-end">
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="flex flex-col items-center text-center -mt-4">
+          <div className="w-24 h-24 rounded-full p-1 bg-brand-100 dark:bg-brand-900/30 mb-4">
+            <img src={`https://i.pravatar.cc/150?u=${instructor}`} alt={instructor} className="w-full h-full rounded-full object-cover" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{instructor}</h3>
+          <p className="text-sm text-brand-600 dark:text-brand-400 font-bold mb-4">Senior Engineer @ Safaricom</p>
+          
+          <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 leading-relaxed">
+            Expert in FinTech integrations with over 10 years of experience building payment systems across Africa. Has mentored 500+ students on ElimuTech.
+          </p>
+
+          <div className="grid grid-cols-3 gap-4 w-full mb-6">
+            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+              <p className="font-bold text-lg text-gray-900 dark:text-white">12</p>
+              <p className="text-[10px] text-gray-500 uppercase">Courses</p>
+            </div>
+            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+              <p className="font-bold text-lg text-gray-900 dark:text-white">4.9</p>
+              <p className="text-[10px] text-gray-500 uppercase">Rating</p>
+            </div>
+            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+              <p className="font-bold text-lg text-gray-900 dark:text-white">2.5k</p>
+              <p className="text-[10px] text-gray-500 uppercase">Students</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3 w-full">
+            <button className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              View Courses
+            </button>
+            <button className="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition-colors">
+              Message
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CourseResourcesModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  if (!isOpen) return null;
+
+  const resources = [
+    { title: "Course Syllabus.pdf", size: "1.2 MB", type: "pdf" },
+    { title: "Project Starter Code.zip", size: "15 MB", type: "zip" },
+    { title: "Official API Documentation", type: "link" },
+    { title: "React Cheatsheet 2025.pdf", size: "0.5 MB", type: "pdf" },
+    { title: "Figma Design System", type: "link" }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <FileText className="text-brand-500" /> Course Resources
+          </h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {resources.map((res, idx) => (
+            <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-white dark:bg-gray-900 flex items-center justify-center shadow-sm text-gray-500">
+                  {res.type === 'pdf' ? <FileText size={20} className="text-red-500" /> : 
+                   res.type === 'zip' ? <Download size={20} className="text-blue-500" /> : 
+                   <ExternalLink size={20} className="text-green-500" />}
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 dark:text-white text-sm">{res.title}</p>
+                  {res.size && <p className="text-xs text-gray-500">{res.size}</p>}
+                </div>
+              </div>
+              <button className="p-2 text-gray-400 group-hover:text-brand-500 transition-colors">
+                <Download size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DeleteAccountModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: () => void }) => {
+  const [confirmText, setConfirmText] = useState("");
+  
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up border-2 border-red-100 dark:border-red-900/30">
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 text-red-600 rounded-full flex items-center justify-center mb-4">
+            <AlertTriangle size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Account?</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            This action is permanent and cannot be undone. All your progress, certificates, and data will be wiped.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+            Type "DELETE" to confirm
+          </label>
+          <input 
+            type="text" 
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-center font-bold tracking-widest outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all text-gray-900 dark:text-white"
+            placeholder="DELETE"
+          />
+          
+          <div className="flex gap-3 pt-2">
+            <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              Cancel
+            </button>
+            <button 
+              onClick={onConfirm}
+              disabled={confirmText !== "DELETE"}
+              className="flex-1 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-red-500/20"
+            >
+              Confirm Delete
             </button>
           </div>
         </div>
@@ -232,7 +414,7 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-[70] bg-black flex flex-col">
        {/* Toolbar */}
        <div className="p-4 bg-gray-900 flex justify-between items-center text-white border-b border-gray-800">
           <div className="flex items-center gap-2">
@@ -268,6 +450,8 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
 const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () => void }) => {
   const [activeModule, setActiveModule] = useState<number | null>(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showInstructorModal, setShowInstructorModal] = useState(false);
+  const [showResourcesModal, setShowResourcesModal] = useState(false);
   // Default to false, can be passed via props in real app
   const [reviewSubmitted, setReviewSubmitted] = useState(course.reviewSubmitted || false); 
 
@@ -486,7 +670,10 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
               <p className="text-sm text-gray-600 dark:text-gray-400 text-sm mb-4">
                 Expert in FinTech integrations with over 10 years of experience building payment systems across Africa.
               </p>
-              <button className="w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <button 
+                onClick={() => setShowInstructorModal(true)}
+                className="w-full py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
                 View Profile
               </button>
            </div>
@@ -494,8 +681,11 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
            <div className={`${cardStyle} p-6`}>
               <h3 className="font-bold text-gray-900 dark:text-white mb-4">Course Tools</h3>
               <div className="space-y-2">
-                 <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <span className="flex items-center gap-2"><FileText size={16} /> Course Notes</span>
+                 <button 
+                   onClick={() => setShowResourcesModal(true)}
+                   className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+                 >
+                    <span className="flex items-center gap-2"><FileText size={16} /> Course Notes / Resources</span>
                     <ExternalLink size={14} className="text-gray-400" />
                  </button>
                  <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -512,6 +702,17 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
         onClose={() => setShowReviewModal(false)}
         courseTitle={course.title}
         onSubmit={handleReviewSubmit}
+      />
+      
+      <InstructorProfileModal 
+        isOpen={showInstructorModal} 
+        onClose={() => setShowInstructorModal(false)} 
+        instructor={course.instructor} 
+      />
+
+      <CourseResourcesModal 
+        isOpen={showResourcesModal}
+        onClose={() => setShowResourcesModal(false)}
       />
     </div>
   );
@@ -707,7 +908,7 @@ const AnalyticsView = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          <div className={`${cardStyle} p-6 flex flex-col`}>
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-brand-50 dark:bg-brand-900/20 text-brand-600 rounded-xl">
@@ -742,6 +943,16 @@ const AnalyticsView = () => {
             </div>
             <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">6</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">Certificates Earned</p>
+         </div>
+
+         <div className={`${cardStyle} p-6 flex flex-col`}>
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl">
+                 <DollarSign size={24} />
+              </div>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">49k</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Total Expenses (KES)</p>
          </div>
       </div>
 
@@ -853,20 +1064,37 @@ const AnalyticsView = () => {
   );
 };
 
-const PaymentsView = () => {
+const PaymentsView = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
 
+  // Use a simulated 'now' for the refund window logic (assume current time is around when page loads)
+  const now = new Date().getTime();
+  const threeHoursAgo = now - (3 * 60 * 60 * 1000);
+
   const transactions = [
-    { id: "INV-001", course: "M-PESA Integration & API", date: "Oct 22, 2025", amount: 5000, method: "M-PESA", status: "Success" },
-    { id: "INV-002", course: "Frontend Dev with React", date: "Sep 15, 2025", amount: 8500, method: "Card", status: "Success" },
-    { id: "INV-003", course: "Mobile App Dev with Flutter", date: "Aug 10, 2025", amount: 14000, method: "M-PESA", status: "Success" },
-    { id: "INV-004", course: "Cybersecurity Essentials", date: "Jul 05, 2025", amount: 9500, method: "PayPal", status: "Success" },
-    { id: "INV-005", course: "Python for Finance", date: "Jun 20, 2025", amount: 12000, method: "M-PESA", status: "Failed" },
+    // This transaction is recent (within 6 hours)
+    { id: "INV-006", course: "Advanced React Patterns", date: new Date(threeHoursAgo).toISOString(), amount: 6000, method: "Card", status: "Success" },
+    { id: "INV-001", course: "M-PESA Integration & API", date: "2025-10-22T10:30:00", amount: 5000, method: "M-PESA", status: "Success" },
+    { id: "INV-002", course: "Frontend Dev with React", date: "2025-09-15T14:20:00", amount: 8500, method: "Card", status: "Success" },
+    { id: "INV-003", course: "Mobile App Dev with Flutter", date: "2025-08-10T09:00:00", amount: 14000, method: "M-PESA", status: "Success" },
+    { id: "INV-004", course: "Cybersecurity Essentials", date: "2025-07-05T11:45:00", amount: 9500, method: "PayPal", status: "Success" },
+    { id: "INV-005", course: "Python for Finance", date: "2025-06-20T16:10:00", amount: 12000, method: "M-PESA", status: "Failed" },
   ];
 
   const totalSpent = transactions
     .filter(t => t.status === "Success")
     .reduce((sum, t) => sum + t.amount, 0);
+
+  const canRefund = (dateStr: string) => {
+    const txTime = new Date(dateStr).getTime();
+    const sixHours = 6 * 60 * 60 * 1000;
+    return (new Date().getTime() - txTime) < sixHours;
+  };
+
+  const handleRefund = (id: string) => {
+    // In a real app, verify and process refund
+    showToast(`Refund requested for ${id}. You will be notified shortly.`);
+  };
 
   return (
     <div className="animate-fade-in-up space-y-8">
@@ -905,7 +1133,7 @@ const PaymentsView = () => {
            </div>
            <div>
              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Last Payment</p>
-             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Oct 22, 2025</h3>
+             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{new Date(transactions[0].date).toLocaleDateString()}</h3>
            </div>
         </div>
       </div>
@@ -924,14 +1152,14 @@ const PaymentsView = () => {
                     <th className="px-6 py-4">Method</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Amount</th>
-                    <th className="px-6 py-4 text-right">Invoice</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                </thead>
                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {transactions.map((t) => (
                     <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{t.course} <span className="block text-xs font-normal text-gray-400 md:hidden">{t.id}</span></td>
-                       <td className="px-6 py-4">{t.date}</td>
+                       <td className="px-6 py-4">{new Date(t.date).toLocaleDateString()}</td>
                        <td className="px-6 py-4 flex items-center gap-2">
                          {t.method === 'M-PESA' ? <Smartphone size={16} className="text-green-500" /> : <CreditCard size={16} className="text-blue-500" />}
                          {t.method}
@@ -942,14 +1170,26 @@ const PaymentsView = () => {
                          </span>
                        </td>
                        <td className="px-6 py-4 text-right font-bold">KES {t.amount.toLocaleString()}</td>
-                       <td className="px-6 py-4 text-right">
+                       <td className="px-6 py-4 text-right flex justify-end gap-2">
                           {t.status === 'Success' && (
-                             <button 
-                               onClick={() => setSelectedInvoice(t)}
-                               className="text-brand-600 dark:text-brand-400 hover:text-brand-700 p-2 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-lg transition-colors"
-                             >
-                                <Download size={18} />
-                             </button>
+                            <>
+                              <button 
+                                onClick={() => setSelectedInvoice(t)}
+                                className="text-brand-600 dark:text-brand-400 hover:text-brand-700 p-2 hover:bg-brand-50 dark:hover:bg-brand-900/10 rounded-lg transition-colors"
+                                title="Download Invoice"
+                              >
+                                  <Download size={18} />
+                              </button>
+                              {canRefund(t.date) && (
+                                <button
+                                  onClick={() => handleRefund(t.id)}
+                                  className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
+                                  title="Request Refund (Available for 6 hours)"
+                                >
+                                  <AlertTriangle size={18} />
+                                </button>
+                              )}
+                            </>
                           )}
                        </td>
                     </tr>
@@ -1091,7 +1331,7 @@ const WishlistView = () => {
   );
 };
 
-const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) => {
+const LiveClassesView = ({ openJitsi, addNotification }: { openJitsi: (room: string) => void, addNotification: (title: string, msg: string, type: string) => void }) => {
   const [viewMode, setViewMode] = useState<'upcoming' | 'past'>('upcoming');
 
   const upcomingSessions = [
@@ -1108,6 +1348,14 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
   ];
 
   const sessions = viewMode === 'upcoming' ? upcomingSessions : pastSessions;
+
+  const handleSetReminder = (session: any) => {
+    addNotification(
+      "Reminder Set", 
+      `Reminder set for ${session.title}. You will receive an SMS and Email 10 minutes before start.`,
+      "info"
+    );
+  };
 
   return (
     <div className="animate-fade-in-up">
@@ -1162,7 +1410,13 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
                 </div>
 
                 <button 
-                  onClick={() => session.status !== 'ended' ? openJitsi(session.title) : null}
+                  onClick={() => {
+                    if (session.status === 'live') {
+                      openJitsi(session.title);
+                    } else if (session.status === 'upcoming') {
+                      handleSetReminder(session);
+                    }
+                  }}
                   className={`${session.status === 'live' ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30' : session.status === 'ended' ? 'bg-white dark:bg-gray-800 border-2 border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/10' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white'} px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all active:scale-95 flex items-center gap-2`}
                 >
                   {session.status === 'live' ? 'Join Now' : session.status === 'ended' ? (
@@ -1181,7 +1435,10 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
 
 const MessagesView = () => {
   const [activeChat, setActiveChat] = useState(0);
-  const [showMobileChat, setShowMobileChat] = useState(false); // State to toggle view on mobile
+  const [showMobileChat, setShowMobileChat] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [showActions, setShowActions] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const myAvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
   
   const contacts = [
@@ -1190,10 +1447,62 @@ const MessagesView = () => {
     { id: 2, name: "Student Support", role: "Admin", online: true, lastMsg: "Your ticket #4291 is resolved.", time: "1d", img: 3 },
   ];
 
+  // Initial Message State (Mock DB)
+  const [chatHistory, setChatHistory] = useState<{ [key: number]: { text: string, isMe: boolean, type?: 'text' | 'image' | 'file', fileName?: string }[] }>({
+    0: [
+       { text: "Hello Jane! How is the API integration project coming along?", isMe: false, type: 'text' },
+       { text: "Hi Kevin! Making good progress. Just stuck on the STK push callback handling.", isMe: true, type: 'text' },
+       { text: "Great work on the assignment!", isMe: false, type: 'text' }
+    ],
+    1: [
+       { text: "Let's schedule a call.", isMe: false, type: 'text' }
+    ],
+    2: [
+       { text: "Your ticket #4291 is resolved.", isMe: false, type: 'text' }
+    ]
+  });
+
   const handleContactClick = (id: number) => {
     setActiveChat(id);
     setShowMobileChat(true);
+    setShowActions(false);
   };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+
+    const newMessage = { text: inputText, isMe: true, type: 'text' as const };
+    setChatHistory(prev => ({
+      ...prev,
+      [activeChat]: [...(prev[activeChat] || []), newMessage]
+    }));
+    setInputText("");
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isImage = file.type.startsWith('image/');
+    const newMessage = { 
+      text: isImage ? URL.createObjectURL(file) : "File Uploaded", 
+      isMe: true, 
+      type: isImage ? 'image' as const : 'file' as const,
+      fileName: file.name
+    };
+
+    setChatHistory(prev => ({
+      ...prev,
+      [activeChat]: [...(prev[activeChat] || []), newMessage]
+    }));
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const currentMessages = chatHistory[activeChat] || [];
 
   return (
     <div className={`h-[calc(100vh-140px)] ${cardStyle} flex overflow-hidden animate-fade-in-up`}>
@@ -1230,7 +1539,7 @@ const MessagesView = () => {
 
        {/* Chat Window */}
        <div className={`flex-1 flex-col bg-gray-50/50 dark:bg-gray-900/50 ${showMobileChat ? 'flex' : 'hidden md:flex'}`}>
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 relative z-20">
             <div className="flex items-center gap-3">
                <button onClick={() => setShowMobileChat(false)} className="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                  <ArrowLeft size={20} />
@@ -1241,55 +1550,96 @@ const MessagesView = () => {
                  <span className="text-xs text-brand-600 dark:text-brand-400 font-medium">{contacts[activeChat].role}</span>
                </div>
             </div>
-            <button className={iconButtonStyle}><MoreVertical size={18} /></button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowActions(!showActions)}
+                className={iconButtonStyle}
+              >
+                <MoreVertical size={18} />
+              </button>
+              {showActions && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 overflow-hidden animate-scale-up origin-top-right">
+                  <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                    <Trash2 size={16} /> Clear Chat
+                  </button>
+                  <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-red-500">
+                    <Ban size={16} /> Block User
+                  </button>
+                  <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                    <Flag size={16} /> Report
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex-1 p-6 overflow-y-auto space-y-4">
              <div className="flex justify-center"><span className="text-[10px] text-gray-400 uppercase tracking-widest">Today</span></div>
-             <div className="flex gap-3">
-                <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-8 h-8 rounded-full self-end" />
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-none shadow-sm max-w-sm text-sm text-gray-700 dark:text-gray-200">
-                  Hello Jane! How is the API integration project coming along?
+             
+             {currentMessages.map((msg, idx) => (
+                <div key={idx} className={`flex gap-3 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
+                  <img 
+                    src={msg.isMe ? myAvatarUrl : `https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} 
+                    alt="" 
+                    className="w-8 h-8 rounded-full self-end object-cover" 
+                  />
+                  <div className={`p-3 rounded-2xl shadow-sm max-w-sm text-sm overflow-hidden ${
+                    msg.isMe 
+                      ? 'bg-brand-600 text-white rounded-br-none' 
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-none'
+                  }`}>
+                    {msg.type === 'image' ? (
+                       <img src={msg.text} alt="Shared" className="max-w-full rounded-lg" />
+                    ) : msg.type === 'file' ? (
+                       <div className="flex items-center gap-2 bg-black/10 p-2 rounded-lg">
+                         <File size={20} />
+                         <span className="truncate">{msg.fileName}</span>
+                       </div>
+                    ) : (
+                       msg.text
+                    )}
+                  </div>
                 </div>
-             </div>
-             <div className="flex gap-3 flex-row-reverse">
-                <img src={myAvatarUrl} alt="Me" className="w-8 h-8 rounded-full self-end object-cover" />
-                <div className="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-md max-w-sm text-sm">
-                  Hi Kevin! Making good progress. Just stuck on the STK push callback handling.
-                </div>
-             </div>
-             <div className="flex gap-3">
-                <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-8 h-8 rounded-full self-end" />
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-2xl rounded-bl-none shadow-sm max-w-sm text-sm text-gray-700 dark:text-gray-200">
-                  {contacts[activeChat].lastMsg}
-                </div>
-             </div>
+             ))}
           </div>
 
-          <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+          <form onSubmit={handleSendMessage} className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
              <div className="flex gap-2">
-               <button className="p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"><Paperclip size={20} /></button>
+               <input 
+                 type="file" 
+                 ref={fileInputRef} 
+                 className="hidden" 
+                 onChange={handleFileUpload}
+               />
+               <button 
+                 type="button"
+                 onClick={triggerFileInput}
+                 className="p-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+               >
+                 <Paperclip size={20} />
+               </button>
                <div className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center px-4">
-                 <input type="text" placeholder="Type a message..." className="bg-transparent border-none outline-none w-full text-sm text-gray-900 dark:text-white" />
+                 <input 
+                    type="text" 
+                    placeholder="Type a message..." 
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    className="bg-transparent border-none outline-none w-full text-sm text-gray-900 dark:text-white" 
+                 />
                </div>
-               <button className="p-3 bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors"><Send size={20} /></button>
+               <button type="submit" className="p-3 bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors">
+                 <Send size={20} />
+               </button>
              </div>
-          </div>
+          </form>
        </div>
     </div>
   );
 };
 
-const NotificationsView = ({ showToast }: { showToast: (msg: string) => void }) => {
+const NotificationsView = ({ notifications, showToast, markAsRead }: { notifications: any[], showToast: (msg: string) => void, markAsRead: (id: number) => void }) => {
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [isMarkingRead, setIsMarkingRead] = useState(false);
-  
-  const notifications = [
-    { id: 1, title: "Assignment Graded", msg: "Your submission for 'React Hooks' has been graded. Score: 95%", details: "Excellent work on the custom hooks implementation. Your code structure is clean and reusable.", time: "2h ago", type: "success", read: false },
-    { id: 2, title: "Live Class Starting", msg: "Weekly Design Review starts in 30 minutes.", details: "Join us for a critique session of this week's UI challenges. Have your Figma links ready.", time: "30m ago", type: "info", read: false },
-    { id: 3, title: "New Course Available", msg: "Advanced Python for Finance is now live!", details: "Master algorithmic trading with our new comprehensive Python course.", time: "1d ago", type: "promo", read: true },
-    { id: 4, title: "Subscription Renewed", msg: "Your monthly subscription was successfully renewed.", details: "Receipt #INV-2025-001 available in settings.", time: "2d ago", type: "system", read: true },
-  ];
 
   const getIcon = (type: string) => {
     switch(type) {
@@ -1303,6 +1653,7 @@ const NotificationsView = ({ showToast }: { showToast: (msg: string) => void }) 
   const handleMarkAsRead = () => {
     setIsMarkingRead(true);
     setTimeout(() => {
+      if (selectedNotification) markAsRead(selectedNotification.id);
       setIsMarkingRead(false);
       setSelectedNotification(null);
       showToast("Notification marked as read");
@@ -1612,9 +1963,17 @@ const PasswordInputWithToggle = ({ placeholder }: { placeholder: string }) => {
 const SettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
   const { theme, setTheme } = useTheme();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleSaveSettings = () => {
     showToast("Settings saved successfully");
+  };
+
+  const handleDeleteAccount = () => {
+    // In real app, call API
+    setShowDeleteModal(false);
+    // Redirect or show success
+    alert("Account deleted.");
   };
 
   return (
@@ -1671,7 +2030,10 @@ const SettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
                </div>
                
                <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <button className="flex items-center gap-2 text-red-500 font-bold text-sm hover:text-red-600 transition-colors">
+                  <button 
+                    onClick={() => setShowDeleteModal(true)}
+                    className="flex items-center gap-2 text-red-500 font-bold text-sm hover:text-red-600 transition-colors"
+                  >
                     <Trash2 size={16} /> Delete Account
                   </button>
                </div>
@@ -1708,6 +2070,12 @@ const SettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
           </div>
         </div>
        )}
+
+       <DeleteAccountModal 
+         isOpen={showDeleteModal} 
+         onClose={() => setShowDeleteModal(false)} 
+         onConfirm={handleDeleteAccount} 
+       />
     </div>
   );
 };
@@ -1728,8 +2096,34 @@ const StudentDashboard: React.FC = () => {
   // State for Course Details View
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
+  // Notifications State lifted up so it can be modified by other views
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: "Assignment Graded", msg: "Your submission for 'React Hooks' has been graded. Score: 95%", details: "Excellent work on the custom hooks implementation. Your code structure is clean and reusable.", time: "2h ago", type: "success", read: false },
+    { id: 2, title: "Live Class Starting", msg: "Weekly Design Review starts in 30 minutes.", details: "Join us for a critique session of this week's UI challenges. Have your Figma links ready.", time: "30m ago", type: "info", read: false },
+    { id: 3, title: "New Course Available", msg: "Advanced Python for Finance is now live!", details: "Master algorithmic trading with our new comprehensive Python course.", time: "1d ago", type: "promo", read: true },
+    { id: 4, title: "Subscription Renewed", msg: "Your monthly subscription was successfully renewed.", details: "Receipt #INV-2025-001 available in settings.", time: "2d ago", type: "system", read: true },
+  ]);
+
   const showToast = (msg: string) => {
     setToastMsg(msg);
+  };
+
+  const addNotification = (title: string, msg: string, type: string) => {
+    const newNotif = {
+      id: Date.now(),
+      title,
+      msg,
+      details: msg,
+      time: "Just now",
+      type,
+      read: false
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+    showToast(msg);
+  };
+
+  const markNotificationAsRead = (id: number) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
   const openJitsi = (room: string) => {
@@ -1748,6 +2142,8 @@ const StudentDashboard: React.FC = () => {
     }
   }, [activeTab]);
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
     { name: 'Analytics', icon: BarChart2 },
@@ -1755,7 +2151,7 @@ const StudentDashboard: React.FC = () => {
     { name: 'Wishlist', icon: Heart },
     { name: 'Live Classes', icon: Video },
     { name: 'Messages', icon: MessageCircle, badge: 3 },
-    { name: 'Notifications', icon: Bell, badge: 4 },
+    { name: 'Notifications', icon: Bell, badge: unreadCount > 0 ? unreadCount : undefined },
     { name: 'Payments', icon: CreditCard },
     { name: 'Profile', icon: User },
     { name: 'Settings', icon: Settings },
@@ -1771,10 +2167,10 @@ const StudentDashboard: React.FC = () => {
       case 'Analytics': return <AnalyticsView />;
       case 'My Courses': return <MyCoursesView onCourseClick={handleCourseClick} />;
       case 'Wishlist': return <WishlistView />;
-      case 'Live Classes': return <LiveClassesView openJitsi={openJitsi} />;
+      case 'Live Classes': return <LiveClassesView openJitsi={openJitsi} addNotification={addNotification} />;
       case 'Messages': return <MessagesView />;
-      case 'Notifications': return <NotificationsView showToast={showToast} />;
-      case 'Payments': return <PaymentsView />;
+      case 'Notifications': return <NotificationsView notifications={notifications} showToast={showToast} markAsRead={markNotificationAsRead} />;
+      case 'Payments': return <PaymentsView showToast={showToast} />;
       case 'Profile': return <ProfileView />;
       case 'Settings': return <SettingsView showToast={showToast} />;
       default: return <DashboardHome setActiveTab={setActiveTab} openJitsi={openJitsi} onCourseClick={handleCourseClick} />;
@@ -1874,7 +2270,7 @@ const StudentDashboard: React.FC = () => {
                </div>
                <button onClick={() => setActiveTab('Notifications')} className={`${iconButtonStyle} relative`}>
                  <Bell size={20} />
-                 <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                 {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>}
                </button>
             </div>
           </div>
