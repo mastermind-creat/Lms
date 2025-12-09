@@ -6,7 +6,8 @@ import {
   Calendar, ChevronRight, Send, Camera, Mic, Paperclip,
   Trash2, Shield, Moon, Sun, Smartphone, Mail, Globe, MapPin, 
   Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
-  FileText, Youtube, Download, ExternalLink, CheckSquare, Square
+  FileText, Youtube, Download, ExternalLink, CheckSquare, Square,
+  Star, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -31,6 +32,98 @@ const Toast = ({ message, onClose }: { message: string, onClose: () => void }) =
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 animate-fade-in-up">
       <CheckCircle size={18} className="text-green-500" />
       <span className="font-bold text-sm">{message}</span>
+    </div>
+  );
+};
+
+const ReviewModal = ({ isOpen, onClose, courseTitle, onSubmit }: { isOpen: boolean, onClose: () => void, courseTitle: string, onSubmit: (data: any) => void }) => {
+  const [rating, setRating] = useState(0);
+  const [testimonial, setTestimonial] = useState("");
+  const [satisfaction, setSatisfaction] = useState<boolean | null>(null);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ rating, testimonial, satisfaction });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Rate Course</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          How was your experience with <span className="font-bold text-gray-900 dark:text-white">{courseTitle}</span>?
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Star Rating */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  className={`p-1 transition-transform hover:scale-110 ${rating >= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
+                >
+                  <Star size={32} fill={rating >= star ? "currentColor" : "none"} />
+                </button>
+              ))}
+            </div>
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tap to Rate</span>
+          </div>
+
+          {/* Satisfaction Toggle */}
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-center">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-3">Were the lessons satisfactory?</label>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setSatisfaction(true)}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition-all ${satisfaction === true ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 border-2 border-green-500' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-transparent'}`}
+              >
+                <ThumbsUp size={16} /> Yes
+              </button>
+              <button
+                type="button"
+                onClick={() => setSatisfaction(false)}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition-all ${satisfaction === false ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-2 border-red-500' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-2 border-transparent'}`}
+              >
+                <ThumbsDown size={16} /> No
+              </button>
+            </div>
+          </div>
+
+          {/* Testimonial */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Write a Review</label>
+            <textarea
+              rows={4}
+              value={testimonial}
+              onChange={(e) => setTestimonial(e.target.value)}
+              placeholder="Tell us what you liked or how we can improve..."
+              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 outline-none focus:ring-2 focus:ring-brand-500 text-sm text-gray-900 dark:text-white resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            disabled={rating === 0 || satisfaction === null}
+            className="w-full py-3 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+          >
+            Submit Review
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
@@ -76,6 +169,8 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
 
 const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () => void }) => {
   const [activeModule, setActiveModule] = useState<number | null>(0);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   // Mock Modules Data with Resources
   const modules = [
@@ -118,6 +213,12 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
     }
   ];
 
+  const handleReviewSubmit = (data: any) => {
+    console.log("Review Submitted:", data);
+    setReviewSubmitted(true);
+    // Here you would typically send data to backend
+  };
+
   return (
     <div className="animate-fade-in-up pb-12">
       <button onClick={onBack} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bold mb-6 transition-colors">
@@ -143,9 +244,23 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
                  <p className="text-gray-500 dark:text-gray-400 text-sm">Instructor: <span className="font-bold text-gray-900 dark:text-white">{course.instructor}</span></p>
                </div>
                {course.progress === 100 && (
-                 <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform">
-                   <Award size={18} /> Get Certificate
-                 </button>
+                 <div className="flex gap-2">
+                   {!reviewSubmitted ? (
+                     <button 
+                       onClick={() => setShowReviewModal(true)}
+                       className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform"
+                     >
+                       <Star size={18} /> Leave Review
+                     </button>
+                   ) : (
+                     <span className="hidden md:flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-500 rounded-xl font-bold text-sm">
+                       <CheckCircle size={18} /> Reviewed
+                     </span>
+                   )}
+                   <button className="hidden md:flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-500 rounded-xl font-bold text-sm hover:scale-105 transition-transform">
+                     <Award size={18} /> Get Certificate
+                   </button>
+                 </div>
                )}
              </div>
 
@@ -271,6 +386,13 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
            </div>
         </div>
       </div>
+
+      <ReviewModal 
+        isOpen={showReviewModal} 
+        onClose={() => setShowReviewModal(false)}
+        courseTitle={course.title}
+        onSubmit={handleReviewSubmit}
+      />
     </div>
   );
 };
@@ -519,7 +641,7 @@ const AnalyticsView = () => {
                
                {/* Grid Lines */}
                {[0, 25, 50, 75, 100].map(y => (
-                 <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="text-gray-400" />
+                 <line key={y} x1="0" y1={y} x2="100" y2="100" stroke="currentColor" strokeOpacity="0.1" strokeWidth="0.5" className="text-gray-400" />
                ))}
 
                {/* Area Path */}
@@ -784,6 +906,7 @@ const LiveClassesView = ({ openJitsi }: { openJitsi: (room: string) => void }) =
 const MessagesView = () => {
   const [activeChat, setActiveChat] = useState(0);
   const [showMobileChat, setShowMobileChat] = useState(false); // State to toggle view on mobile
+  const myAvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
   
   const contacts = [
     { id: 0, name: "Kevin Omondi", role: "Instructor", online: true, lastMsg: "Great work on the assignment!", time: "10m", img: 12 },
@@ -854,7 +977,7 @@ const MessagesView = () => {
                 </div>
              </div>
              <div className="flex gap-3 flex-row-reverse">
-                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold self-end">ME</div>
+                <img src={myAvatarUrl} alt="Me" className="w-8 h-8 rounded-full self-end object-cover" />
                 <div className="bg-brand-600 text-white p-3 rounded-2xl rounded-br-none shadow-md max-w-sm text-sm">
                   Hi Kevin! Making good progress. Just stuck on the STK push callback handling.
                 </div>
