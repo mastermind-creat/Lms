@@ -8,9 +8,9 @@ import {
   Edit3, Save, X, Lock, BarChart2, TrendingUp, Eye, EyeOff, ArrowLeft, 
   FileText, Youtube, Download, ExternalLink, CheckSquare, Square,
   Star, ThumbsUp, ThumbsDown, CreditCard, DollarSign, Receipt, Printer, AlertTriangle,
-  MoreHorizontal, Flag, Ban, Upload, Image as ImageIcon, File
+  MoreHorizontal, Flag, Ban, Upload, Image as ImageIcon, File, Users
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { courses } from '../data/courses';
 import CourseCard from '../components/CourseCard';
 import { useTheme } from '../context/ThemeContext';
@@ -45,58 +45,65 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:p-0 print:block print:inset-auto print:absolute print:top-0 print:left-0 print:w-full print:h-full print:bg-white print:z-[9999]">
-      {/* Hide everything else when printing handled via CSS usually, but we can also use specific classes */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* 
+        Print specific styles to ensure visibility.
+        The key is using visibility: hidden on body * and visibility: visible on invoice content.
+        This allows the fixed modal to print correctly regardless of parent visibility.
+      */}
       <style>
         {`
           @media print {
-            body > *:not(.invoice-modal-root) {
-              display: none !important;
+            body * {
+              visibility: hidden;
+            }
+            .invoice-modal-root, .invoice-modal-root * {
+              visibility: visible;
             }
             .invoice-modal-root {
-              display: flex !important;
-              position: absolute !important;
-              top: 0 !important;
-              left: 0 !important;
-              width: 100% !important;
-              height: 100% !important;
-              align-items: flex-start !important;
-              padding: 0 !important;
-              background: white !important;
+              position: fixed;
+              left: 0;
+              top: 0;
+              width: 100vw;
+              height: 100vh;
+              z-index: 9999;
+              background: white;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: flex-start;
+              padding: 0;
+              margin: 0;
+              border-radius: 0;
+              box-shadow: none;
             }
-            .invoice-content {
-              box-shadow: none !important;
-              width: 100% !important;
-              max-width: none !important;
-              border-radius: 0 !important;
-            }
-            .no-print {
+            .invoice-modal-overlay, .no-print {
               display: none !important;
             }
           }
         `}
       </style>
       
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm print:hidden" onClick={onClose}></div>
-      <div className="invoice-modal-root relative bg-white text-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-scale-up invoice-content">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm invoice-modal-overlay" onClick={onClose}></div>
+      <div className="invoice-modal-root relative bg-white text-gray-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-scale-up">
         
         {/* Invoice Header */}
-        <div className="bg-brand-600 text-white p-8 flex justify-between items-start print:bg-white print:text-black print:border-b print:border-gray-300">
+        <div className="bg-brand-600 text-white p-8 flex justify-between items-start w-full">
           <div>
-            <div className="flex items-center gap-2 mb-2 print:mb-4">
-              <img src="/logo.png" alt="Logo" className="h-8 w-auto brightness-0 invert print:filter-none print:invert-0" />
+            <div className="flex items-center gap-2 mb-2">
+              <img src="/logo.png" alt="Logo" className="h-8 w-auto brightness-0 invert" />
               <span className="font-bold text-2xl tracking-tight">ElimuTech</span>
             </div>
-            <p className="text-brand-100 text-sm print:text-gray-500">The Future of Learning</p>
+            <p className="text-brand-100 text-sm">The Future of Learning</p>
           </div>
           <div className="text-right">
-            <h2 className="text-3xl font-bold opacity-50 print:opacity-100 print:text-gray-900">INVOICE</h2>
-            <p className="font-mono text-brand-100 print:text-gray-600">#{transaction.id}</p>
+            <h2 className="text-3xl font-bold opacity-50">INVOICE</h2>
+            <p className="font-mono text-brand-100">#{transaction.id}</p>
           </div>
         </div>
 
         {/* Invoice Details */}
-        <div className="p-8">
+        <div className="p-8 w-full">
           <div className="flex flex-col md:flex-row justify-between gap-8 mb-12">
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Billed To</h3>
@@ -113,7 +120,7 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
           </div>
 
           {/* Line Items */}
-          <div className="border rounded-xl overflow-hidden mb-8">
+          <div className="border rounded-xl overflow-hidden mb-8 w-full">
             <table className="w-full text-left">
               <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
                 <tr>
@@ -166,7 +173,19 @@ const InvoiceModal = ({ isOpen, onClose, transaction }: { isOpen: boolean, onClo
   );
 };
 
-const InstructorProfileModal = ({ isOpen, onClose, instructor }: { isOpen: boolean, onClose: () => void, instructor: string }) => {
+const InstructorProfileModal = ({ 
+  isOpen, 
+  onClose, 
+  instructor,
+  onMessage,
+  onViewCourses
+}: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  instructor: string,
+  onMessage: (instructor: string) => void,
+  onViewCourses: (instructor: string) => void
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -205,10 +224,22 @@ const InstructorProfileModal = ({ isOpen, onClose, instructor }: { isOpen: boole
           </div>
 
           <div className="flex gap-3 w-full">
-            <button className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <button 
+              onClick={() => {
+                onViewCourses(instructor);
+                onClose();
+              }}
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
               View Courses
             </button>
-            <button className="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition-colors">
+            <button 
+              onClick={() => {
+                onMessage(instructor);
+                onClose();
+              }}
+              className="flex-1 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition-colors"
+            >
               Message
             </button>
           </div>
@@ -261,6 +292,82 @@ const CourseResourcesModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: (
               </button>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DiscussionGroupsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  if (!isOpen) return null;
+
+  const groups = [
+    { name: "WhatsApp Cohort 24", icon: <Smartphone size={20} />, color: "text-green-500", link: "#" },
+    { name: "Discord Server", icon: <MessageCircle size={20} />, color: "text-indigo-500", link: "#" },
+    { name: "Telegram Channel", icon: <Send size={20} />, color: "text-blue-500", link: "#" }
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Join Discussion</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          Connect with peers and mentors in our official community groups.
+        </p>
+        <div className="space-y-3">
+          {groups.map((group, idx) => (
+            <a 
+              key={idx}
+              href={group.link}
+              onClick={(e) => { e.preventDefault(); onClose(); /* Handle actual link logic */ }}
+              className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-100 dark:border-gray-700"
+            >
+              <div className={`w-10 h-10 rounded-full bg-white dark:bg-gray-900 flex items-center justify-center shadow-sm ${group.color}`}>
+                {group.icon}
+              </div>
+              <span className="font-bold text-gray-900 dark:text-white flex-1">{group.name}</span>
+              <ExternalLink size={16} className="text-gray-400" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const RefundConfirmationModal = ({ isOpen, onClose, onConfirm, courseName }: { isOpen: boolean, onClose: () => void, onConfirm: () => void, courseName: string }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up border-2 border-red-100 dark:border-red-900/30">
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 text-red-600 rounded-full flex items-center justify-center mb-4">
+            <AlertTriangle size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Request Refund?</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Are you sure you want to refund <strong>{courseName}</strong>? This will remove your access to the course and materials.
+          </p>
+        </div>
+        
+        <div className="flex gap-3 pt-2">
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            Cancel
+          </button>
+          <button 
+            onClick={onConfirm}
+            className="flex-1 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-lg shadow-red-500/20"
+          >
+            Confirm Refund
+          </button>
         </div>
       </div>
     </div>
@@ -447,11 +554,12 @@ const JitsiModal = ({ isOpen, onClose, roomName }: { isOpen: boolean, onClose: (
 
 // --- Sub-Views ---
 
-const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () => void }) => {
+const EnrolledCourseDetailView = ({ course, onBack, onViewInstructorCourses, onMessageInstructor }: { course: any, onBack: () => void, onViewInstructorCourses: (name: string) => void, onMessageInstructor: (name: string) => void }) => {
   const [activeModule, setActiveModule] = useState<number | null>(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showInstructorModal, setShowInstructorModal] = useState(false);
   const [showResourcesModal, setShowResourcesModal] = useState(false);
+  const [showDiscussionModal, setShowDiscussionModal] = useState(false);
   // Default to false, can be passed via props in real app
   const [reviewSubmitted, setReviewSubmitted] = useState(course.reviewSubmitted || false); 
 
@@ -688,7 +796,10 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
                     <span className="flex items-center gap-2"><FileText size={16} /> Course Notes / Resources</span>
                     <ExternalLink size={14} className="text-gray-400" />
                  </button>
-                 <button className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300">
+                 <button 
+                   onClick={() => setShowDiscussionModal(true)}
+                   className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
+                 >
                     <span className="flex items-center gap-2"><MessageCircle size={16} /> Discussion Group</span>
                     <ExternalLink size={14} className="text-gray-400" />
                  </button>
@@ -708,11 +819,18 @@ const EnrolledCourseDetailView = ({ course, onBack }: { course: any, onBack: () 
         isOpen={showInstructorModal} 
         onClose={() => setShowInstructorModal(false)} 
         instructor={course.instructor} 
+        onMessage={onMessageInstructor}
+        onViewCourses={onViewInstructorCourses}
       />
 
       <CourseResourcesModal 
         isOpen={showResourcesModal}
         onClose={() => setShowResourcesModal(false)}
+      />
+
+      <DiscussionGroupsModal 
+        isOpen={showDiscussionModal}
+        onClose={() => setShowDiscussionModal(false)}
       />
     </div>
   );
@@ -881,6 +999,7 @@ const DashboardHome = ({ setActiveTab, openJitsi, onCourseClick }: { setActiveTa
   );
 };
 
+// ... AnalyticsView remains same ...
 const AnalyticsView = () => {
   // Mock Data for Charts
   const learningData = [20, 45, 30, 60, 40, 75, 50]; // Mon-Sun
@@ -1066,6 +1185,7 @@ const AnalyticsView = () => {
 
 const PaymentsView = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [refundData, setRefundData] = useState<any>(null);
 
   // Use a simulated 'now' for the refund window logic (assume current time is around when page loads)
   const now = new Date().getTime();
@@ -1091,9 +1211,15 @@ const PaymentsView = ({ showToast }: { showToast: (msg: string) => void }) => {
     return (new Date().getTime() - txTime) < sixHours;
   };
 
-  const handleRefund = (id: string) => {
-    // In a real app, verify and process refund
-    showToast(`Refund requested for ${id}. You will be notified shortly.`);
+  const initiateRefund = (transaction: any) => {
+    setRefundData(transaction);
+  };
+
+  const confirmRefund = () => {
+    if (refundData) {
+      showToast(`Refund requested for ${refundData.id}. You will be notified shortly.`);
+      setRefundData(null);
+    }
   };
 
   return (
@@ -1182,7 +1308,7 @@ const PaymentsView = ({ showToast }: { showToast: (msg: string) => void }) => {
                               </button>
                               {canRefund(t.date) && (
                                 <button
-                                  onClick={() => handleRefund(t.id)}
+                                  onClick={() => initiateRefund(t)}
                                   className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
                                   title="Request Refund (Available for 6 hours)"
                                 >
@@ -1204,10 +1330,18 @@ const PaymentsView = ({ showToast }: { showToast: (msg: string) => void }) => {
         onClose={() => setSelectedInvoice(null)} 
         transaction={selectedInvoice} 
       />
+
+      <RefundConfirmationModal 
+        isOpen={!!refundData}
+        onClose={() => setRefundData(null)}
+        onConfirm={confirmRefund}
+        courseName={refundData?.course || ""}
+      />
     </div>
   );
 };
 
+// ... MyCoursesView and WishlistView remain same ...
 const MyCoursesView = ({ onCourseClick }: { onCourseClick: (course: any) => void }) => {
   const [filter, setFilter] = useState<'in-progress' | 'completed'>('in-progress');
 
@@ -1331,6 +1465,7 @@ const WishlistView = () => {
   );
 };
 
+// ... LiveClassesView, MessagesView, NotificationsView, ProfileView, SettingsView remain same ...
 const LiveClassesView = ({ openJitsi, addNotification }: { openJitsi: (room: string) => void, addNotification: (title: string, msg: string, type: string) => void }) => {
   const [viewMode, setViewMode] = useState<'upcoming' | 'past'>('upcoming');
 
@@ -2084,6 +2219,7 @@ const SettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
 
 const StudentDashboard: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // Restore tab from location state if present, else default to Dashboard
   const [activeTab, setActiveTab] = useState(location.state?.tab || 'Dashboard');
@@ -2135,6 +2271,16 @@ const StudentDashboard: React.FC = () => {
     setSelectedCourse(course);
   };
 
+  const handleMessageInstructor = (instructorName: string) => {
+    setActiveTab('Messages');
+    setSelectedCourse(null);
+    showToast(`Started chat with ${instructorName}`);
+  };
+
+  const handleViewInstructorCourses = (instructorName: string) => {
+    navigate('/courses', { state: { searchQuery: instructorName } });
+  };
+
   // Clear selected course when switching main tabs
   useEffect(() => {
     if (activeTab !== 'Dashboard' && activeTab !== 'My Courses') {
@@ -2160,7 +2306,14 @@ const StudentDashboard: React.FC = () => {
   const renderContent = () => {
     // If a course is selected, show detail view regardless of tab (for Dashboard/MyCourses context)
     if (selectedCourse) {
-      return <EnrolledCourseDetailView course={selectedCourse} onBack={() => setSelectedCourse(null)} />;
+      return (
+        <EnrolledCourseDetailView 
+          course={selectedCourse} 
+          onBack={() => setSelectedCourse(null)} 
+          onMessageInstructor={handleMessageInstructor}
+          onViewInstructorCourses={handleViewInstructorCourses}
+        />
+      );
     }
 
     switch(activeTab) {

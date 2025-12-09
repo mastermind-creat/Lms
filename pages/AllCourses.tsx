@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { courses } from '../data/courses';
 import CourseCard from '../components/CourseCard';
+import { useLocation } from 'react-router-dom';
 
 const AllCourses: React.FC = () => {
   const categories = ["All", "Development", "Design", "Marketing", "Data Science", "Finance", "AgriTech", "Fintech"];
+  const location = useLocation();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Initialize search from navigation state (e.g., from Instructor Profile)
+  useEffect(() => {
+    if (location.state?.searchQuery) {
+      setSearchQuery(location.state.searchQuery);
+    }
+  }, [location.state]);
 
   const filteredCourses = courses.filter(course => {
     const matchesCategory = activeCategory === "All" || course.category === activeCategory || (activeCategory === "Development" && (course.category === "Web Dev" || course.category === "Technology"));
