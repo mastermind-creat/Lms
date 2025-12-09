@@ -5,7 +5,8 @@ import {
   Star, Bell, User, Settings, LogOut, Search, Menu, 
   TrendingUp, CreditCard, ChevronRight, Upload, X, 
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
-  MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2
+  MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
+  Youtube, Link as LinkIcon, File, Eye
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -45,124 +46,431 @@ const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
   </div>
 );
 
+// Types for the Course Builder
+interface Resource {
+  title: string;
+  type: 'video' | 'pdf' | 'link' | 'file';
+  duration?: string; // e.g. "12:30"
+  size?: string; // e.g. "1.2 MB"
+  url?: string;
+}
+
+interface Module {
+  id: number;
+  title: string;
+  description: string; // "In this module we cover..."
+  resources: Resource[];
+}
+
 const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
   const [step, setStep] = useState(1);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  
   const [courseData, setCourseData] = useState({
-    title: "", category: "", price: "", description: "", level: "Beginner", modules: [] as any[]
+    title: "", 
+    category: "Development", 
+    price: "", 
+    description: "", 
+    level: "Beginner",
+    instructor: "Kevin Omondi", // Mock logged-in user
+    modules: [
+      {
+        id: 1,
+        title: "Introduction & Environment Setup",
+        description: "In this module, we cover the fundamentals necessary to get started. Make sure to download the attached resources.",
+        resources: [
+          { title: "Course Syllabus.pdf", type: 'pdf', size: "1.2 MB" },
+          { title: "Setting up VS Code", type: 'video', duration: "12:30" }
+        ]
+      }
+    ] as Module[]
   });
 
+  // Handle Thumbnail Upload
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setThumbnailPreview(url);
+    }
+  };
+
+  // Module Handlers
   const addModule = () => {
     setCourseData({
       ...courseData,
-      modules: [...courseData.modules, { title: "", lessons: [] }]
+      modules: [...courseData.modules, { 
+        id: Date.now(), 
+        title: "", 
+        description: "",
+        resources: [] 
+      }]
     });
   };
 
-  const addLesson = (moduleIndex: number) => {
-    const updatedModules = [...courseData.modules];
-    updatedModules[moduleIndex].lessons.push({ title: "", type: "video" });
-    setCourseData({ ...courseData, modules: updatedModules });
+  const updateModule = (index: number, field: string, value: string) => {
+    const updated = [...courseData.modules];
+    updated[index] = { ...updated[index], [field]: value };
+    setCourseData({ ...courseData, modules: updated });
+  };
+
+  const removeModule = (index: number) => {
+    const updated = [...courseData.modules];
+    updated.splice(index, 1);
+    setCourseData({ ...courseData, modules: updated });
+  };
+
+  // Resource Handlers
+  const addResource = (moduleIndex: number, type: 'video' | 'pdf' | 'link') => {
+    const updated = [...courseData.modules];
+    const newResource: Resource = {
+      title: "",
+      type: type,
+      duration: type === 'video' ? "00:00" : undefined,
+      size: type === 'pdf' ? "0 MB" : undefined
+    };
+    updated[moduleIndex].resources.push(newResource);
+    setCourseData({ ...courseData, modules: updated });
+  };
+
+  const updateResource = (moduleIndex: number, resIndex: number, field: string, value: string) => {
+    const updated = [...courseData.modules];
+    updated[moduleIndex].resources[resIndex] = { 
+      ...updated[moduleIndex].resources[resIndex], 
+      [field]: value 
+    };
+    setCourseData({ ...courseData, modules: updated });
+  };
+
+  const removeResource = (moduleIndex: number, resIndex: number) => {
+    const updated = [...courseData.modules];
+    updated[moduleIndex].resources.splice(resIndex, 1);
+    setCourseData({ ...courseData, modules: updated });
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in-up">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create New Course</h2>
+    <div className="max-w-5xl mx-auto animate-fade-in-up">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create New Course</h2>
+        <div className="text-sm font-bold text-gray-500">Step {step} of 3</div>
+      </div>
       
+      {/* Progress Bar */}
       <div className="flex mb-8 gap-4">
-        <div className={`flex-1 h-2 rounded-full ${step >= 1 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-        <div className={`flex-1 h-2 rounded-full ${step >= 2 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-        <div className={`flex-1 h-2 rounded-full ${step >= 3 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+        <div className={`flex-1 h-2 rounded-full transition-colors ${step >= 1 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+        <div className={`flex-1 h-2 rounded-full transition-colors ${step >= 2 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+        <div className={`flex-1 h-2 rounded-full transition-colors ${step >= 3 ? 'bg-brand-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
       </div>
 
       <div className={`${cardStyle} p-8`}>
         {step === 1 && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Basic Information</h3>
+          <div className="space-y-8">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Course Title</label>
-              <input 
-                value={courseData.title}
-                onChange={(e) => setCourseData({...courseData, title: e.target.value})}
-                className={inputStyle} 
-                placeholder="e.g. Master M-PESA Integration" 
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
-                <select className={inputStyle}>
-                  <option>Development</option>
-                  <option>Design</option>
-                  <option>Business</option>
-                </select>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Course Identity</h3>
+              <p className="text-sm text-gray-500 mb-6">This information will be displayed on the course card and header.</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                 {/* Thumbnail Uploader */}
+                 <div className="md:col-span-1">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Course Thumbnail</label>
+                    <div 
+                      className={`aspect-video rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors relative overflow-hidden group`}
+                      onClick={() => document.getElementById('thumbnail-upload')?.click()}
+                    >
+                      {thumbnailPreview ? (
+                        <>
+                          <img src={thumbnailPreview} alt="Preview" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                             <span className="text-white text-xs font-bold flex items-center gap-1"><Edit3 size={14} /> Change</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon size={32} className="text-gray-400 mb-2" />
+                          <p className="text-xs text-gray-500 text-center px-4">Click to upload <br/>(1280x720 recommended)</p>
+                        </>
+                      )}
+                      <input id="thumbnail-upload" type="file" className="hidden" accept="image/*" onChange={handleThumbnailChange} />
+                    </div>
+                 </div>
+
+                 {/* Basic Fields */}
+                 <div className="md:col-span-2 space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Course Title</label>
+                      <input 
+                        value={courseData.title}
+                        onChange={(e) => setCourseData({...courseData, title: e.target.value})}
+                        className={inputStyle} 
+                        placeholder="e.g. Master M-PESA Integration" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Description</label>
+                      <textarea 
+                        rows={3} 
+                        value={courseData.description}
+                        onChange={(e) => setCourseData({...courseData, description: e.target.value})}
+                        className={inputStyle} 
+                        placeholder="Brief overview for the course header..."
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
+                        <select 
+                          value={courseData.category}
+                          onChange={(e) => setCourseData({...courseData, category: e.target.value})}
+                          className={inputStyle}
+                        >
+                          <option>Development</option>
+                          <option>Design</option>
+                          <option>Business</option>
+                          <option>Fintech</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Price (KES)</label>
+                        <input 
+                          type="number"
+                          value={courseData.price}
+                          onChange={(e) => setCourseData({...courseData, price: e.target.value})}
+                          className={inputStyle} 
+                          placeholder="5000" 
+                        />
+                      </div>
+                    </div>
+                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Price (KES)</label>
-                <input 
-                  type="number"
-                  value={courseData.price}
-                  onChange={(e) => setCourseData({...courseData, price: e.target.value})}
-                  className={inputStyle} 
-                  placeholder="5000" 
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Description</label>
-              <textarea 
-                rows={4} 
-                value={courseData.description}
-                onChange={(e) => setCourseData({...courseData, description: e.target.value})}
-                className={inputStyle} 
-                placeholder="What will students learn?"
-              />
             </div>
           </div>
         )}
 
         {step === 2 && (
           <div className="space-y-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Curriculum Builder</h3>
-            {courseData.modules.map((module, mIdx) => (
-              <div key={mIdx} className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 p-4 rounded-xl">
-                <div className="flex justify-between items-center mb-3">
-                  <input 
-                    className="bg-transparent font-bold text-gray-900 dark:text-white outline-none w-full" 
-                    placeholder={`Module ${mIdx + 1} Title`}
-                  />
-                  <button className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
-                </div>
-                <div className="space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
-                   {module.lessons.map((lesson: any, lIdx: number) => (
-                     <div key={lIdx} className="flex items-center gap-2">
-                       <FileText size={14} className="text-gray-400" />
-                       <input 
-                         className="bg-transparent text-sm text-gray-700 dark:text-gray-300 outline-none w-full" 
-                         placeholder="Lesson Title" 
-                       />
-                     </div>
-                   ))}
-                   <button onClick={() => addLesson(mIdx)} className="text-xs font-bold text-brand-600 flex items-center gap-1 mt-2">
-                     <PlusCircle size={14} /> Add Lesson
-                   </button>
-                </div>
+            <div className="flex justify-between items-end">
+              <div>
+                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Curriculum Builder</h3>
+                 <p className="text-sm text-gray-500">Structure your course exactly how students will see it.</p>
               </div>
-            ))}
-            <button onClick={addModule} className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl text-gray-500 font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              + Add Module
-            </button>
+              <button 
+                onClick={addModule} 
+                className="px-4 py-2 bg-brand-50 dark:bg-brand-900/20 text-brand-600 rounded-lg text-sm font-bold hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors flex items-center gap-2"
+              >
+                <PlusCircle size={16} /> Add Module
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {courseData.modules.map((module, mIdx) => (
+                <div key={module.id} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-gray-50/50 dark:bg-gray-900/50">
+                  {/* Module Header Editor */}
+                  <div className="p-4 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex justify-between items-start gap-4 mb-3">
+                      <div className="flex-1 space-y-2">
+                        <input 
+                          value={module.title}
+                          onChange={(e) => updateModule(mIdx, 'title', e.target.value)}
+                          className="bg-transparent font-bold text-gray-900 dark:text-white outline-none w-full placeholder:text-gray-400" 
+                          placeholder={`Module ${mIdx + 1} Title`}
+                        />
+                        <textarea
+                          value={module.description}
+                          onChange={(e) => updateModule(mIdx, 'description', e.target.value)}
+                          rows={2}
+                          className="w-full bg-white dark:bg-gray-900 rounded-lg p-2 text-xs text-gray-600 dark:text-gray-300 outline-none border border-transparent focus:border-brand-500 resize-none placeholder:text-gray-400"
+                          placeholder="Module description (visible to students in the accordion)..."
+                        />
+                      </div>
+                      <button onClick={() => removeModule(mIdx)} className="text-gray-400 hover:text-red-500 transition-colors">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+
+                    {/* Quick Add Resource Buttons */}
+                    <div className="flex gap-2">
+                      <button onClick={() => addResource(mIdx, 'video')} className="px-3 py-1.5 bg-white dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:text-brand-500 flex items-center gap-1">
+                        <Video size={12} /> Add Video
+                      </button>
+                      <button onClick={() => addResource(mIdx, 'pdf')} className="px-3 py-1.5 bg-white dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:text-brand-500 flex items-center gap-1">
+                        <FileText size={12} /> Add PDF
+                      </button>
+                      <button onClick={() => addResource(mIdx, 'link')} className="px-3 py-1.5 bg-white dark:bg-gray-700 rounded-lg text-xs font-bold text-gray-600 dark:text-gray-300 shadow-sm hover:text-brand-500 flex items-center gap-1">
+                        <LinkIcon size={12} /> Add Link
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Resources List */}
+                  <div className="p-4 space-y-2">
+                     {module.resources.length === 0 && (
+                       <p className="text-center text-xs text-gray-400 py-2 italic">No resources added yet.</p>
+                     )}
+                     {module.resources.map((res, rIdx) => (
+                       <div key={rIdx} className="flex items-center gap-3 p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                            res.type === 'video' ? 'bg-red-50 text-red-500' :
+                            res.type === 'pdf' ? 'bg-orange-50 text-orange-500' :
+                            'bg-blue-50 text-blue-500'
+                          }`}>
+                            {res.type === 'video' ? <Youtube size={16} /> : res.type === 'pdf' ? <FileText size={16} /> : <ExternalLink size={16} />}
+                          </div>
+                          
+                          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2">
+                             <input 
+                               value={res.title}
+                               onChange={(e) => updateResource(mIdx, rIdx, 'title', e.target.value)}
+                               className="bg-transparent text-sm font-medium text-gray-900 dark:text-white outline-none placeholder:text-gray-400"
+                               placeholder="Resource Title"
+                             />
+                             <div className="flex gap-2">
+                               {res.type === 'video' && (
+                                 <input 
+                                   value={res.duration}
+                                   onChange={(e) => updateResource(mIdx, rIdx, 'duration', e.target.value)}
+                                   className="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs outline-none w-20 text-gray-500"
+                                   placeholder="00:00"
+                                 />
+                               )}
+                               {res.type === 'pdf' && (
+                                 <input 
+                                   value={res.size}
+                                   onChange={(e) => updateResource(mIdx, rIdx, 'size', e.target.value)}
+                                   className="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs outline-none w-20 text-gray-500"
+                                   placeholder="0 MB"
+                                 />
+                               )}
+                               <input 
+                                  className="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs outline-none flex-1 text-gray-500 truncate"
+                                  placeholder={res.type === 'video' ? 'Video URL' : 'File URL'}
+                                  disabled
+                                  value={res.type === 'video' ? 'Upload Pending...' : 'Attachment'}
+                               />
+                             </div>
+                          </div>
+                          <button onClick={() => removeResource(mIdx, rIdx)} className="text-gray-300 hover:text-red-500 p-1">
+                            <X size={14} />
+                          </button>
+                       </div>
+                     ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
         {step === 3 && (
-          <div className="space-y-6 text-center">
-             <div className="w-24 h-24 bg-green-100 dark:bg-green-900/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-               <CheckCircle size={48} />
+          <div className="space-y-8">
+             <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Student View Preview</h3>
+                <p className="text-gray-500 text-sm">Review how your course looks to enrolled students.</p>
              </div>
-             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Ready to Publish?</h3>
-             <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-               Your course "{courseData.title}" is ready. You can save it as a draft or publish it immediately for students to enroll.
-             </p>
+
+             {/* PREVIEW CONTAINER - Replicates StudentDashboard Layout */}
+             <div className="border border-gray-200 dark:border-gray-700 rounded-3xl p-1 bg-gray-100 dark:bg-black/20">
+                <div className="bg-gray-50 dark:bg-gray-900 rounded-[1.4rem] p-6 md:p-8 overflow-hidden">
+                   
+                   {/* Header Mockup */}
+                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
+                      <div className="flex flex-col md:flex-row gap-6">
+                         <div className="w-full md:w-64 aspect-video bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden shrink-0">
+                            {thumbnailPreview ? (
+                              <img src={thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400"><ImageIcon size={32} /></div>
+                            )}
+                         </div>
+                         <div className="flex-1">
+                            <span className="inline-block px-3 py-1 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-bold mb-2">In Progress</span>
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{courseData.title || "Untitled Course"}</h1>
+                            <p className="text-sm text-gray-500 mb-4">Instructor: <span className="font-bold text-gray-900 dark:text-white">{courseData.instructor}</span></p>
+                            
+                            <div className="space-y-2 mb-4">
+                               <div className="flex justify-between text-xs font-bold">
+                                 <span className="text-brand-600">0% Complete</span>
+                                 <span className="text-gray-400">0/{courseData.modules.length} Modules</span>
+                               </div>
+                               <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full"><div className="w-0 h-full"></div></div>
+                            </div>
+                            
+                            <div className="flex gap-3">
+                              <button className="px-6 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold flex items-center gap-2">
+                                <PlayCircle size={16} /> Continue Learning
+                              </button>
+                              <button className="px-6 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-bold flex items-center gap-2">
+                                <MessageCircle size={16} /> Course Forum
+                              </button>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Course Content Preview */}
+                   <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                     <BookOpen className="text-brand-500" size={20} /> Course Content
+                   </h2>
+                   
+                   <div className="space-y-4 mb-8">
+                      {courseData.modules.map((mod, i) => (
+                        <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                           <div className="p-4 flex items-center justify-between bg-white dark:bg-gray-800">
+                              <div className="flex items-center gap-4">
+                                 <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-500">{i + 1}</div>
+                                 <h3 className="font-bold text-gray-900 dark:text-white">{mod.title || "(No Title)"}</h3>
+                              </div>
+                              <ChevronRight size={20} className="text-gray-400 rotate-90" />
+                           </div>
+                           
+                           {/* Expanded State Preview */}
+                           <div className="bg-gray-50 dark:bg-gray-900/50 p-4 border-t border-gray-100 dark:border-gray-700">
+                              {mod.description && (
+                                <div className="mb-4 pl-12 text-sm text-gray-600 dark:text-gray-400">
+                                  {mod.description}
+                                </div>
+                              )}
+                              
+                              <div className="pl-12 space-y-2">
+                                 {mod.resources.length > 0 ? (
+                                    <>
+                                       <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Resources</h4>
+                                       {mod.resources.map((res, j) => (
+                                          <div key={j} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                                             <div className="flex items-center gap-3">
+                                                {res.type === 'pdf' && <FileText size={18} className="text-red-500" />}
+                                                {res.type === 'video' && <Youtube size={18} className="text-red-600" />}
+                                                {res.type === 'link' && <ExternalLink size={18} className="text-blue-500" />}
+                                                <div>
+                                                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{res.title || "Untitled Resource"}</p>
+                                                   {(res.size || res.duration) && <p className="text-[10px] text-gray-400">{res.size || res.duration}</p>}
+                                                </div>
+                                             </div>
+                                             <Download size={16} className="text-gray-300" />
+                                          </div>
+                                       ))}
+                                    </>
+                                 ) : (
+                                    <p className="text-xs text-gray-400 italic">No resources in this module</p>
+                                 )}
+                              </div>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
+                   
+                   {/* Instructor Card Preview */}
+                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                      <h3 className="font-bold text-gray-900 dark:text-white mb-4">About the Instructor</h3>
+                      <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                         <div>
+                            <p className="font-bold text-gray-900 dark:text-white">{courseData.instructor}</p>
+                            <button className="text-xs text-brand-600 font-bold hover:underline">View Profile</button>
+                         </div>
+                      </div>
+                   </div>
+
+                </div>
+             </div>
           </div>
         )}
 
