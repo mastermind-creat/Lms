@@ -6,7 +6,7 @@ import {
   TrendingUp, CreditCard, ChevronRight, Upload, X, 
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
   MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
-  Youtube, Link as LinkIcon, File, Eye, Filter, Clock
+  Youtube, Link as LinkIcon, File, Eye, Filter, Clock, Tag, RefreshCw
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -63,6 +63,240 @@ interface Module {
   description: string; // "In this module we cover..."
   resources: Resource[];
 }
+
+const CreateDiscountModal = ({ isOpen, onClose, onCreate }: { isOpen: boolean, onClose: () => void, onCreate: (discount: any) => void }) => {
+  const [code, setCode] = useState("");
+  const [courseId, setCourseId] = useState("all");
+  const [percentage, setPercentage] = useState("10");
+  const [limit, setLimit] = useState("");
+  const [expiry, setExpiry] = useState("");
+
+  if (!isOpen) return null;
+
+  const generateCode = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCode(result);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onCreate({
+      id: Date.now(),
+      code: code.toUpperCase(),
+      course: courseId === "all" ? "All Courses" : initialCourses.find(c => c.id.toString() === courseId)?.title,
+      value: parseInt(percentage),
+      used: 0,
+      max: limit ? parseInt(limit) : Infinity,
+      expires: expiry,
+      status: "Active"
+    });
+    onClose();
+    // Reset form
+    setCode("");
+    setCourseId("all");
+    setPercentage("10");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Create Discount</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+           <div>
+             <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Discount Code</label>
+             <div className="flex gap-2">
+               <input 
+                 value={code}
+                 onChange={(e) => setCode(e.target.value.toUpperCase())}
+                 className={inputStyle}
+                 placeholder="e.g. SUMMER2025"
+                 required
+               />
+               <button 
+                 type="button" 
+                 onClick={generateCode}
+                 className="p-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl text-gray-600 dark:text-gray-300 transition-colors"
+                 title="Generate Random Code"
+               >
+                 <RefreshCw size={20} />
+               </button>
+             </div>
+           </div>
+
+           <div>
+             <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Apply To Course</label>
+             <select 
+               value={courseId}
+               onChange={(e) => setCourseId(e.target.value)}
+               className={inputStyle}
+             >
+               <option value="all">All Courses</option>
+               {initialCourses.map(c => (
+                 <option key={c.id} value={c.id}>{c.title}</option>
+               ))}
+             </select>
+           </div>
+
+           <div className="grid grid-cols-2 gap-4">
+             <div>
+               <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Percentage Off (%)</label>
+               <input 
+                 type="number"
+                 min="1"
+                 max="100"
+                 value={percentage}
+                 onChange={(e) => setPercentage(e.target.value)}
+                 className={inputStyle}
+                 required
+               />
+             </div>
+             <div>
+               <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Usage Limit (Optional)</label>
+               <input 
+                 type="number"
+                 min="1"
+                 value={limit}
+                 onChange={(e) => setLimit(e.target.value)}
+                 className={inputStyle}
+                 placeholder="Unlimited"
+               />
+             </div>
+           </div>
+
+           <div>
+             <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Expiry Date</label>
+             <input 
+               type="date"
+               value={expiry}
+               onChange={(e) => setExpiry(e.target.value)}
+               className={inputStyle}
+               required
+             />
+           </div>
+
+           <div className="pt-4">
+             <button type="submit" className={btnPrimary + " w-full flex justify-center items-center gap-2"}>
+               <Tag size={18} /> Create Discount
+             </button>
+           </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const DiscountManager = () => {
+  const [discounts, setDiscounts] = useState([
+    { id: 1, code: "WELCOME20", course: "All Courses", value: 20, used: 45, max: 100, expires: "2025-12-31", status: "Active" },
+    { id: 2, code: "REACT50", course: "Advanced React Patterns", value: 50, used: 12, max: 20, expires: "2025-06-30", status: "Active" },
+    { id: 3, code: "EARLYBIRD", course: "Python for Data Science", value: 15, used: 50, max: 50, expires: "2024-12-31", status: "Expired" },
+  ]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleCreate = (newDiscount: any) => {
+    setDiscounts([newDiscount, ...discounts]);
+  };
+
+  const deleteDiscount = (id: number) => {
+    if (confirm("Are you sure you want to delete this discount?")) {
+      setDiscounts(discounts.filter(d => d.id !== id));
+    }
+  };
+
+  return (
+    <div className="animate-fade-in-up">
+      <div className="flex flex-col md:flex-row justify-between items-end gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1">Discount Management</h1>
+          <p className="text-gray-500 dark:text-gray-400">Boost sales by creating promotional codes for your courses.</p>
+        </div>
+        <button onClick={() => setShowCreateModal(true)} className={btnPrimary + " flex items-center gap-2"}>
+          <PlusCircle size={18} /> Create New Discount
+        </button>
+      </div>
+
+      <div className={`${cardStyle} overflow-hidden`}>
+         <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+               <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+                 <tr>
+                   <th className="px-6 py-4">Code</th>
+                   <th className="px-6 py-4">Target Course</th>
+                   <th className="px-6 py-4">Discount</th>
+                   <th className="px-6 py-4">Usage</th>
+                   <th className="px-6 py-4">Status</th>
+                   <th className="px-6 py-4">Expires</th>
+                   <th className="px-6 py-4 text-right">Actions</th>
+                 </tr>
+               </thead>
+               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                 {discounts.map((discount) => (
+                   <tr key={discount.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                     <td className="px-6 py-4">
+                       <span className="font-mono font-bold text-brand-600 bg-brand-50 dark:bg-brand-900/20 px-2 py-1 rounded-md border border-brand-200 dark:border-brand-900/50">
+                         {discount.code}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{discount.course}</td>
+                     <td className="px-6 py-4 text-green-600 font-bold">{discount.value}% OFF</td>
+                     <td className="px-6 py-4">
+                       <div className="flex items-center gap-2">
+                         <div className="w-20 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                           <div 
+                             className="h-full bg-blue-500 rounded-full" 
+                             style={{ width: `${(discount.used / (discount.max === Infinity ? discount.used * 1.5 : discount.max)) * 100}%` }}
+                           ></div>
+                         </div>
+                         <span className="text-xs">{discount.used} / {discount.max === Infinity ? '∞' : discount.max}</span>
+                       </div>
+                     </td>
+                     <td className="px-6 py-4">
+                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${discount.status === 'Active' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-500' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
+                         {discount.status}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 text-xs">{new Date(discount.expires).toLocaleDateString()}</td>
+                     <td className="px-6 py-4 text-right">
+                       <button 
+                         onClick={() => deleteDiscount(discount.id)}
+                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
+                       >
+                         <Trash2 size={16} />
+                       </button>
+                     </td>
+                   </tr>
+                 ))}
+                 {discounts.length === 0 && (
+                   <tr>
+                     <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
+                       No discounts created yet.
+                     </td>
+                   </tr>
+                 )}
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+      <CreateDiscountModal 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreate={handleCreate}
+      />
+    </div>
+  );
+};
 
 const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
   const [step, setStep] = useState(1);
@@ -709,6 +943,7 @@ const InstructorDashboard: React.FC = () => {
     { name: 'Dashboard', icon: LayoutDashboard },
     { name: 'My Courses', icon: BookOpen },
     { name: 'Create Course', icon: PlusCircle },
+    { name: 'Discounts', icon: Tag },
     { name: 'Live Classes', icon: Video },
     { name: 'Assignments', icon: CheckSquare },
     { name: 'Students', icon: Users },
@@ -727,6 +962,8 @@ const InstructorDashboard: React.FC = () => {
         return <EarningsView />;
       case 'Live Classes':
         return <LiveClassManager />;
+      case 'Discounts':
+        return <DiscountManager />;
       case 'My Courses':
         return (
           <div className="animate-fade-in-up">
