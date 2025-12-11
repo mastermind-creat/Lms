@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   LayoutDashboard, BookOpen, PlusCircle, Video, PlayCircle, 
   FileText, CheckSquare, Users, MessageCircle, DollarSign, 
@@ -6,7 +6,8 @@ import {
   TrendingUp, CreditCard, ChevronRight, Upload, X, 
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
   MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
-  Youtube, Link as LinkIcon, File, Eye, Filter, Clock, Tag, RefreshCw
+  Youtube, Link as LinkIcon, File, Eye, Filter, Clock, Tag, RefreshCw, Send, Paperclip, Ban, Flag,
+  Shield, Moon, Smartphone, Mail, Globe, MapPin, EyeOff
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -34,6 +35,90 @@ const initialStudents = [
 ];
 
 // --- Sub-Components ---
+
+const Toast = ({ message, onClose }: { message: string, onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-2xl z-[60] flex items-center gap-3 animate-fade-in-up">
+      <CheckCircle size={18} className="text-green-500" />
+      <span className="font-bold text-sm">{message}</span>
+    </div>
+  );
+};
+
+const PasswordInputWithToggle = ({ placeholder }: { placeholder: string }) => {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+      <input 
+        type={show ? "text" : "password"} 
+        className={inputStyle + " pl-10 pr-10"} 
+        placeholder={placeholder} 
+      />
+      <button 
+        type="button"
+        onClick={() => setShow(!show)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-500 transition-colors"
+      >
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+};
+
+const DeleteAccountModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean, onClose: () => void, onConfirm: () => void }) => {
+  const [confirmText, setConfirmText] = useState("");
+  
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up border-2 border-red-100 dark:border-red-900/30">
+        <div className="flex flex-col items-center text-center mb-6">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 text-red-600 rounded-full flex items-center justify-center mb-4">
+            <AlertTriangle size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Account?</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            This action is permanent. All your courses, student data, and earnings history will be permanently deleted.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+            Type "DELETE" to confirm
+          </label>
+          <input 
+            type="text" 
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-center font-bold tracking-widest outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all text-gray-900 dark:text-white"
+            placeholder="DELETE"
+          />
+          
+          <div className="flex gap-3 pt-2">
+            <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              Cancel
+            </button>
+            <button 
+              onClick={onConfirm}
+              disabled={confirmText !== "DELETE"}
+              className="flex-1 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-red-500/20"
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
   <div className={`${cardStyle} p-6 flex items-center justify-between`}>
@@ -294,6 +379,457 @@ const DiscountManager = () => {
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreate}
       />
+    </div>
+  );
+};
+
+const InstructorProfileView = ({ showToast }: { showToast: (msg: string) => void }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "Kevin Omondi",
+    email: "kevin.omondi@elimutech.ke",
+    phone: "+254 712 345 678",
+    expertise: "Development",
+    experience: "8",
+    portfolio: "https://kevinomondi.dev",
+    bio: "Senior Software Engineer with a passion for teaching. Specialized in React, Node.js, and Cloud Infrastructure.",
+    image: "https://i.pravatar.cc/150?u=Kevin"
+  });
+
+  const expertiseOptions = ["Development", "Design", "Business", "Marketing", "Data Science", "Cybersecurity", "Finance"];
+
+  const handleSave = () => {
+    setIsEditing(false);
+    showToast("Profile updated successfully!");
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const url = URL.createObjectURL(e.target.files[0]);
+      setFormData({ ...formData, image: url });
+      showToast("Profile picture updated!");
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto animate-fade-in-up">
+       <div className="flex justify-between items-center mb-8">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Instructor Profile</h1>
+         <button 
+           onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+           className={`flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm transition-all ${isEditing ? 'bg-green-600 text-white shadow-lg' : 'bg-brand-600 text-white shadow-lg'}`}
+         >
+           {isEditing ? <><Save size={16} /> Save Changes</> : <><Edit3 size={16} /> Edit Profile</>}
+         </button>
+       </div>
+
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className={`${cardStyle} p-6 flex flex-col items-center text-center h-fit`}>
+             <div className="relative mb-6 group">
+               <div className="w-32 h-32 rounded-full p-1 bg-white dark:bg-gray-700 shadow-[inset_4px_4px_8px_rgba(0,0,0,0.1)] overflow-hidden">
+                 <img src={formData.image} alt="Profile" className="w-full h-full rounded-full object-cover" />
+               </div>
+               {isEditing && (
+                 <label className="absolute bottom-0 right-0 p-2 bg-brand-600 text-white rounded-full shadow-lg hover:scale-110 transition-transform cursor-pointer">
+                   <ImageIcon size={16} />
+                   <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                 </label>
+               )}
+             </div>
+             
+             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{formData.name}</h2>
+             <p className="text-sm text-brand-600 dark:text-brand-400 font-bold mb-6">{formData.expertise} Instructor</p>
+             
+             <div className="w-full space-y-4 text-left">
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Mail size={16} className="text-brand-500" /> <span className="truncate">{formData.email}</span>
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Smartphone size={16} className="text-brand-500" /> {formData.phone}
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Globe size={16} className="text-brand-500" /> 
+                 <a href={formData.portfolio} target="_blank" rel="noreferrer" className="truncate hover:underline text-blue-500">{formData.portfolio}</a>
+               </div>
+               <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                 <Clock size={16} className="text-brand-500" /> {formData.experience} Years Exp.
+               </div>
+             </div>
+          </div>
+
+          <div className={`${cardStyle} p-6 md:p-8 md:col-span-2`}>
+             <form className="space-y-6">
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Full Name</label>
+                   <input 
+                     disabled={!isEditing}
+                     value={formData.name}
+                     onChange={(e) => setFormData({...formData, name: e.target.value})}
+                     className={inputStyle}
+                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email</label>
+                     <input 
+                       disabled={!isEditing}
+                       value={formData.email}
+                       onChange={(e) => setFormData({...formData, email: e.target.value})}
+                       className={inputStyle}
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Mobile Number</label>
+                     <input 
+                       disabled={!isEditing}
+                       value={formData.phone}
+                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                       className={inputStyle}
+                     />
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Area of Expertise</label>
+                     <div className="relative">
+                       <select
+                         disabled={!isEditing}
+                         value={formData.expertise}
+                         onChange={(e) => setFormData({...formData, expertise: e.target.value})}
+                         className={inputStyle}
+                       >
+                         {expertiseOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                       </select>
+                     </div>
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Years of Experience</label>
+                     <input 
+                       type="number"
+                       disabled={!isEditing}
+                       value={formData.experience}
+                       onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                       className={inputStyle}
+                     />
+                   </div>
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Portfolio / Social URL</label>
+                   <input 
+                     disabled={!isEditing}
+                     value={formData.portfolio}
+                     onChange={(e) => setFormData({...formData, portfolio: e.target.value})}
+                     className={inputStyle}
+                   />
+                </div>
+
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Bio</label>
+                   <textarea 
+                     rows={5}
+                     disabled={!isEditing}
+                     value={formData.bio}
+                     onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                     className={inputStyle}
+                   />
+                </div>
+             </form>
+          </div>
+       </div>
+    </div>
+  );
+};
+
+const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => void }) => {
+  const { theme, setTheme } = useTheme();
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleSaveSettings = () => {
+    showToast("Settings saved successfully");
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteModal(false);
+    alert("Account permanently deleted. Redirecting to home...");
+    // navigate('/'); 
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto animate-fade-in-up">
+       <div className="flex justify-between items-center mb-8">
+         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
+         <button onClick={handleSaveSettings} className="hidden md:block text-brand-600 font-bold hover:underline text-sm">Save Changes</button>
+       </div>
+
+       <div className="space-y-8">
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Moon size={20} className="text-brand-500" /> Appearance
+             </h3>
+             <div className="flex items-center justify-between">
+               <span className="text-gray-600 dark:text-gray-300 font-medium">Dark Mode</span>
+               <button 
+                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                 className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 ${theme === 'dark' ? 'bg-brand-500' : 'bg-gray-200'}`}
+               >
+                 <div className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`}></div>
+               </button>
+             </div>
+          </div>
+
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Bell size={20} className="text-brand-500" /> Notification Preferences
+             </h3>
+             <div className="space-y-4">
+                {[
+                  "New Student Enrollments",
+                  "Course Reviews",
+                  "Assignment Submissions",
+                  "Platform Updates",
+                  "Daily Digest (Email)"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">{item}</span>
+                    <input type="checkbox" defaultChecked className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-gray-300" />
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          <div className={`${cardStyle} p-6`}>
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+               <Shield size={20} className="text-brand-500" /> Security
+             </h3>
+             <div className="space-y-4">
+               <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                 <div>
+                   <p className="font-bold text-gray-900 dark:text-white">Password</p>
+                   <p className="text-xs text-gray-500">Last changed 6 months ago</p>
+                 </div>
+                 <button onClick={() => setShowPasswordModal(true)} className="text-sm font-bold text-brand-600 dark:text-brand-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-colors">Change</button>
+               </div>
+               
+               <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                 <div>
+                   <p className="font-bold text-gray-900 dark:text-white">Two-Factor Authentication</p>
+                   <p className="text-xs text-gray-500">Secure your account with 2FA</p>
+                 </div>
+                 <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="toggle" id="toggle" className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300"/>
+                    <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                </div>
+               </div>
+             </div>
+          </div>
+
+          <div className={`${cardStyle} p-6 border-l-4 border-l-red-500`}>
+             <h3 className="text-lg font-bold text-red-600 mb-6 flex items-center gap-2">
+               <AlertTriangle size={20} /> Danger Zone
+             </h3>
+             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+               <div>
+                  <p className="font-bold text-gray-900 dark:text-white">Delete Instructor Account</p>
+                  <p className="text-sm text-gray-500">This will remove all your courses and data.</p>
+               </div>
+               <button 
+                 onClick={() => setShowDeleteModal(true)}
+                 className="px-6 py-2 bg-red-100 dark:bg-red-900/20 text-red-600 font-bold rounded-xl hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
+               >
+                 Delete Account
+               </button>
+             </div>
+          </div>
+       </div>
+
+       {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowPasswordModal(false)}></div>
+          <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-scale-up p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Change Password</h3>
+            <form onSubmit={(e) => { e.preventDefault(); setShowPasswordModal(false); showToast("Password updated successfully"); }}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Current Password</label>
+                   <PasswordInputWithToggle placeholder="••••••••" />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">New Password</label>
+                   <PasswordInputWithToggle placeholder="••••••••" />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Confirm New Password</label>
+                   <PasswordInputWithToggle placeholder="••••••••" />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-8">
+                <button type="button" onClick={() => setShowPasswordModal(false)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-lg">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+       )}
+
+       <DeleteAccountModal 
+         isOpen={showDeleteModal} 
+         onClose={() => setShowDeleteModal(false)} 
+         onConfirm={handleDeleteAccount} 
+       />
+    </div>
+  );
+};
+
+const InstructorMessagesView = () => {
+  const [activeChat, setActiveChat] = useState(0);
+  const [inputText, setInputText] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mock Students
+  const contacts = [
+    { id: 0, name: "Jane Doe", course: "Advanced React", online: true, lastMsg: "Thanks for the feedback!", time: "5m", img: 5 },
+    { id: 1, name: "John Smith", course: "UI/UX Principles", online: false, lastMsg: "When is the deadline?", time: "1h", img: 3 },
+    { id: 2, name: "Alice Johnson", course: "Advanced React", online: true, lastMsg: "I'm stuck on Module 3.", time: "3h", img: 12 },
+  ];
+
+  const [chatHistory, setChatHistory] = useState<{ [key: number]: any[] }>({
+    0: [
+      { text: "Hello Jane, I reviewed your assignment. Great job!", isMe: true, type: 'text' },
+      { text: "Thanks for the feedback! I'll work on the optimizations.", isMe: false, type: 'text' }
+    ]
+  });
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+
+    const newMessage = { text: inputText, isMe: true, type: 'text' };
+    setChatHistory(prev => ({
+      ...prev,
+      [activeChat]: [...(prev[activeChat] || []), newMessage]
+    }));
+    setInputText("");
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const isImage = file.type.startsWith('image/');
+    const newMessage = { 
+      text: isImage ? URL.createObjectURL(file) : "File Attachment", 
+      isMe: true, 
+      type: isImage ? 'image' : 'file',
+      fileName: file.name
+    };
+    setChatHistory(prev => ({
+      ...prev,
+      [activeChat]: [...(prev[activeChat] || []), newMessage]
+    }));
+  };
+
+  const currentMessages = chatHistory[activeChat] || [];
+
+  return (
+    <div className={`h-[calc(100vh-140px)] ${cardStyle} flex overflow-hidden animate-fade-in-up`}>
+      {/* Sidebar */}
+      <div className="w-80 border-r border-gray-100 dark:border-gray-700 flex flex-col">
+         <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+             <div className={innerCardStyle + " flex items-center px-3 py-2"}>
+               <Search size={16} className="text-gray-400" />
+               <input type="text" placeholder="Search students" className="bg-transparent border-none outline-none text-sm ml-2 w-full text-gray-700 dark:text-gray-200" />
+             </div>
+         </div>
+         <div className="flex-1 overflow-y-auto">
+            {contacts.map((contact) => (
+              <div 
+                key={contact.id} 
+                onClick={() => setActiveChat(contact.id)}
+                className={`p-4 flex gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${activeChat === contact.id ? 'bg-brand-50 dark:bg-brand-900/10 border-r-2 border-brand-500' : ''}`}
+              >
+                <div className="relative">
+                  <img src={`https://i.pravatar.cc/150?img=${contact.img}`} alt={contact.name} className="w-10 h-10 rounded-full bg-gray-200" />
+                  {contact.online && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <h4 className={`text-sm font-bold ${activeChat === contact.id ? 'text-brand-700 dark:text-brand-400' : 'text-gray-900 dark:text-white'}`}>{contact.name}</h4>
+                    <span className="text-[10px] text-gray-400">{contact.time}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{contact.lastMsg}</p>
+                  <p className="text-[10px] text-brand-500 mt-1">{contact.course}</p>
+                </div>
+              </div>
+            ))}
+         </div>
+      </div>
+
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col bg-gray-50/50 dark:bg-gray-900/50">
+         <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+            <div className="flex items-center gap-3">
+               <img src={`https://i.pravatar.cc/150?img=${contacts[activeChat].img}`} alt="" className="w-10 h-10 rounded-full" />
+               <div>
+                 <h3 className="font-bold text-gray-900 dark:text-white">{contacts[activeChat].name}</h3>
+                 <span className="text-xs text-brand-600 dark:text-brand-400 font-medium">Student</span>
+               </div>
+            </div>
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+              <MoreVertical size={20} className="text-gray-500" />
+            </button>
+         </div>
+
+         <div className="flex-1 p-6 overflow-y-auto space-y-4">
+            {currentMessages.map((msg, idx) => (
+               <div key={idx} className={`flex gap-3 ${msg.isMe ? 'flex-row-reverse' : ''}`}>
+                 <div className={`p-3 rounded-2xl shadow-sm max-w-sm text-sm ${
+                   msg.isMe 
+                     ? 'bg-brand-600 text-white rounded-br-none' 
+                     : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-none'
+                 }`}>
+                   {msg.type === 'image' ? (
+                      <img src={msg.text} alt="Shared" className="max-w-full rounded-lg" />
+                   ) : msg.type === 'file' ? (
+                      <div className="flex items-center gap-2 bg-black/10 p-2 rounded-lg">
+                        <File size={20} />
+                        <span className="truncate">{msg.fileName}</span>
+                      </div>
+                   ) : (
+                      msg.text
+                   )}
+                 </div>
+               </div>
+            ))}
+         </div>
+
+         <form onSubmit={handleSendMessage} className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex gap-2">
+              <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} />
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current?.click()}
+                className="p-3 text-gray-400 hover:text-brand-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+              >
+                <Paperclip size={20} />
+              </button>
+              <div className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center px-4">
+                <input 
+                   type="text" 
+                   placeholder="Type a message..." 
+                   value={inputText}
+                   onChange={(e) => setInputText(e.target.value)}
+                   className="bg-transparent border-none outline-none w-full text-sm text-gray-900 dark:text-white" 
+                />
+              </div>
+              <button type="submit" className="p-3 bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition-colors">
+                <Send size={20} />
+              </button>
+            </div>
+         </form>
+      </div>
     </div>
   );
 };
@@ -794,9 +1330,10 @@ const EarningsView = () => {
   );
 };
 
-const LiveClassManager = () => {
+const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [topic, setTopic] = useState("");
   const [date, setDate] = useState("");
+  const [targetAudience, setTargetAudience] = useState("Open for All");
   const [activeFilter, setActiveFilter] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
   
   // Use dates relative to now to demonstrate filtering
@@ -805,10 +1342,10 @@ const LiveClassManager = () => {
   const thirtyMins = 30 * 60 * 1000;
 
   const [classes, setClasses] = useState([
-    { id: 1, topic: "Weekly Design Review", date: new Date(now + oneDay).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Review" },
-    { id: 2, topic: "React Q&A Session", date: new Date(now - thirtyMins).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-React" },
-    { id: 3, topic: "Intro to Figma", date: new Date(now - oneDay * 2).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Figma" },
-    { id: 4, topic: "Cybersecurity Basics", date: new Date(now + oneDay * 3).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Cyber" }
+    { id: 1, topic: "Weekly Design Review", date: new Date(now + oneDay).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Review", audience: "Open for All" },
+    { id: 2, topic: "React Q&A Session", date: new Date(now - thirtyMins).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-React", audience: "Advanced React Patterns" },
+    { id: 3, topic: "Intro to Figma", date: new Date(now - oneDay * 2).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Figma", audience: "UI/UX Principles" },
+    { id: 4, topic: "Cybersecurity Basics", date: new Date(now + oneDay * 3).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Cyber", audience: "Open for All" }
   ]);
 
   const scheduleClass = () => {
@@ -818,9 +1355,18 @@ const LiveClassManager = () => {
       id: Date.now(),
       topic,
       date,
-      link: `https://meet.jit.si/ElimuTech-${cleanTopic}-${Date.now()}`
+      link: `https://meet.jit.si/ElimuTech-${cleanTopic}-${Date.now()}`,
+      audience: targetAudience
     };
     setClasses([...classes, newClass]);
+    
+    // Notification Logic
+    if (targetAudience === "Open for All") {
+      showToast("System-wide notification sent to all students!");
+    } else {
+      showToast(`Notification sent to students enrolled in ${targetAudience}`);
+    }
+
     setTopic("");
     setDate("");
   };
@@ -874,6 +1420,17 @@ const LiveClassManager = () => {
                  />
                </div>
                <div>
+                 <label className="text-xs font-bold text-gray-500 uppercase">Target Audience</label>
+                 <select
+                   value={targetAudience}
+                   onChange={(e) => setTargetAudience(e.target.value)}
+                   className={inputStyle}
+                 >
+                   <option>Open for All</option>
+                   {initialCourses.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
+                 </select>
+               </div>
+               <div>
                  <label className="text-xs font-bold text-gray-500 uppercase">Date & Time</label>
                  <input 
                     type="datetime-local"
@@ -911,6 +1468,9 @@ const LiveClassManager = () => {
                      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
                        <Calendar size={14} /> {new Date(cls.date).toLocaleString()}
                      </p>
+                     <p className="text-xs text-brand-600 dark:text-brand-400 font-bold mt-1">
+                       Target: {cls.audience}
+                     </p>
                      <a href={cls.link} target="_blank" rel="noreferrer" className="text-brand-600 text-xs mt-1 block hover:underline truncate max-w-xs">{cls.link}</a>
                    </div>
                    <div className="flex gap-2">
@@ -937,7 +1497,12 @@ const InstructorDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCourseFilter, setSelectedCourseFilter] = useState("All");
+  const [toastMsg, setToastMsg] = useState("");
   const navigate = useNavigate();
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+  };
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
@@ -961,9 +1526,15 @@ const InstructorDashboard: React.FC = () => {
       case 'Earnings':
         return <EarningsView />;
       case 'Live Classes':
-        return <LiveClassManager />;
+        return <LiveClassManager showToast={showToast} />;
       case 'Discounts':
         return <DiscountManager />;
+      case 'Profile':
+        return <InstructorProfileView showToast={showToast} />;
+      case 'Settings':
+        return <InstructorSettingsView showToast={showToast} />;
+      case 'Messages':
+        return <InstructorMessagesView />;
       case 'My Courses':
         return (
           <div className="animate-fade-in-up">
@@ -1226,6 +1797,9 @@ const InstructorDashboard: React.FC = () => {
            {renderContent()}
         </main>
       </div>
+
+      {/* Global Toast */}
+      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg("")} />}
     </div>
   );
 };
