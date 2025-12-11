@@ -1,17 +1,18 @@
+
 import React from 'react';
-import { Monitor, Briefcase, PenTool, Laptop, Calculator, Wand2, Database, Shield } from 'lucide-react';
+import { BookOpen, Users, Award, Briefcase, Monitor, Wand2, Database, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Categories: React.FC = () => {
   const categories = [
+    { name: 'Theology', desc: "Faith & Spiritual Studies", icon: <BookOpen size={24} /> },
+    { name: 'Counseling', desc: "Psychology & Care", icon: <Users size={24} /> },
+    { name: 'Leadership', desc: "Management & Influence", icon: <Award size={24} /> },
+    { name: 'Business', desc: "Strategy & Entrepreneurship", icon: <Briefcase size={24} /> },
     { name: 'Development', desc: "Web, Mobile & Software", icon: <Monitor size={24} /> },
-    { name: 'Business', desc: "Leadership & Entrepreneurship", icon: <Briefcase size={24} /> },
-    { name: 'Design', desc: "UI/UX & Graphics", icon: <PenTool size={24} /> },
-    { name: 'IT & Software', desc: "Cloud & DevOps", icon: <Laptop size={24} /> },
-    { name: 'Data Science', desc: "AI, ML & Analytics", icon: <Database size={24} /> },
     { name: 'Marketing', desc: "Digital & Social Media", icon: <Wand2 size={24} /> },
+    { name: 'Data Science', desc: "AI, ML & Analytics", icon: <Database size={24} /> },
     { name: 'Cybersecurity', desc: "Network & Info Sec", icon: <Shield size={24} /> },
-    { name: 'Finance', desc: "Accounting & Fintech", icon: <Calculator size={24} /> },
   ];
 
   return (

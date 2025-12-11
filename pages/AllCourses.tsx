@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { courses } from '../data/courses';
@@ -5,7 +6,7 @@ import CourseCard from '../components/CourseCard';
 import { useLocation } from 'react-router-dom';
 
 const AllCourses: React.FC = () => {
-  const categories = ["All", "Development", "Design", "Marketing", "Data Science", "Finance", "AgriTech", "Fintech"];
+  const categories = ["All", "Theology", "Counseling", "Leadership", "Business", "Development", "Design", "Marketing", "Data Science", "Finance"];
   const location = useLocation();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
