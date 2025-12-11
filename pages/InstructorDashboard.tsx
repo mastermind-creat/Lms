@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   LayoutDashboard, BookOpen, PlusCircle, Video, PlayCircle, 
@@ -7,7 +8,7 @@ import {
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
   MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
   Youtube, Link as LinkIcon, File, Eye, Filter, Clock, Tag, RefreshCw, Send, Paperclip, Ban, Flag,
-  Shield, Moon, Smartphone, Mail, Globe, MapPin, EyeOff
+  Shield, Moon, Smartphone, Mail, Globe, MapPin, EyeOff, QrCode, Reply, MessageSquare, ThumbsUp
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -23,7 +24,7 @@ const inputStyle = "w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 da
 const initialCourses = [
   { id: 1, title: "Advanced React Patterns", students: 124, price: 6000, status: "Published", rating: 4.8, image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=200&q=80" },
   { id: 2, title: "Python for Data Science", students: 85, price: 8000, status: "Draft", rating: 0, image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=200&q=80" },
-  { id: 3, title: "UI/UX Principles", students: 210, price: 5000, status: "Published", rating: 4.9, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=200&q=80" },
+  { id: 3, title: "UI/UX Principles", students: 0, price: 5000, status: "Pending Approval", rating: 0, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=200&q=80" },
 ];
 
 const initialStudents = [
@@ -67,6 +68,144 @@ const PasswordInputWithToggle = ({ placeholder }: { placeholder: string }) => {
       >
         {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>
+    </div>
+  );
+};
+
+const TwoFASetupModal = ({ isOpen, onClose, onComplete }: { isOpen: boolean, onClose: () => void, onComplete: () => void }) => {
+  const [step, setStep] = useState(1);
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleVerify = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      onComplete();
+    }, 1500);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-8 animate-scale-up text-center">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Enable 2-Step Verification</h3>
+        <p className="text-sm text-gray-500 mb-6">Protect your account with an extra layer of security.</p>
+
+        {step === 1 && (
+          <div className="space-y-6">
+            <div className="bg-white p-4 rounded-xl border-2 border-dashed border-gray-200 inline-block">
+              <QrCode size={120} className="text-gray-900" />
+            </div>
+            <p className="text-xs text-gray-500">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)</p>
+            <button 
+              onClick={() => setStep(2)}
+              className={btnPrimary + " w-full"}
+            >
+              I've Scanned It
+            </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6">
+            <div className="space-y-2 text-left">
+              <label className="text-xs font-bold text-gray-500 uppercase">Enter Verification Code</label>
+              <input 
+                type="text" 
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="123 456" 
+                className={inputStyle + " text-center tracking-widest text-xl"}
+                maxLength={6}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setStep(1)} className={btnSecondary + " flex-1"}>Back</button>
+              <button 
+                onClick={handleVerify} 
+                disabled={code.length < 6 || isLoading}
+                className={btnPrimary + " flex-1 flex justify-center"}
+              >
+                {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Verify & Enable"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const RecordingUploadModal = ({ isOpen, onClose, sessionTitle, onUpload }: { isOpen: boolean, onClose: () => void, sessionTitle: string, onUpload: () => void }) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  if (!isOpen) return null;
+
+  const handleUpload = () => {
+    if (!file) return;
+    setUploading(true);
+    
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            onUpload();
+            setUploading(false);
+            setFile(null);
+            setProgress(0);
+          }, 500);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 300);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Upload Recording</h3>
+        <p className="text-sm text-gray-500 mb-6">For session: <span className="font-bold">{sessionTitle}</span></p>
+        
+        {!uploading ? (
+          <div className="space-y-4">
+            <label className="block w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <Upload size={24} className="text-gray-400 mb-2" />
+              <span className="text-sm text-gray-500">{file ? file.name : "Click to select video file (MP4)"}</span>
+              <input type="file" className="hidden" accept="video/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            </label>
+            <div className="flex gap-3">
+              <button onClick={onClose} className={btnSecondary + " flex-1"}>Cancel</button>
+              <button 
+                onClick={handleUpload}
+                disabled={!file}
+                className={btnPrimary + " flex-1 disabled:opacity-50"}
+              >
+                Start Upload
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4 py-4">
+            <div className="flex justify-between text-xs font-bold text-gray-500">
+              <span>Uploading...</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+              <div className="h-full bg-brand-500 transition-all duration-300" style={{ width: `${progress}%` }}></div>
+            </div>
+            <p className="text-center text-xs text-gray-400">Please do not close this window.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -383,6 +522,92 @@ const DiscountManager = () => {
   );
 };
 
+const ReviewsView = () => {
+  const [reviews, setReviews] = useState([
+    { id: 1, student: "Alice Johnson", course: "Advanced React Patterns", rating: 5, date: "2 days ago", comment: "The module on Hooks was a game changer for me. Instructor explains complex topics very clearly!", reply: "" },
+    { id: 2, student: "Robert Mugo", course: "Python for Data Science", rating: 4, date: "1 week ago", comment: "Great content, but I wish there were more real-world examples in the Pandas section.", reply: "Thank you Robert! I'm planning to add a new case study module next month." },
+    { id: 3, student: "Sarah Hassan", course: "UI/UX Principles", rating: 5, date: "2 weeks ago", comment: "Absolutely loved this course. The Figma resources are super high quality.", reply: "" },
+  ]);
+
+  const [replyText, setReplyText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+
+  const handleReplySubmit = (id: number) => {
+    if (!replyText.trim()) return;
+    setReviews(reviews.map(r => r.id === id ? { ...r, reply: replyText } : r));
+    setReplyingTo(null);
+    setReplyText("");
+  };
+
+  return (
+    <div className="animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Student Reviews</h1>
+      
+      <div className="grid grid-cols-1 gap-6">
+        {reviews.map(review => (
+          <div key={review.id} className={`${cardStyle} p-6`}>
+             <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/20 text-brand-600 flex items-center justify-center font-bold">
+                     {review.student.charAt(0)}
+                   </div>
+                   <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white text-sm">{review.student}</h3>
+                      <p className="text-xs text-gray-500">{review.course}</p>
+                   </div>
+                </div>
+                <div className="text-right">
+                   <div className="flex gap-1 mb-1">
+                     {[...Array(5)].map((_, i) => (
+                       <Star key={i} size={14} className={i < review.rating ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                     ))}
+                   </div>
+                   <p className="text-xs text-gray-400">{review.date}</p>
+                </div>
+             </div>
+
+             <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl text-sm text-gray-700 dark:text-gray-300 mb-4">
+               {review.comment}
+             </div>
+
+             {review.reply ? (
+               <div className="ml-8 mt-2 p-4 bg-blue-50 dark:bg-blue-900/10 border-l-2 border-blue-500 rounded-r-xl">
+                  <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-2"><Reply size={12} /> Your Reply</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{review.reply}</p>
+               </div>
+             ) : (
+               <>
+                 {replyingTo === review.id ? (
+                   <div className="ml-8 mt-4 animate-fade-in">
+                      <textarea 
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 outline-none text-sm text-gray-900 dark:text-white mb-2"
+                        placeholder="Write a public reply..."
+                        rows={3}
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => setReplyingTo(null)} className="px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">Cancel</button>
+                        <button onClick={() => handleReplySubmit(review.id)} className="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700">Post Reply</button>
+                      </div>
+                   </div>
+                 ) : (
+                   <button 
+                     onClick={() => setReplyingTo(review.id)}
+                     className="ml-auto flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-600 transition-colors"
+                   >
+                     <MessageSquare size={16} /> Reply
+                   </button>
+                 )}
+               </>
+             )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const InstructorProfileView = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -547,6 +772,8 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
   const { theme, setTheme } = useTheme();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
   const handleSaveSettings = () => {
     showToast("Settings saved successfully");
@@ -555,7 +782,12 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
   const handleDeleteAccount = () => {
     setShowDeleteModal(false);
     alert("Account permanently deleted. Redirecting to home...");
-    // navigate('/'); 
+  };
+
+  const handle2FAComplete = () => {
+    setIs2FAEnabled(true);
+    setShow2FAModal(false);
+    showToast("Two-Factor Authentication Enabled!");
   };
 
   return (
@@ -566,6 +798,7 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
        </div>
 
        <div className="space-y-8">
+          {/* Appearance */}
           <div className={`${cardStyle} p-6`}>
              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                <Moon size={20} className="text-brand-500" /> Appearance
@@ -581,6 +814,7 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
              </div>
           </div>
 
+          {/* Notifications */}
           <div className={`${cardStyle} p-6`}>
              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                <Bell size={20} className="text-brand-500" /> Notification Preferences
@@ -601,6 +835,7 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
              </div>
           </div>
 
+          {/* Account Security */}
           <div className={`${cardStyle} p-6`}>
              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                <Shield size={20} className="text-brand-500" /> Security
@@ -617,11 +852,24 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
                <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
                  <div>
                    <p className="font-bold text-gray-900 dark:text-white">Two-Factor Authentication</p>
-                   <p className="text-xs text-gray-500">Secure your account with 2FA</p>
+                   <p className="text-xs text-gray-500">{is2FAEnabled ? "Enabled and protecting your account" : "Secure your account with 2FA"}</p>
                  </div>
                  <div className="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
-                    <input type="checkbox" name="toggle" id="toggle" className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300"/>
-                    <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                    <input 
+                      type="checkbox" 
+                      name="toggle" 
+                      id="toggle" 
+                      checked={is2FAEnabled}
+                      onChange={() => {
+                        if (!is2FAEnabled) setShow2FAModal(true);
+                        else setIs2FAEnabled(false);
+                      }}
+                      className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 checked:right-0 checked:border-brand-600"
+                    />
+                    <label 
+                      htmlFor="toggle" 
+                      className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${is2FAEnabled ? 'bg-brand-600' : 'bg-gray-300'}`}
+                    ></label>
                 </div>
                </div>
              </div>
@@ -679,6 +927,12 @@ const InstructorSettingsView = ({ showToast }: { showToast: (msg: string) => voi
          isOpen={showDeleteModal} 
          onClose={() => setShowDeleteModal(false)} 
          onConfirm={handleDeleteAccount} 
+       />
+
+       <TwoFASetupModal
+         isOpen={show2FAModal}
+         onClose={() => setShow2FAModal(false)}
+         onComplete={handle2FAComplete}
        />
     </div>
   );
@@ -834,13 +1088,16 @@ const InstructorMessagesView = () => {
   );
 };
 
-const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
+const CreateCourseView = ({ onSave }: { onSave: (msg: string) => void }) => {
   const [step, setStep] = useState(1);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const resourceFileRef = useRef<HTMLInputElement>(null);
+  const [activeResIndex, setActiveResIndex] = useState<{mod: number, res: number} | null>(null);
   
   const [courseData, setCourseData] = useState({
     title: "", 
     category: "Development", 
+    pricing: "Paid", // 'Free' or 'Paid'
     price: "", 
     description: "", 
     level: "Beginner",
@@ -902,6 +1159,30 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
     };
     updated[moduleIndex].resources.push(newResource);
     setCourseData({ ...courseData, modules: updated });
+
+    // If it's a file type (video/pdf), trigger upload immediately
+    if (type === 'video' || type === 'pdf') {
+       const resIndex = updated[moduleIndex].resources.length - 1;
+       setActiveResIndex({ mod: moduleIndex, res: resIndex });
+       setTimeout(() => resourceFileRef.current?.click(), 100);
+    }
+  };
+
+  const handleResourceFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && activeResIndex) {
+      const file = e.target.files[0];
+      const sizeInMB = (file.size / (1024 * 1024)).toFixed(1) + " MB";
+      
+      const updated = [...courseData.modules];
+      const res = updated[activeResIndex.mod].resources[activeResIndex.res];
+      
+      res.title = file.name;
+      if (res.type === 'pdf') res.size = sizeInMB;
+      // For video duration we'd typically need metadata, just setting mock for now or filename
+      
+      setCourseData({ ...courseData, modules: updated });
+      setActiveResIndex(null);
+    }
   };
 
   const updateResource = (moduleIndex: number, resIndex: number, field: string, value: string) => {
@@ -917,6 +1198,10 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
     const updated = [...courseData.modules];
     updated[moduleIndex].resources.splice(resIndex, 1);
     setCourseData({ ...courseData, modules: updated });
+  };
+
+  const handlePublish = () => {
+     onSave("Course submitted for admin approval!");
   };
 
   return (
@@ -1000,15 +1285,41 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
                           <option>Fintech</option>
                         </select>
                       </div>
+                      
+                      {/* Price Toggle & Input */}
                       <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Price (KES)</label>
-                        <input 
-                          type="number"
-                          value={courseData.price}
-                          onChange={(e) => setCourseData({...courseData, price: e.target.value})}
-                          className={inputStyle} 
-                          placeholder="5000" 
-                        />
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Pricing</label>
+                        <div className="flex gap-4 mb-2">
+                           <label className="flex items-center gap-2 cursor-pointer">
+                              <input 
+                                type="radio" 
+                                name="pricing" 
+                                checked={courseData.pricing === 'Free'} 
+                                onChange={() => setCourseData({...courseData, pricing: 'Free', price: '0'})} 
+                                className="text-brand-600 focus:ring-brand-500"
+                              />
+                              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Free</span>
+                           </label>
+                           <label className="flex items-center gap-2 cursor-pointer">
+                              <input 
+                                type="radio" 
+                                name="pricing" 
+                                checked={courseData.pricing === 'Paid'} 
+                                onChange={() => setCourseData({...courseData, pricing: 'Paid'})} 
+                                className="text-brand-600 focus:ring-brand-500"
+                              />
+                              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Paid</span>
+                           </label>
+                        </div>
+                        {courseData.pricing === 'Paid' && (
+                          <input 
+                            type="number"
+                            value={courseData.price}
+                            onChange={(e) => setCourseData({...courseData, price: e.target.value})}
+                            className={inputStyle} 
+                            placeholder="Amount in KES" 
+                          />
+                        )}
                       </div>
                     </div>
                  </div>
@@ -1019,6 +1330,9 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
 
         {step === 2 && (
           <div className="space-y-6">
+            {/* Hidden File Input for Auto-Detection */}
+            <input type="file" ref={resourceFileRef} className="hidden" onChange={handleResourceFileChange} />
+
             <div className="flex justify-between items-end">
               <div>
                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Curriculum Builder</h3>
@@ -1115,7 +1429,7 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
                                   className="bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs outline-none flex-1 text-gray-500 truncate"
                                   placeholder={res.type === 'video' ? 'Video URL' : 'File URL'}
                                   disabled
-                                  value={res.type === 'video' ? 'Upload Pending...' : 'Attachment'}
+                                  value={res.type === 'link' ? '' : 'File Auto-Attached'}
                                />
                              </div>
                           </div>
@@ -1228,19 +1542,6 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
                         </div>
                       ))}
                    </div>
-                   
-                   {/* Instructor Card Preview */}
-                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
-                      <h3 className="font-bold text-gray-900 dark:text-white mb-4">About the Instructor</h3>
-                      <div className="flex items-center gap-4">
-                         <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                         <div>
-                            <p className="font-bold text-gray-900 dark:text-white">{courseData.instructor}</p>
-                            <button className="text-xs text-brand-600 font-bold hover:underline">View Profile</button>
-                         </div>
-                      </div>
-                   </div>
-
                 </div>
              </div>
           </div>
@@ -1255,7 +1556,7 @@ const CreateCourseView = ({ onSave }: { onSave: () => void }) => {
            {step < 3 ? (
              <button onClick={() => setStep(step + 1)} className={btnPrimary}>Next Step</button>
            ) : (
-             <button onClick={onSave} className={btnPrimary}>Publish Course</button>
+             <button onClick={handlePublish} className={btnPrimary}>Submit for Review</button>
            )}
         </div>
       </div>
@@ -1333,8 +1634,12 @@ const EarningsView = () => {
 const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) => {
   const [topic, setTopic] = useState("");
   const [date, setDate] = useState("");
-  const [targetAudience, setTargetAudience] = useState("Open for All");
+  const [targetAudience, setTargetAudience] = useState("All Students");
   const [activeFilter, setActiveFilter] = useState<'upcoming' | 'ongoing' | 'completed'>('upcoming');
+  const [isEditing, setIsEditing] = useState<number | null>(null);
+  const [editReason, setEditReason] = useState("");
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedSessionForUpload, setSelectedSessionForUpload] = useState("");
   
   // Use dates relative to now to demonstrate filtering
   const now = Date.now();
@@ -1342,46 +1647,80 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
   const thirtyMins = 30 * 60 * 1000;
 
   const [classes, setClasses] = useState([
-    { id: 1, topic: "Weekly Design Review", date: new Date(now + oneDay).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Review", audience: "Open for All" },
-    { id: 2, topic: "React Q&A Session", date: new Date(now - thirtyMins).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-React", audience: "Advanced React Patterns" },
-    { id: 3, topic: "Intro to Figma", date: new Date(now - oneDay * 2).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Figma", audience: "UI/UX Principles" },
-    { id: 4, topic: "Cybersecurity Basics", date: new Date(now + oneDay * 3).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Cyber", audience: "Open for All" }
+    { id: 1, topic: "Weekly Design Review", date: new Date(now + oneDay).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Review", audience: "All Students", status: 'upcoming' },
+    { id: 2, topic: "React Q&A Session", date: new Date(now - thirtyMins).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-React", audience: "Advanced React Patterns", status: 'ongoing' },
+    { id: 3, topic: "Intro to Figma", date: new Date(now - oneDay * 2).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Figma", audience: "UI/UX Principles", status: 'completed' },
+    { id: 4, topic: "Cybersecurity Basics", date: new Date(now + oneDay * 3).toISOString().slice(0, 16), link: "https://meet.jit.si/ElimuTech-Cyber", audience: "All Students", status: 'upcoming' }
   ]);
 
   const scheduleClass = () => {
     if (!topic || !date) return;
-    const cleanTopic = topic.replace(/\s/g, '');
-    const newClass = {
-      id: Date.now(),
-      topic,
-      date,
-      link: `https://meet.jit.si/ElimuTech-${cleanTopic}-${Date.now()}`,
-      audience: targetAudience
-    };
-    setClasses([...classes, newClass]);
     
-    // Notification Logic
-    if (targetAudience === "Open for All") {
-      showToast("System-wide notification sent to all students!");
+    if (isEditing) {
+      // Editing existing class
+      setClasses(classes.map(c => 
+        c.id === isEditing 
+          ? { ...c, topic, date, audience: targetAudience } 
+          : c
+      ));
+      showToast(`Class updated. Notification sent for: "${editReason}"`);
+      setIsEditing(null);
+      setEditReason("");
     } else {
-      showToast(`Notification sent to students enrolled in ${targetAudience}`);
+      // Creating new class
+      const cleanTopic = topic.replace(/\s/g, '');
+      const newClass = {
+        id: Date.now(),
+        topic,
+        date,
+        link: `https://meet.jit.si/ElimuTech-${cleanTopic}-${Date.now()}`,
+        audience: targetAudience,
+        status: 'upcoming'
+      };
+      setClasses([...classes, newClass]);
+      
+      // Notification Logic
+      if (targetAudience === "All Students") {
+        showToast("System-wide notification sent to all students!");
+      } else {
+        showToast(`Notification sent to students enrolled in ${targetAudience}`);
+      }
     }
 
+    // Reset Form
     setTopic("");
     setDate("");
+    setTargetAudience("All Students");
   };
 
-  const getStatus = (dateStr: string) => {
-    const classTime = new Date(dateStr).getTime();
-    const currentTime = Date.now();
-    const duration = 60 * 60 * 1000; // Assume 1 hour class duration
-    
-    if (classTime > currentTime) return 'upcoming';
-    if (classTime <= currentTime && classTime + duration > currentTime) return 'ongoing';
-    return 'completed';
+  const startEdit = (cls: any) => {
+    setTopic(cls.topic);
+    setDate(cls.date);
+    setTargetAudience(cls.audience);
+    setIsEditing(cls.id);
+    // Switch filter to match edit context if needed, but keeping it simple
   };
 
-  const filteredClasses = classes.filter(c => getStatus(c.date) === activeFilter);
+  const cancelEdit = () => {
+    setIsEditing(null);
+    setTopic("");
+    setDate("");
+    setTargetAudience("All Students");
+    setEditReason("");
+  };
+
+  const changeStatus = (id: number, newStatus: string) => {
+    setClasses(classes.map(c => c.id === id ? { ...c, status: newStatus } : c));
+    const statusMsg = newStatus === 'ongoing' ? 'Class Started!' : 'Class Ended';
+    showToast(statusMsg);
+  };
+
+  const handleUploadClick = (title: string) => {
+    setSelectedSessionForUpload(title);
+    setShowUploadModal(true);
+  };
+
+  const filteredClasses = classes.filter(c => c.status === activeFilter);
 
   return (
     <div className="animate-fade-in-up">
@@ -1389,17 +1728,21 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Live Classes</h1>
           
           <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
-            {(['upcoming', 'ongoing', 'completed'] as const).map(filter => (
+            {[
+              { id: 'upcoming', label: 'Upcoming' },
+              { id: 'ongoing', label: 'Ongoing' },
+              { id: 'completed', label: 'Past' }
+            ].map(tab => (
               <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
+                key={tab.id}
+                onClick={() => setActiveFilter(tab.id as any)}
                 className={`px-4 py-2 rounded-lg text-xs font-bold capitalize transition-all ${
-                  activeFilter === filter 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                  activeFilter === tab.id 
+                    ? 'bg-brand-600 text-white shadow-sm' 
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                {filter}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -1408,7 +1751,9 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Schedule Form */}
           <div className={`${cardStyle} p-6 h-fit`}>
-             <h3 className="font-bold text-gray-900 dark:text-white mb-4">Schedule New Class</h3>
+             <h3 className="font-bold text-gray-900 dark:text-white mb-4">
+               {isEditing ? "Edit Session" : "Schedule New Class"}
+             </h3>
              <div className="space-y-4">
                <div>
                  <label className="text-xs font-bold text-gray-500 uppercase">Topic</label>
@@ -1426,7 +1771,7 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
                    onChange={(e) => setTargetAudience(e.target.value)}
                    className={inputStyle}
                  >
-                   <option>Open for All</option>
+                   <option>All Students</option>
                    {initialCourses.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
                  </select>
                </div>
@@ -1439,9 +1784,30 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
                     className={inputStyle} 
                  />
                </div>
-               <button onClick={scheduleClass} className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition-colors">
-                 Generate Jitsi Link
-               </button>
+               
+               {isEditing && (
+                 <div className="animate-fade-in">
+                   <label className="text-xs font-bold text-gray-500 uppercase">Reason for Change</label>
+                   <input 
+                      value={editReason}
+                      onChange={(e) => setEditReason(e.target.value)}
+                      className={inputStyle} 
+                      placeholder="e.g. Rescheduled due to conflict"
+                      required
+                   />
+                 </div>
+               )}
+
+               <div className="flex gap-2">
+                 {isEditing && (
+                   <button onClick={cancelEdit} className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                     Cancel
+                   </button>
+                 )}
+                 <button onClick={scheduleClass} className="flex-1 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition-colors">
+                   {isEditing ? "Update Class" : "Schedule"}
+                 </button>
+               </div>
              </div>
           </div>
 
@@ -1454,10 +1820,10 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
                </div>
              ) : (
                filteredClasses.map(cls => (
-                 <div key={cls.id} className={`${cardStyle} p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-l-4 ${activeFilter === 'ongoing' ? 'border-l-red-500' : 'border-l-transparent'}`}>
-                   <div>
+                 <div key={cls.id} className={`${cardStyle} p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-l-4 ${cls.status === 'ongoing' ? 'border-l-red-500' : 'border-l-brand-500'}`}>
+                   <div className="flex-1">
                      <div className="flex items-center gap-2 mb-1">
-                       {activeFilter === 'ongoing' && (
+                       {cls.status === 'ongoing' && (
                          <span className="flex h-2 w-2 relative">
                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
@@ -1471,17 +1837,53 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
                      <p className="text-xs text-brand-600 dark:text-brand-400 font-bold mt-1">
                        Target: {cls.audience}
                      </p>
-                     <a href={cls.link} target="_blank" rel="noreferrer" className="text-brand-600 text-xs mt-1 block hover:underline truncate max-w-xs">{cls.link}</a>
                    </div>
+                   
+                   {/* Action Buttons */}
                    <div className="flex gap-2">
-                     <a href={cls.link} target="_blank" rel="noreferrer" className={activeFilter === 'completed' ? btnSecondary : btnPrimary}>
-                       {activeFilter === 'completed' ? 'View Recording' : 'Start Class'}
-                     </a>
-                     {activeFilter === 'completed' && (
-                       <label className={btnSecondary + " cursor-pointer flex items-center gap-2 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-400 border border-brand-200 dark:border-brand-800"}>
+                     {cls.status === 'upcoming' && (
+                       <>
+                         <button 
+                           onClick={() => startEdit(cls)}
+                           className={btnSecondary}
+                         >
+                           Edit
+                         </button>
+                         <button 
+                           onClick={() => changeStatus(cls.id, 'ongoing')}
+                           className={btnPrimary}
+                         >
+                           Start
+                         </button>
+                       </>
+                     )}
+
+                     {cls.status === 'ongoing' && (
+                       <>
+                         <a 
+                           href={cls.link} 
+                           target="_blank" 
+                           rel="noreferrer" 
+                           className={btnPrimary + " bg-red-600 hover:bg-red-700"}
+                         >
+                           Join
+                         </a>
+                         <button 
+                           onClick={() => changeStatus(cls.id, 'completed')}
+                           className={btnSecondary}
+                         >
+                           End Class
+                         </button>
+                       </>
+                     )}
+
+                     {cls.status === 'completed' && (
+                       <button 
+                         onClick={() => handleUploadClick(cls.topic)}
+                         className={btnSecondary + " flex items-center gap-2"}
+                       >
                          <Upload size={16} /> Upload Recording
-                         <input type="file" className="hidden" />
-                       </label>
+                       </button>
                      )}
                    </div>
                  </div>
@@ -1489,6 +1891,13 @@ const LiveClassManager = ({ showToast }: { showToast: (msg: string) => void }) =
              )}
           </div>
        </div>
+
+       <RecordingUploadModal 
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+          sessionTitle={selectedSessionForUpload}
+          onUpload={() => showToast("Recording uploaded successfully!")}
+       />
     </div>
   );
 };
@@ -1522,7 +1931,7 @@ const InstructorDashboard: React.FC = () => {
   const renderContent = () => {
     switch(activeTab) {
       case 'Create Course': 
-        return <CreateCourseView onSave={() => setActiveTab('My Courses')} />;
+        return <CreateCourseView onSave={(msg) => { setActiveTab('My Courses'); showToast(msg); }} />;
       case 'Earnings':
         return <EarningsView />;
       case 'Live Classes':
@@ -1535,6 +1944,8 @@ const InstructorDashboard: React.FC = () => {
         return <InstructorSettingsView showToast={showToast} />;
       case 'Messages':
         return <InstructorMessagesView />;
+      case 'Reviews':
+        return <ReviewsView />;
       case 'My Courses':
         return (
           <div className="animate-fade-in-up">
@@ -1564,7 +1975,11 @@ const InstructorDashboard: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${course.status === 'Published' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-500' : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500'}`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                            course.status === 'Published' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-500' : 
+                            course.status === 'Pending Approval' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-500' :
+                            'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-500'
+                          }`}>
                             {course.status}
                           </span>
                         </td>
