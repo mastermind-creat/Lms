@@ -27,7 +27,7 @@ export const courses: Course[] = [
     duration: "12 weeks",
     level: "All Levels",
     price: "KES 5,000",
-    image: "/images/destiny.jpg",
+    image: "/public/images/destiny.jpg",
     description: "Explore the foundations of faith, biblical interpretation, and theological history to deepen your spiritual understanding.",
     syllabus: ["Introduction to Theology", "Biblical Studies", "Systematic Theology", "Church History", "Ethics and Faith"],
     isPopular: true
@@ -42,7 +42,7 @@ export const courses: Course[] = [
     duration: "10 weeks",
     level: "Intermediate",
     price: "KES 6,000",
-    image: "/images/destiny.jpg",
+    image: "/public/images/destiny.jpg",
     description: "Gain essential skills in pastoral counseling, human psychology, and conflict resolution for community support.",
     syllabus: ["Fundamentals of Psychology", "Counseling Techniques", "Crisis Intervention", "Family & Marriage Counseling", "Ethics in Counseling"],
     isNew: true
