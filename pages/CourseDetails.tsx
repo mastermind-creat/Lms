@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Star, Clock, Users, BookOpen, CheckCircle, PlayCircle, Award, ArrowLeft, Share2, ArrowRight, X, Mail, Smartphone, CreditCard, Globe, Check } from 'lucide-react';
@@ -7,6 +8,7 @@ const CourseDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const course = courses.find(c => c.id === Number(id));
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [imgSrc, setImgSrc] = useState('');
   
   // Payment States
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa');
@@ -25,7 +27,8 @@ const CourseDetails: React.FC = () => {
   // Reset scroll on load
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [id]);
+    if (course) setImgSrc(course.image);
+  }, [id, course]);
 
   const handleEnrollClick = () => {
     // In a real app, check if logged in. If not, show modal.
@@ -59,6 +62,10 @@ const CourseDetails: React.FC = () => {
     setPaymentMethod('mpesa');
     setGuestEmail('');
     setPhoneNumber('');
+  };
+
+  const handleImageError = () => {
+    setImgSrc('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80');
   };
 
   if (!course) {
@@ -135,8 +142,13 @@ const CourseDetails: React.FC = () => {
             </div>
 
             <div className="relative animate-scale-up [animation-duration:1000ms] [animation-delay:200ms]">
-              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl relative group border-4 border-white dark:border-gray-800">
-                <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
+              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl relative group border-4 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700">
+                <img 
+                  src={imgSrc} 
+                  alt={course.title} 
+                  className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" 
+                  onError={handleImageError}
+                />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                   <div className="w-20 h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-brand-600 shadow-xl cursor-pointer group-hover:scale-110 transition-transform duration-300">
                     <PlayCircle size={40} fill="currentColor" />

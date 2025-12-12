@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart, Check } from 'lucide-react';
 import { Course } from '../data/courses';
@@ -11,6 +12,12 @@ interface CourseCardProps {
 const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
   const [inCart, setInCart] = useState(false);
   const [inWishlist, setInWishlist] = useState(false);
+  const [imgSrc, setImgSrc] = useState(course.image);
+
+  // Update image source when prop changes
+  useEffect(() => {
+    setImgSrc(course.image);
+  }, [course.image]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation to course details
@@ -25,6 +32,11 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
     setInWishlist(!inWishlist);
   };
 
+  const handleImageError = () => {
+    // Fallback to a generic educational image if the source fails
+    setImgSrc('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80');
+  };
+
   return (
     <Link 
       to={`/courses/${course.id}`} 
@@ -32,11 +44,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
       className="group flex flex-col w-full h-full bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors p-1 relative"
     >
       {/* Image */}
-      <div className="relative aspect-video w-full overflow-hidden border border-gray-200 dark:border-gray-700 rounded-sm mb-2">
+      <div className="relative aspect-video w-full overflow-hidden border border-gray-200 dark:border-gray-700 rounded-sm mb-2 bg-gray-200 dark:bg-gray-800">
         <img 
-          src={course.image} 
+          src={imgSrc} 
           alt={course.title} 
           className="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+          onError={handleImageError}
         />
         {course.isPopular && (
            <div className="absolute top-2 left-0 bg-yellow-200 text-yellow-900 text-[10px] font-bold px-2 py-0.5 uppercase tracking-wide">
