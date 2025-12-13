@@ -8,7 +8,8 @@ import {
   Save, Edit3, Trash2, Calendar, Lock, Image as ImageIcon,
   MoreVertical, Download, ExternalLink, AlertTriangle, CheckCircle, BarChart2,
   Youtube, Link as LinkIcon, File, Eye, Filter, Clock, Tag, RefreshCw, Send, Paperclip, Ban, Flag,
-  Shield, Moon, Smartphone, Mail, Globe, MapPin, EyeOff, QrCode, Reply, MessageSquare, ThumbsUp
+  Shield, Moon, Smartphone, Mail, Globe, MapPin, EyeOff, QrCode, Reply, MessageSquare, ThumbsUp,
+  Award, Share2, Megaphone, UserPlus, Trash, Copy
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -22,17 +23,17 @@ const inputStyle = "w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 da
 
 // --- Mock Data ---
 const initialCourses = [
-  { id: 1, title: "Advanced React Patterns", students: 124, price: 6000, status: "Published", rating: 4.8, image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=200&q=80" },
-  { id: 2, title: "Python for Data Science", students: 85, price: 8000, status: "Draft", rating: 0, image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=200&q=80" },
-  { id: 3, title: "UI/UX Principles", students: 0, price: 5000, status: "Pending Approval", rating: 0, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=200&q=80" },
+  { id: 1, title: "Advanced React Patterns", students: 124, price: 6000, discount: 10, status: "Published", rating: 4.8, image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=200&q=80" },
+  { id: 2, title: "Python for Data Science", students: 85, price: 8000, discount: 0, status: "Draft", rating: 0, image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=200&q=80" },
+  { id: 3, title: "UI/UX Principles", students: 0, price: 5000, discount: 20, status: "Pending Approval", rating: 0, image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=200&q=80" },
 ];
 
 const initialStudents = [
-  { id: 1, name: "Jane Doe", course: "Advanced React Patterns", progress: 65, grade: "A" },
-  { id: 2, name: "John Smith", course: "UI/UX Principles", progress: 90, grade: "A+" },
-  { id: 3, name: "Alice Johnson", course: "Advanced React Patterns", progress: 15, grade: "-" },
-  { id: 4, name: "Robert Mugo", course: "Python for Data Science", progress: 45, grade: "B" },
-  { id: 5, name: "Sarah Hassan", course: "UI/UX Principles", progress: 100, grade: "A" },
+  { id: 1, name: "Jane Doe", course: "Advanced React Patterns", progress: 65, grade: "A", email: "jane@example.com" },
+  { id: 2, name: "John Smith", course: "UI/UX Principles", progress: 90, grade: "A+", email: "john@example.com" },
+  { id: 3, name: "Alice Johnson", course: "Advanced React Patterns", progress: 15, grade: "-", email: "alice@example.com" },
+  { id: 4, name: "Robert Mugo", course: "Python for Data Science", progress: 45, grade: "B", email: "robert@example.com" },
+  { id: 5, name: "Sarah Hassan", course: "UI/UX Principles", progress: 100, grade: "A", email: "sarah@example.com" },
 ];
 
 // --- Sub-Components ---
@@ -205,6 +206,107 @@ const RecordingUploadModal = ({ isOpen, onClose, sessionTitle, onUpload }: { isO
             <p className="text-center text-xs text-gray-400">Please do not close this window.</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const AnnouncementModal = ({ isOpen, onClose, courseTitle, onPublish }: { isOpen: boolean, onClose: () => void, courseTitle: string, onPublish: (data: any) => void }) => {
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [publishOption, setPublishOption] = useState("now");
+  const [scheduleDate, setScheduleDate] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onPublish({ title, message, publishOption, scheduleDate });
+    setTitle("");
+    setMessage("");
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 animate-scale-up">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <Megaphone size={20} className="text-brand-500" /> New Announcement
+          </h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+            <X size={20} />
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">Post an announcement for <span className="font-bold text-gray-800 dark:text-gray-200">{courseTitle}</span></p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Title</label>
+            <input 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={inputStyle}
+              placeholder="e.g. New resources added"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Message</label>
+            <textarea 
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className={inputStyle}
+              rows={4}
+              placeholder="Write your announcement..."
+              required
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${publishOption === 'now' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/10' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input 
+                type="radio" 
+                name="publish" 
+                checked={publishOption === 'now'}
+                onChange={() => setPublishOption('now')}
+                className="text-brand-600 focus:ring-brand-500"
+              />
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Publish Now</span>
+            </label>
+            <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${publishOption === 'later' ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/10' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input 
+                type="radio" 
+                name="publish" 
+                checked={publishOption === 'later'}
+                onChange={() => setPublishOption('later')}
+                className="text-brand-600 focus:ring-brand-500"
+              />
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Schedule</span>
+            </label>
+          </div>
+
+          {publishOption === 'later' && (
+            <div className="animate-fade-in">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Schedule Date</label>
+              <input 
+                type="datetime-local"
+                value={scheduleDate}
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className={inputStyle}
+                required={publishOption === 'later'}
+              />
+            </div>
+          )}
+
+          <div className="pt-4 flex gap-3">
+            <button type="button" onClick={onClose} className={btnSecondary + " flex-1"}>Cancel</button>
+            <button type="submit" className={btnPrimary + " flex-1"}>
+              {publishOption === 'now' ? 'Post Announcement' : 'Schedule Post'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -415,6 +517,187 @@ const CreateDiscountModal = ({ isOpen, onClose, onCreate }: { isOpen: boolean, o
              </button>
            </div>
         </form>
+      </div>
+    </div>
+  );
+};
+
+const CertificatesView = () => {
+  const [certificates, setCertificates] = useState([
+    { id: 101, student: "Jane Doe", course: "Advanced React Patterns", date: "2025-10-20", status: "Issued" },
+    { id: 102, student: "Sarah Hassan", course: "UI/UX Principles", date: "2025-10-18", status: "Issued" },
+    { id: 103, student: "John Smith", course: "UI/UX Principles", date: "2025-10-15", status: "Pending" },
+  ]);
+
+  return (
+    <div className="animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Issued Certificates</h1>
+      <div className={`${cardStyle} overflow-hidden`}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+            <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+              <tr>
+                <th className="px-6 py-4">Certificate ID</th>
+                <th className="px-6 py-4">Student</th>
+                <th className="px-6 py-4">Course</th>
+                <th className="px-6 py-4">Date Issued</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {certificates.map((cert) => (
+                <tr key={cert.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs">{cert.id}</td>
+                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{cert.student}</td>
+                  <td className="px-6 py-4">{cert.course}</td>
+                  <td className="px-6 py-4 text-xs">{cert.date}</td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${cert.status === 'Issued' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'}`}>
+                      {cert.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button className="text-brand-600 hover:text-brand-700 font-bold text-xs flex items-center gap-1 justify-end ml-auto">
+                      <Download size={14} /> Download
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const InviteFriendsView = ({ showToast }: { showToast: (msg: string) => void }) => {
+  const [email, setEmail] = useState("");
+  const referralLink = "https://elimutech.ke/invite/kevin-omondi";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referralLink);
+    showToast("Referral link copied to clipboard!");
+  };
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      showToast(`Invite sent to ${email}`);
+      setEmail("");
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Invite Friends</h1>
+      <p className="text-gray-500 mb-8">Share your unique link and earn rewards for every new student or instructor who joins.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className={`${cardStyle} p-6 flex flex-col items-center justify-center text-center`}>
+           <h3 className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-1">12</h3>
+           <p className="text-xs text-gray-500 uppercase tracking-wider">Invites Sent</p>
+        </div>
+        <div className={`${cardStyle} p-6 flex flex-col items-center justify-center text-center`}>
+           <h3 className="text-4xl font-bold text-green-600 dark:text-green-400 mb-1">5</h3>
+           <p className="text-xs text-gray-500 uppercase tracking-wider">Successful Signups</p>
+        </div>
+      </div>
+
+      <div className={`${cardStyle} p-8`}>
+        <div className="mb-8">
+          <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Your Referral Link</label>
+          <div className="flex gap-2">
+            <input readOnly value={referralLink} className={inputStyle + " bg-gray-100 dark:bg-gray-900"} />
+            <button onClick={handleCopy} className={btnPrimary + " flex items-center gap-2"}>
+              <Copy size={18} /> Copy
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleInvite}>
+          <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Invite via Email</label>
+          <div className="flex gap-2">
+            <input 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="friend@example.com" 
+              className={inputStyle} 
+              required
+            />
+            <button type="submit" className={btnSecondary + " flex items-center gap-2"}>
+              <Send size={18} /> Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const FeedbackView = () => {
+  const [feedbacks, setFeedbacks] = useState([
+    { id: 1, user: "Platform User", rating: 4, comment: "The video player loads a bit slow on mobile data.", date: "2025-10-21", reply: "" },
+    { id: 2, user: "Anonymous", rating: 5, comment: "Love the offline mode feature! Very helpful.", date: "2025-10-20", reply: "Thanks! We prioritized accessibility." }
+  ]);
+  const [replyText, setReplyText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+
+  const handleReply = (id: number) => {
+    if (!replyText.trim()) return;
+    setFeedbacks(feedbacks.map(f => f.id === id ? { ...f, reply: replyText } : f));
+    setReplyingTo(null);
+    setReplyText("");
+  };
+
+  return (
+    <div className="animate-fade-in-up">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">Platform Feedback</h1>
+      <div className="space-y-4">
+        {feedbacks.map(item => (
+          <div key={item.id} className={`${cardStyle} p-6`}>
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm">{item.user}</h3>
+                <div className="flex gap-1 mt-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={12} className={i < item.rating ? "text-yellow-400 fill-current" : "text-gray-300"} />
+                  ))}
+                </div>
+              </div>
+              <span className="text-xs text-gray-400">{item.date}</span>
+            </div>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{item.comment}</p>
+            
+            {item.reply ? (
+              <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border-l-2 border-brand-500 text-xs text-gray-600 dark:text-gray-400">
+                <span className="font-bold block mb-1">Response:</span> {item.reply}
+              </div>
+            ) : (
+              replyingTo === item.id ? (
+                <div className="mt-2">
+                  <textarea 
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    className={inputStyle + " text-sm mb-2"}
+                    rows={2}
+                    placeholder="Write a response..."
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button onClick={() => setReplyingTo(null)} className="text-xs text-gray-500 font-bold">Cancel</button>
+                    <button onClick={() => handleReply(item.id)} className="text-xs text-brand-600 font-bold">Post Reply</button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => setReplyingTo(item.id)} className="text-xs font-bold text-brand-600 hover:underline flex items-center gap-1">
+                  <Reply size={12} /> Reply
+                </button>
+              )
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -942,13 +1225,15 @@ const InstructorMessagesView = () => {
   const [activeChat, setActiveChat] = useState(0);
   const [inputText, setInputText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showNewChatModal, setShowNewChatModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Mock Students
-  const contacts = [
+  const [contacts, setContacts] = useState([
     { id: 0, name: "Jane Doe", course: "Advanced React", online: true, lastMsg: "Thanks for the feedback!", time: "5m", img: 5 },
     { id: 1, name: "John Smith", course: "UI/UX Principles", online: false, lastMsg: "When is the deadline?", time: "1h", img: 3 },
     { id: 2, name: "Alice Johnson", course: "Advanced React", online: true, lastMsg: "I'm stuck on Module 3.", time: "3h", img: 12 },
-  ];
+  ]);
 
   const [chatHistory, setChatHistory] = useState<{ [key: number]: any[] }>({
     0: [
@@ -985,13 +1270,41 @@ const InstructorMessagesView = () => {
     }));
   };
 
+  const startNewChat = (student: typeof initialStudents[0]) => {
+    const existingContact = contacts.find(c => c.name === student.name);
+    if (existingContact) {
+      setActiveChat(existingContact.id);
+    } else {
+      const newId = Math.max(...contacts.map(c => c.id)) + 1;
+      const newContact = {
+        id: newId,
+        name: student.name,
+        course: student.course,
+        online: true,
+        lastMsg: "New Conversation",
+        time: "Just now",
+        img: Math.floor(Math.random() * 20) + 1
+      };
+      setContacts([newContact, ...contacts]);
+      setChatHistory(prev => ({ ...prev, [newId]: [] }));
+      setActiveChat(newId);
+    }
+    setShowNewChatModal(false);
+  };
+
   const currentMessages = chatHistory[activeChat] || [];
 
   return (
     <div className={`h-[calc(100vh-140px)] ${cardStyle} flex overflow-hidden animate-fade-in-up`}>
       {/* Sidebar */}
       <div className="w-80 border-r border-gray-100 dark:border-gray-700 flex flex-col">
-         <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+         <div className="p-4 border-b border-gray-100 dark:border-gray-700 space-y-4">
+             <div className="flex justify-between items-center">
+                <h3 className="font-bold text-gray-900 dark:text-white">Messages</h3>
+                <button onClick={() => setShowNewChatModal(true)} className="p-2 bg-brand-50 dark:bg-brand-900/20 text-brand-600 rounded-lg hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors" title="New Chat">
+                  <PlusCircle size={20} />
+                </button>
+             </div>
              <div className={innerCardStyle + " flex items-center px-3 py-2"}>
                <Search size={16} className="text-gray-400" />
                <input type="text" placeholder="Search students" className="bg-transparent border-none outline-none text-sm ml-2 w-full text-gray-700 dark:text-gray-200" />
@@ -1084,6 +1397,51 @@ const InstructorMessagesView = () => {
             </div>
          </form>
       </div>
+
+      {showNewChatModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowNewChatModal(false)}></div>
+          <div className="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl p-6 animate-scale-up">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Start New Chat</h3>
+              <button onClick={() => setShowNewChatModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <input 
+                type="text"
+                placeholder="Search student..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={inputStyle}
+              />
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-2">
+              {initialStudents
+                .filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map(student => (
+                  <button 
+                    key={student.id}
+                    onClick={() => startNewChat(student)}
+                    className="w-full text-left p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/20 text-brand-600 flex items-center justify-center font-bold">
+                      {student.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">{student.name}</p>
+                      <p className="text-xs text-gray-500">{student.course}</p>
+                    </div>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -1097,6 +1455,7 @@ const CreateCourseView = ({ onSave }: { onSave: (msg: string) => void }) => {
   const [courseData, setCourseData] = useState({
     title: "", 
     category: "Development", 
+    subCategory: "",
     pricing: "Paid", // 'Free' or 'Paid'
     price: "", 
     description: "", 
@@ -1114,6 +1473,17 @@ const CreateCourseView = ({ onSave }: { onSave: (msg: string) => void }) => {
       }
     ] as Module[]
   });
+
+  const subCategories: {[key: string]: string[]} = {
+    "Development": ["Web Development", "Mobile Apps", "Game Dev", "DevOps"],
+    "Design": ["UI/UX", "Graphic Design", "3D Modeling"],
+    "Business": ["Entrepreneurship", "Management", "Strategy"],
+    "Fintech": ["Blockchain", "Payments", "Crypto"],
+    "Marketing": ["Digital Marketing", "SEO", "Content Strategy"],
+    "Data Science": ["Machine Learning", "AI", "Data Analysis"],
+    "Cybersecurity": ["Network Security", "Ethical Hacking"],
+    "Finance": ["Personal Finance", "Investing", "Corporate Finance"]
+  };
 
   // Handle Thumbnail Upload
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1276,18 +1646,30 @@ const CreateCourseView = ({ onSave }: { onSave: (msg: string) => void }) => {
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
                         <select 
                           value={courseData.category}
-                          onChange={(e) => setCourseData({...courseData, category: e.target.value})}
+                          onChange={(e) => setCourseData({...courseData, category: e.target.value, subCategory: ""})}
                           className={inputStyle}
                         >
-                          <option>Development</option>
-                          <option>Design</option>
-                          <option>Business</option>
-                          <option>Fintech</option>
+                          {Object.keys(subCategories).map(cat => <option key={cat} value={cat}>{cat}</option>)}
                         </select>
                       </div>
                       
-                      {/* Price Toggle & Input */}
                       <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Sub-Category</label>
+                        <select 
+                          value={courseData.subCategory}
+                          onChange={(e) => setCourseData({...courseData, subCategory: e.target.value})}
+                          className={inputStyle}
+                          disabled={!courseData.category}
+                        >
+                          <option value="">Select Sub-Category</option>
+                          {courseData.category && subCategories[courseData.category].map(sub => (
+                            <option key={sub} value={sub}>{sub}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Pricing</label>
                         <div className="flex gap-4 mb-2">
                            <label className="flex items-center gap-2 cursor-pointer">
@@ -1321,7 +1703,6 @@ const CreateCourseView = ({ onSave }: { onSave: (msg: string) => void }) => {
                           />
                         )}
                       </div>
-                    </div>
                  </div>
               </div>
             </div>
@@ -1907,23 +2288,40 @@ const InstructorDashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCourseFilter, setSelectedCourseFilter] = useState("All");
   const [toastMsg, setToastMsg] = useState("");
+  const [coursesList, setCoursesList] = useState(initialCourses);
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState<number | null>(null);
+  
   const navigate = useNavigate();
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
   };
 
+  const handleSoftDeleteCourse = (id: number) => {
+    if (confirm("Are you sure you want to delete this course? It will be hidden from students.")) {
+      setCoursesList(coursesList.map(c => c.id === id ? { ...c, status: "Deleted" } : c));
+      showToast("Course moved to trash.");
+    }
+  };
+
+  const handlePublishAnnouncement = (data: any) => {
+    showToast(`Announcement "${data.title}" posted successfully!`);
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard },
     { name: 'My Courses', icon: BookOpen },
     { name: 'Create Course', icon: PlusCircle },
+    { name: 'Certificates', icon: Award },
     { name: 'Discounts', icon: Tag },
     { name: 'Live Classes', icon: Video },
     { name: 'Assignments', icon: CheckSquare },
     { name: 'Students', icon: Users },
     { name: 'Messages', icon: MessageCircle },
+    { name: 'Invite Friends', icon: UserPlus },
     { name: 'Earnings', icon: DollarSign },
     { name: 'Reviews', icon: Star },
+    { name: 'Feedback', icon: MessageSquare },
     { name: 'Profile', icon: User },
     { name: 'Settings', icon: Settings },
   ];
@@ -1938,6 +2336,12 @@ const InstructorDashboard: React.FC = () => {
         return <LiveClassManager showToast={showToast} />;
       case 'Discounts':
         return <DiscountManager />;
+      case 'Certificates':
+        return <CertificatesView />;
+      case 'Invite Friends':
+        return <InviteFriendsView showToast={showToast} />;
+      case 'Feedback':
+        return <FeedbackView />;
       case 'Profile':
         return <InstructorProfileView showToast={showToast} />;
       case 'Settings':
@@ -1959,12 +2363,13 @@ const InstructorDashboard: React.FC = () => {
                       <th className="px-6 py-4">Status</th>
                       <th className="px-6 py-4">Students</th>
                       <th className="px-6 py-4">Price</th>
+                      <th className="px-6 py-4">Discounted</th>
                       <th className="px-6 py-4">Rating</th>
                       <th className="px-6 py-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {initialCourses.map((course) => (
+                    {coursesList.filter(c => c.status !== 'Deleted').map((course) => (
                       <tr key={course.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
@@ -1986,22 +2391,34 @@ const InstructorDashboard: React.FC = () => {
                         <td className="px-6 py-4 flex items-center gap-2">
                            <Users size={16} className="text-gray-400" /> {course.students}
                         </td>
-                        <td className="px-6 py-4 font-bold text-brand-600 dark:text-brand-400">
+                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
                            KES {course.price.toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 font-bold text-brand-600 dark:text-brand-400">
+                           KES {(course.price * (1 - (course.discount || 0) / 100)).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 flex items-center gap-1">
                            <Star size={16} className="text-yellow-400 fill-current" /> {course.rating > 0 ? course.rating : '-'}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={() => setShowAnnouncementModal(course.id)}
+                              className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 rounded-lg transition-colors" title="Announcements"
+                            >
+                              <Megaphone size={16} />
+                            </button>
                             <button 
                               onClick={() => setActiveTab('Create Course')}
                               className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 rounded-lg transition-colors" title="Edit"
                             >
                               <Edit3 size={16} />
                             </button>
-                            <button className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors" title="Manage">
-                              <Settings size={16} />
+                            <button 
+                              onClick={() => handleSoftDeleteCourse(course.id)}
+                              className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 rounded-lg transition-colors" title="Delete"
+                            >
+                              <Trash size={16} />
                             </button>
                           </div>
                         </td>
@@ -2011,6 +2428,13 @@ const InstructorDashboard: React.FC = () => {
                 </table>
               </div>
             </div>
+            
+            <AnnouncementModal 
+              isOpen={!!showAnnouncementModal}
+              onClose={() => setShowAnnouncementModal(null)}
+              courseTitle={coursesList.find(c => c.id === showAnnouncementModal)?.title || ""}
+              onPublish={handlePublishAnnouncement}
+            />
           </div>
         );
       case 'Students':
@@ -2033,7 +2457,7 @@ const InstructorDashboard: React.FC = () => {
                      className="bg-transparent border-none outline-none text-sm font-bold text-gray-700 dark:text-gray-200 cursor-pointer"
                    >
                      <option value="All">All Courses</option>
-                     {initialCourses.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
+                     {coursesList.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
                    </select>
                  </div>
                  <button className="p-2 bg-brand-600 text-white rounded-xl shadow-md hover:bg-brand-700">
@@ -2117,28 +2541,69 @@ const InstructorDashboard: React.FC = () => {
 
              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className={`${cardStyle} p-6 lg:col-span-2`}>
-                   <h3 className="font-bold text-gray-900 dark:text-white mb-6">Revenue Growth</h3>
-                   <div className="h-64 bg-gray-50 dark:bg-gray-900/50 rounded-xl flex items-center justify-center text-gray-400">
-                      <BarChart2 size={48} />
-                      <span className="ml-2">Chart Visualization Placeholder</span>
+                   <h3 className="font-bold text-gray-900 dark:text-white mb-6">Enrollment Overview</h3>
+                   <div className="h-64 flex items-end justify-between px-4">
+                      {/* Simple CSS Line Chart Simulation */}
+                      {[30, 45, 35, 60, 50, 70, 65, 80].map((h, i) => (
+                        <div key={i} className="w-full flex flex-col items-center gap-2 group">
+                          <div 
+                            className="w-full bg-brand-100 dark:bg-brand-900/20 rounded-t-lg relative group-hover:bg-brand-200 dark:group-hover:bg-brand-900/40 transition-colors" 
+                            style={{ height: `${h}%` }}
+                          >
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                              {h * 2}
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-gray-400">{`Week ${i+1}`}</span>
+                        </div>
+                      ))}
                    </div>
                 </div>
+                
                 <div className={`${cardStyle} p-6`}>
-                   <h3 className="font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h3>
-                   <div className="space-y-4">
-                     {[1,2,3,4].map(i => (
-                       <div key={i} className="flex gap-3">
-                         <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/20 text-brand-600 flex items-center justify-center shrink-0">
-                           <Bell size={14} />
-                         </div>
-                         <div>
-                           <p className="text-sm font-bold text-gray-900 dark:text-white">New student enrolled</p>
-                           <p className="text-xs text-gray-500">Advanced React Patterns • 2h ago</p>
-                         </div>
-                       </div>
-                     ))}
+                   <h3 className="font-bold text-gray-900 dark:text-white mb-6">Trending Courses</h3>
+                   <div className="flex items-center justify-center h-48">
+                      {/* Simple Radar Chart Visual */}
+                      <div className="relative w-40 h-40">
+                        <div className="absolute inset-0 border border-gray-200 dark:border-gray-700 rounded-full"></div>
+                        <div className="absolute inset-4 border border-gray-200 dark:border-gray-700 rounded-full"></div>
+                        <div className="absolute inset-8 border border-gray-200 dark:border-gray-700 rounded-full"></div>
+                        {/* Triangle Shape */}
+                        <svg viewBox="0 0 100 100" className="w-full h-full absolute inset-0">
+                          <polygon points="50,10 90,80 10,80" fill="rgba(243,111,33,0.2)" stroke="#F36F21" strokeWidth="2" />
+                        </svg>
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 text-[10px] font-bold text-gray-500">React</div>
+                        <div className="absolute bottom-0 right-0 translate-x-2 translate-y-2 text-[10px] font-bold text-gray-500">Python</div>
+                        <div className="absolute bottom-0 left-0 -translate-x-2 translate-y-2 text-[10px] font-bold text-gray-500">UI/UX</div>
+                      </div>
                    </div>
+                   <p className="text-center text-xs text-gray-400 mt-4">Based on enrollments & completion</p>
                 </div>
+             </div>
+
+             <div className={`${cardStyle} p-6`}>
+               <h3 className="font-bold text-gray-900 dark:text-white mb-6">Recent Enrollments</h3>
+               <div className="space-y-4">
+                 {[
+                   { name: "David Kimani", course: "Advanced React Patterns", date: "2h ago" },
+                   { name: "Lucy Wanjiku", course: "UI/UX Principles", date: "5h ago" },
+                   { name: "Peter Omondi", course: "Python for Data Science", date: "1d ago" },
+                   { name: "Grace Mwangi", course: "Advanced React Patterns", date: "1d ago" },
+                 ].map((item, i) => (
+                   <div key={i} className="flex justify-between items-center p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-xl transition-colors">
+                     <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 rounded-full bg-brand-50 dark:bg-brand-900/20 text-brand-600 flex items-center justify-center font-bold text-sm">
+                         {item.name.charAt(0)}
+                       </div>
+                       <div>
+                         <p className="font-bold text-sm text-gray-900 dark:text-white">{item.name}</p>
+                         <p className="text-xs text-gray-500">{item.course}</p>
+                       </div>
+                     </div>
+                     <span className="text-xs text-gray-400 font-medium">{item.date}</span>
+                   </div>
+                 ))}
+               </div>
              </div>
           </div>
         );
