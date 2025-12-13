@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -11,6 +12,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import StudentDashboard from './pages/StudentDashboard';
 import InstructorDashboard from './pages/InstructorDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Loader from './components/Loader';
@@ -59,6 +61,7 @@ const App: React.FC = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/dashboard" element={<StudentDashboard />} />
               <Route path="/instructor" element={<InstructorDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </main>
           <Chatbot />
