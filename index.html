@@ -152,15 +152,15 @@
         100% { transform: rotate(360deg); }
       }
     </style>
-<script type="importmap""
+<script type="importmap">
 {
   "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "vite": "https://esm.sh/vite@^7.2.7",
     "react-router-dom": "https://esm.sh/react-router-dom@^7.10.1",
     "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "vite": "https://esm.sh/vite@^7.2.7",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
@@ -172,8 +172,8 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Bumped version to v13 to force refresh
-          navigator.serviceWorker.register('/sw.js?v=13')
+          // Bumped version to v14 to force refresh and clear old cached index.html
+          navigator.serviceWorker.register('/sw.js?v=14')
             .then((registration) => {
               console.log('SW registered: ', registration);
             })

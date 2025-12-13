@@ -1,4 +1,5 @@
-const CACHE_NAME = 'elimutech-v13';
+
+const CACHE_NAME = 'elimutech-v14';
 const urlsToCache = [
   './',
   './index.html',
@@ -34,7 +35,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Network First strategy for HTML requests
-  // This ensures the user always gets the latest index.html (fixing the white screen importmap issue)
+  // This ensures the user always gets the latest index.html
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
