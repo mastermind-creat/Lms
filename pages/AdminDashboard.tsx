@@ -122,7 +122,7 @@ const UserManagementView = () => {
                   </td>
                   <td className="px-6 py-4 text-xs">
                     {user.role === 'Instructor' ? (
-                      <span className="text-green-600 font-bold">KES {user.earnings.toLocaleString()}</span>
+                      <span className="text-green-600 font-bold">KES {(user.earnings || 0).toLocaleString()}</span>
                     ) : (
                       <span>{user.courses} Courses</span>
                     )}
