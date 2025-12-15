@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, Users, BookOpen, DollarSign, Video, 
@@ -101,7 +102,7 @@ const UserDetailModal = ({ isOpen, onClose, user, userCourses, onToggleCourseSta
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
               <p className="text-xs text-gray-500 uppercase font-bold mb-1">{user.role === 'Instructor' ? 'Total Earnings' : 'Total Spent'}</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">KES {(user.role === 'Instructor' ? user.earnings : user.spent).toLocaleString()}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">KES {((user.role === 'Instructor' ? user.earnings : user.spent) || 0).toLocaleString()}</p>
             </div>
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
               <p className="text-xs text-gray-500 uppercase font-bold mb-1">{user.role === 'Instructor' ? 'Courses Taught' : 'Enrolled'}</p>
