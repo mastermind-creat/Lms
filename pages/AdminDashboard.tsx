@@ -9,7 +9,8 @@ import {
   RefreshCw, Trash2, Edit3, Save, Bell, Smartphone,
   ChevronDown, PlusCircle, CreditCard, UserPlus, Mail,
   Globe, Server, Percent, ToggleLeft, ToggleRight, List,
-  Image as ImageIcon, Calendar, Clock, Star
+  Image as ImageIcon, Calendar, Clock, Star, HelpCircle, Quote, MapPin, Key, Plus,
+  Facebook, Twitter, Instagram, Linkedin
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -33,12 +34,6 @@ const initialWithdrawals = [
   { id: "WTH-001", instructor: "Kevin Omondi", amount: 25000, method: "M-PESA", date: "2025-10-24", status: "Pending" },
   { id: "WTH-002", instructor: "Maria Garcia", amount: 12000, method: "Bank Transfer", date: "2025-10-23", status: "Approved" },
   { id: "WTH-003", instructor: "James Wilson", amount: 50000, method: "M-PESA", date: "2025-10-20", status: "Paid" },
-];
-
-const auditLogs = [
-  { id: 1, action: "User Suspension", details: "Suspended John Smith for policy violation", admin: "Super Admin", time: "2h ago" },
-  { id: 2, action: "Course Approval", details: "Approved 'Advanced React Patterns'", admin: "Content Lead", time: "5h ago" },
-  { id: 3, action: "System Update", details: "Updated commission rate to 20%", admin: "System Admin", time: "1d ago" },
 ];
 
 const categoriesData = [
@@ -135,7 +130,6 @@ const UserManagementView = ({ defaultFilter = "All" }) => {
   const [filter, setFilter] = useState(defaultFilter);
   const [users, setUsers] = useState(initialUsers);
 
-  // Sync internal filter if prop changes (e.g. from sidebar navigation)
   React.useEffect(() => {
     setFilter(defaultFilter);
   }, [defaultFilter]);
@@ -217,6 +211,74 @@ const UserManagementView = ({ defaultFilter = "All" }) => {
                         <Eye size={16} />
                       </button>
                     </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FinancialsView = () => {
+  const [withdrawals, setWithdrawals] = useState(initialWithdrawals);
+
+  const handleApprove = (id: string) => {
+    setWithdrawals(withdrawals.map(w => w.id === id ? { ...w, status: 'Approved' } : w));
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Financial Overview</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard title="Total Revenue" value="KES 45M" subtext="+8% vs last month" icon={DollarSign} color="bg-green-500" />
+        <StatCard title="Pending Withdrawals" value="KES 120k" subtext="5 requests" icon={Clock} color="bg-yellow-500" />
+        <StatCard title="Total Payouts" value="KES 32M" subtext="All time" icon={CheckCircle} color="bg-blue-500" />
+      </div>
+
+      <div className={`${cardStyle} overflow-hidden`}>
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white">Withdrawal Requests</h3>
+          <button className={btnSecondary}><Download size={16} /> Export CSV</button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+            <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+              <tr>
+                <th className="px-6 py-4">ID</th>
+                <th className="px-6 py-4">Instructor</th>
+                <th className="px-6 py-4">Amount</th>
+                <th className="px-6 py-4">Method</th>
+                <th className="px-6 py-4">Date</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {withdrawals.map((w) => (
+                <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs">{w.id}</td>
+                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{w.instructor}</td>
+                  <td className="px-6 py-4 font-bold">KES {w.amount.toLocaleString()}</td>
+                  <td className="px-6 py-4">{w.method}</td>
+                  <td className="px-6 py-4 text-xs">{w.date}</td>
+                  <td className="px-6 py-4">
+                    <span className={`${badgeStyle} ${w.status === 'Paid' ? 'bg-green-100 text-green-700' : w.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {w.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {w.status === 'Pending' && (
+                      <button 
+                        onClick={() => handleApprove(w.id)}
+                        className="text-green-600 font-bold text-xs hover:underline"
+                      >
+                        Approve
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -346,8 +408,7 @@ const CourseDetailView = ({ course, onBack }: { course: any, onBack: () => void 
 };
 
 const CourseManagementView = ({ filter = "All", onViewCourse }: { filter?: string, onViewCourse: (course: any) => void }) => {
-  // Filter logic based on prop
-  const filteredCourses = courses; // Mock filter implementation would go here
+  const filteredCourses = courses; 
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -400,118 +461,6 @@ const CourseManagementView = ({ filter = "All", onViewCourse }: { filter?: strin
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
-  );
-};
-
-const SettingsView = () => {
-  const [activeTab, setActiveTab] = useState("General");
-
-  const tabs = [
-    { name: "General", icon: Settings },
-    { name: "Categories", icon: List },
-    { name: "Course Rules", icon: BookOpen },
-    { name: "Commissions", icon: Percent },
-    { name: "Security", icon: Shield },
-    { name: "Notifications", icon: Bell },
-  ];
-
-  return (
-    <div className="animate-fade-in-up">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">System Settings</h1>
-      
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Settings Sidebar */}
-        <div className="w-full lg:w-64 flex-shrink-0">
-          <div className={`${cardStyle} overflow-hidden`}>
-            {tabs.map(tab => (
-              <button
-                key={tab.name}
-                onClick={() => setActiveTab(tab.name)}
-                className={`w-full flex items-center gap-3 px-6 py-4 text-sm font-bold border-l-4 transition-all ${
-                  activeTab === tab.name 
-                    ? 'border-brand-500 bg-gray-50 dark:bg-gray-900 text-brand-600 dark:text-brand-400' 
-                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                }`}
-              >
-                <tab.icon size={18} /> {tab.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Settings Content */}
-        <div className="flex-1">
-          {activeTab === "Categories" && (
-            <div className={cardStyle + " p-8"}>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Category Management</h3>
-              <CategoryManager />
-            </div>
-          )}
-
-          {activeTab === "General" && (
-            <div className={cardStyle + " p-8 space-y-6"}>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Platform Details</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Platform Name</label>
-                  <input defaultValue="ElimuTech" className={inputStyle} />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Support Email</label>
-                  <input defaultValue="support@elimutech.ke" className={inputStyle} />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Logo URL</label>
-                  <div className="flex gap-2">
-                    <input defaultValue="/logo.png" className={inputStyle} />
-                    <button className={btnSecondary}>Upload</button>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-                <button className={btnPrimary}>Save Changes</button>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "Commissions" && (
-            <div className={cardStyle + " p-8 space-y-6"}>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Financial Configuration</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Default Platform Commission (%)</label>
-                  <input type="number" defaultValue="20" className={inputStyle} />
-                  <p className="text-xs text-gray-400 mt-1">Percentage taken from each course sale.</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Minimum Payout (KES)</label>
-                  <input type="number" defaultValue="500" className={inputStyle} />
-                </div>
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
-                  <div>
-                    <span className="font-bold text-gray-900 dark:text-white block">Auto-Approve Payouts</span>
-                    <span className="text-xs text-gray-500">Automatically process requests under KES 5000</span>
-                  </div>
-                  <ToggleRight size={32} className="text-brand-500 cursor-pointer" />
-                </div>
-              </div>
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-                <button className={btnPrimary}>Update Rules</button>
-              </div>
-            </div>
-          )}
-          
-          {/* Placeholders for other tabs to keep code concise but show completeness */}
-          {(activeTab === "Course Rules" || activeTab === "Security" || activeTab === "Notifications") && (
-             <div className={cardStyle + " p-8 flex flex-col items-center justify-center min-h-[300px] text-center"}>
-                <Settings size={48} className="text-gray-300 mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Configuration Panel</h3>
-                <p className="text-gray-500">Advanced settings for {activeTab} would go here.</p>
-             </div>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -590,68 +539,358 @@ const LiveClassesView = () => (
   </div>
 );
 
-const FinancialsView = () => {
-  const [withdrawals, setWithdrawals] = useState(initialWithdrawals);
+// --- Settings View (Updated Detailed Version) ---
+const SettingsView = () => {
+  const [activeTab, setActiveTab] = useState("General Info");
 
-  const handleApprove = (id: string) => {
-    setWithdrawals(withdrawals.map(w => w.id === id ? { ...w, status: 'Approved' } : w));
+  // Mock Data States
+  const [slides, setSlides] = useState([
+    { id: 1, title: "Future of Learning", subtitle: "Master skills driving the Silicon Savannah", image: "/hero1.jpg" },
+    { id: 2, title: "Build Real Projects", subtitle: "From zero to deployed in weeks", image: "/hero2.jpg" }
+  ]);
+  const [partners, setPartners] = useState([
+    { id: 1, name: "Safaricom" }, { id: 2, name: "Microsoft" }, { id: 3, name: "Google" }
+  ]);
+  const [faqs, setFaqs] = useState([
+    { id: 1, q: "How do I enroll?", a: "Click the enroll button on any course page." }
+  ]);
+
+  const menuGroups = [
+    {
+      title: "App Settings",
+      items: [
+        { name: "General Info", icon: Globe },
+        { name: "Hero Slider", icon: ImageIcon },
+        { name: "Partners", icon: Users },
+        { name: "FAQs", icon: HelpCircle },
+        { name: "Testimonials", icon: Quote },
+      ]
+    },
+    {
+      title: "System Configuration",
+      items: [
+        { name: "Mail Settings", icon: Mail },
+        { name: "Payment Gateways", icon: CreditCard },
+        { name: "Google Integration", icon: Globe },
+        { name: "Security", icon: Shield },
+      ]
+    },
+    {
+      title: "Platform Logic",
+      items: [
+        { name: "Categories", icon: List },
+        { name: "Commissions", icon: Percent },
+        { name: "Notifications", icon: Bell },
+      ]
+    }
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      // --- APP SETTINGS ---
+      case "General Info":
+        return (
+          <div className={cardStyle + " p-8 space-y-8"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">General Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">App Name</label>
+                <input defaultValue="ElimuTech" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Support Email</label>
+                <input defaultValue="support@elimutech.ke" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Contact Phone</label>
+                <input defaultValue="+254 700 000 000" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Physical Address</label>
+                <input defaultValue="Westlands, Nairobi" className={inputStyle} />
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4">Social Media Handles</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <Facebook size={20} className="text-blue-600" />
+                  <input placeholder="Facebook URL" className={inputStyle} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Twitter size={20} className="text-sky-500" />
+                  <input placeholder="Twitter Handle" className={inputStyle} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Instagram size={20} className="text-pink-600" />
+                  <input placeholder="Instagram URL" className={inputStyle} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Linkedin size={20} className="text-blue-700" />
+                  <input placeholder="LinkedIn URL" className={inputStyle} />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+               <button className={btnPrimary}>Save Changes</button>
+            </div>
+          </div>
+        );
+
+      case "Hero Slider":
+        return (
+          <div className={cardStyle + " p-8"}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Manage Hero Slider</h3>
+              <button className={btnPrimary + " py-2 text-xs flex items-center gap-2"}><Plus size={16} /> Add Slide</button>
+            </div>
+            <div className="space-y-4">
+              {slides.map((slide) => (
+                <div key={slide.id} className="flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl items-center">
+                  <div className="w-24 h-16 bg-gray-200 rounded-lg shrink-0 overflow-hidden">
+                     <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 text-xs">Image</div>
+                  </div>
+                  <div className="flex-1">
+                    <input defaultValue={slide.title} className="font-bold text-sm bg-transparent w-full outline-none mb-1 text-gray-900 dark:text-white" />
+                    <input defaultValue={slide.subtitle} className="text-xs text-gray-500 bg-transparent w-full outline-none" />
+                  </div>
+                  <button className="text-red-500 p-2 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case "Partners":
+        return (
+          <div className={cardStyle + " p-8"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Trusted Partners</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {partners.map(p => (
+                <div key={p.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl flex items-center justify-between group">
+                  <span className="font-bold text-sm text-gray-900 dark:text-white">{p.name}</span>
+                  <button className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={14} /></button>
+                </div>
+              ))}
+              <button className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex items-center justify-center text-gray-500 hover:text-brand-500 hover:border-brand-500 transition-colors">
+                <Plus size={20} />
+              </button>
+            </div>
+          </div>
+        );
+
+      case "FAQs":
+        return (
+          <div className={cardStyle + " p-8"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h3>
+            <div className="space-y-4">
+              {faqs.map(faq => (
+                <div key={faq.id} className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                  <input defaultValue={faq.q} className="font-bold text-sm bg-transparent w-full outline-none mb-2 text-gray-900 dark:text-white" />
+                  <textarea defaultValue={faq.a} className="text-sm text-gray-600 dark:text-gray-400 bg-transparent w-full outline-none resize-none" rows={2} />
+                </div>
+              ))}
+              <button className={btnSecondary + " w-full"}>Add New Question</button>
+            </div>
+          </div>
+        );
+
+      case "Testimonials":
+        return (
+          <div className={cardStyle + " p-8 flex flex-col items-center justify-center min-h-[300px] text-center"}>
+             <Quote size={48} className="text-gray-300 mb-4" />
+             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Testimonial Manager</h3>
+             <p className="text-gray-500 mb-4">Curate student success stories.</p>
+             <button className={btnPrimary}>View All Testimonials</button>
+          </div>
+        );
+
+      // --- CONFIG SETTINGS ---
+      case "Mail Settings":
+        return (
+          <div className={cardStyle + " p-8 space-y-6"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">SMTP Configuration</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Mail Driver</label>
+                <select className={inputStyle}><option>SMTP</option><option>Sendgrid</option></select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Mail Host</label>
+                <input defaultValue="smtp.mailtrap.io" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Mail Port</label>
+                <input defaultValue="2525" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Encryption</label>
+                <select className={inputStyle}><option>TLS</option><option>SSL</option></select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Username</label>
+                <input className={inputStyle} type="text" />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Password</label>
+                <input className={inputStyle} type="password" />
+              </div>
+            </div>
+            <div className="flex justify-end pt-4">
+               <button className={btnPrimary}>Update Configuration</button>
+            </div>
+          </div>
+        );
+
+      case "Payment Gateways":
+        return (
+          <div className={cardStyle + " p-8 space-y-8"}>
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Smartphone className="text-green-600" size={24} />
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">M-PESA (Daraja API)</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-8 border-l-2 border-green-500">
+                <input placeholder="Consumer Key" className={inputStyle} />
+                <input placeholder="Consumer Secret" className={inputStyle} type="password" />
+                <input placeholder="Passkey" className={inputStyle} type="password" />
+                <input placeholder="Shortcode (Paybill/Till)" className={inputStyle} />
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-4">
+                <CreditCard className="text-blue-600" size={24} />
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Stripe / PayPal</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-8 border-l-2 border-blue-500">
+                <input placeholder="Stripe Publishable Key" className={inputStyle} />
+                <input placeholder="Stripe Secret Key" className={inputStyle} type="password" />
+                <input placeholder="PayPal Client ID" className={inputStyle} />
+                <input placeholder="PayPal Secret" className={inputStyle} type="password" />
+              </div>
+            </div>
+            <div className="flex justify-end">
+               <button className={btnPrimary}>Save Keys</button>
+            </div>
+          </div>
+        );
+
+      case "Google Integration":
+        return (
+          <div className={cardStyle + " p-8 space-y-6"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Google Services</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Google Analytics ID</label>
+                <div className="flex gap-2">
+                  <Globe size={20} className="text-gray-400 mt-3" />
+                  <input placeholder="UA-XXXXX-Y" className={inputStyle} />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Google Maps API Key</label>
+                <div className="flex gap-2">
+                  <MapPin size={20} className="text-gray-400 mt-3" />
+                  <input placeholder="AIza..." className={inputStyle} type="password" />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">OAuth Client ID (Login)</label>
+                <div className="flex gap-2">
+                  <Key size={20} className="text-gray-400 mt-3" />
+                  <input placeholder="client-id.apps.googleusercontent.com" className={inputStyle} />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end pt-4">
+               <button className={btnPrimary}>Update Google Settings</button>
+            </div>
+          </div>
+        );
+
+      // --- PLATFORM LOGIC ---
+      case "Categories":
+        return (
+          <div className={cardStyle + " p-8"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Category Management</h3>
+            <CategoryManager />
+          </div>
+        );
+
+      case "Commissions":
+        return (
+          <div className={cardStyle + " p-8 space-y-6"}>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Financial Rules</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Default Platform Commission (%)</label>
+                <input type="number" defaultValue="20" className={inputStyle} />
+              </div>
+              <div>
+                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block">Minimum Payout (KES)</label>
+                <input type="number" defaultValue="500" className={inputStyle} />
+              </div>
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div>
+                  <span className="font-bold text-gray-900 dark:text-white block">Auto-Approve Payouts</span>
+                  <span className="text-xs text-gray-500">Automatically process requests under KES 5000</span>
+                </div>
+                <ToggleRight size={32} className="text-brand-500 cursor-pointer" />
+              </div>
+            </div>
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+              <button className={btnPrimary}>Update Rules</button>
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+           <div className={cardStyle + " p-8 flex flex-col items-center justify-center min-h-[300px] text-center"}>
+              <Settings size={48} className="text-gray-300 mb-4" />
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">{activeTab}</h3>
+              <p className="text-gray-500">Settings panel for {activeTab} is under construction.</p>
+           </div>
+        );
+    }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Financial Overview</h2>
+    <div className="animate-fade-in-up">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">System Settings</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard title="Total Revenue" value="KES 45M" subtext="+8% vs last month" icon={DollarSign} color="bg-green-500" />
-        <StatCard title="Pending Withdrawals" value="KES 120k" subtext="5 requests" icon={Clock} color="bg-yellow-500" />
-        <StatCard title="Total Payouts" value="KES 32M" subtext="All time" icon={CheckCircle} color="bg-blue-500" />
-      </div>
-
-      <div className={`${cardStyle} overflow-hidden`}>
-        <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-          <h3 className="font-bold text-lg text-gray-900 dark:text-white">Withdrawal Requests</h3>
-          <button className={btnSecondary}><Download size={16} /> Export CSV</button>
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Hierarchical Settings Sidebar */}
+        <div className="w-full lg:w-64 flex-shrink-0">
+          <div className={`${cardStyle} overflow-hidden py-2`}>
+            {menuGroups.map((group, idx) => (
+              <div key={idx} className="mb-2 last:mb-0">
+                <h4 className="px-6 py-2 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                  {group.title}
+                </h4>
+                {group.items.map(tab => (
+                  <button
+                    key={tab.name}
+                    onClick={() => setActiveTab(tab.name)}
+                    className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-bold border-l-4 transition-all ${
+                      activeTab === tab.name 
+                        ? 'border-brand-500 bg-gray-50 dark:bg-gray-900 text-brand-600 dark:text-brand-400' 
+                        : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    <tab.icon size={16} /> {tab.name}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-            <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
-              <tr>
-                <th className="px-6 py-4">ID</th>
-                <th className="px-6 py-4">Instructor</th>
-                <th className="px-6 py-4">Amount</th>
-                <th className="px-6 py-4">Method</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {withdrawals.map((w) => (
-                <tr key={w.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-xs">{w.id}</td>
-                  <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{w.instructor}</td>
-                  <td className="px-6 py-4 font-bold">KES {w.amount.toLocaleString()}</td>
-                  <td className="px-6 py-4">{w.method}</td>
-                  <td className="px-6 py-4 text-xs">{w.date}</td>
-                  <td className="px-6 py-4">
-                    <span className={`${badgeStyle} ${w.status === 'Paid' ? 'bg-green-100 text-green-700' : w.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
-                      {w.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {w.status === 'Pending' && (
-                      <button 
-                        onClick={() => handleApprove(w.id)}
-                        className="text-green-600 font-bold text-xs hover:underline"
-                      >
-                        Approve
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {/* Settings Content Area */}
+        <div className="flex-1">
+          {renderContent()}
         </div>
       </div>
     </div>
@@ -698,7 +937,7 @@ const AdminDashboard: React.FC = () => {
   const handleNavClick = (menu: string, sub?: string) => {
     setActiveTab(menu);
     if (sub) setSubFilter(sub);
-    setViewCourseId(null); // Reset detail view on nav change
+    setViewCourseId(null);
     if (window.innerWidth < 1024) setIsSidebarOpen(false);
   };
 
@@ -713,7 +952,7 @@ const AdminDashboard: React.FC = () => {
       children: [
         { name: 'All Courses', filter: 'All' },
         { name: 'Pending Approval', filter: 'Pending' },
-        { name: 'Categories', target: 'Settings', targetTab: 'Categories' } // Special case handled in logic
+        { name: 'Categories', target: 'Settings', targetTab: 'Categories' } 
       ] 
     },
     { 
@@ -752,9 +991,6 @@ const AdminDashboard: React.FC = () => {
 
     switch (activeTab) {
       case 'Courses':
-        // If "Categories" was clicked, we actually show Settings with category tab active, 
-        // but for this structure let's keep it simple or redirect.
-        // Assuming subFilter "Categories" isn't passed here directly if handled in NavClick.
         return <CourseManagementView filter={subFilter} onViewCourse={handleViewCourse} />;
       case 'Users': 
         return <UserManagementView defaultFilter={subFilter === 'All Users' ? 'All' : subFilter.replace('s', '')} />;
@@ -770,7 +1006,6 @@ const AdminDashboard: React.FC = () => {
         return <SettingsView />;
       case 'Dashboard':
       default:
-        // Reusing the dashboard home from previous logic but cleaned up
         return (
           <div className="space-y-8 animate-fade-in-up">
             <div className="flex justify-between items-end">
@@ -864,7 +1099,6 @@ const AdminDashboard: React.FC = () => {
                         onClick={() => {
                           if (sub.target) {
                             setActiveTab(sub.target);
-                            // In a real app we'd pass targetTab via context/state to Settings view
                           } else {
                             handleNavClick(item.name, sub.filter);
                           }
