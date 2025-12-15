@@ -37,6 +37,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
     setImgSrc('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80');
   };
 
+  // Check if price contains numbers to determine if we should show a discount
+  const hasPrice = /\d/.test(course.price);
+
   return (
     <Link 
       to={`/courses/${course.id}`} 
@@ -112,7 +115,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, linkState }) => {
           <span className="font-bold text-base text-gray-900 dark:text-white">
             {course.price === 'Free' ? 'Free' : course.price}
           </span>
-          {course.price !== 'Free' && (
+          {course.price !== 'Free' && hasPrice && (
              <span className="text-xs text-gray-400 line-through decoration-gray-400">
                KES {(parseInt(course.price.replace(/[^0-9]/g, '')) * 1.5).toLocaleString()}
              </span>

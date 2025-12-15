@@ -26,9 +26,9 @@ export const courses: Course[] = [
     students: 150,
     duration: "12 weeks",
     level: "All Levels",
-    price: "KES 5,000",
+    price: "Restricted Access",
     image: "/images/destiny.jpg",
-    description: "Explore the foundations of faith, biblical interpretation, and theological history to deepen your spiritual understanding.",
+    description: "Explore the foundations of faith, biblical interpretation, and theological history. This course requires authorized access to view materials.",
     syllabus: ["Introduction to Theology", "Biblical Studies", "Systematic Theology", "Church History", "Ethics and Faith"],
     isPopular: true
   },
@@ -41,9 +41,9 @@ export const courses: Course[] = [
     students: 120,
     duration: "10 weeks",
     level: "Intermediate",
-    price: "KES 6,000",
+    price: "Restricted Access",
     image: "/images/destiny.jpg",
-    description: "Gain essential skills in pastoral counseling, human psychology, and conflict resolution for community support.",
+    description: "Gain essential skills in pastoral counseling, human psychology, and conflict resolution. This course is password protected.",
     syllabus: ["Fundamentals of Psychology", "Counseling Techniques", "Crisis Intervention", "Family & Marriage Counseling", "Ethics in Counseling"],
     isNew: true
   },
@@ -56,9 +56,9 @@ export const courses: Course[] = [
     students: 200,
     duration: "8 weeks",
     level: "All Levels",
-    price: "KES 4,500",
+    price: "Restricted Access",
     image: "/images/destiny.jpg",
-    description: "Develop your potential to lead with integrity, vision, and purpose in various organizational and community contexts.",
+    description: "Develop your potential to lead with integrity, vision, and purpose. Content is restricted to enrolled leadership candidates.",
     syllabus: ["Principles of Leadership", "Strategic Planning", "Team Dynamics", "Conflict Management", "Servant Leadership"],
     isPopular: true
   },
@@ -71,9 +71,9 @@ export const courses: Course[] = [
     students: 180,
     duration: "12 weeks",
     level: "Beginner",
-    price: "KES 5,500",
+    price: "Restricted Access",
     image: "/images/destiny.jpg",
-    description: "Understand the mechanics of business management, entrepreneurship, and ethics in the modern marketplace.",
+    description: "Understand the mechanics of business management, entrepreneurship, and ethics. Access is restricted.",
     syllabus: ["Entrepreneurship Basics", "Business Ethics", "Financial Management", "Marketing Fundamentals", "Operations Management"]
   },
   {
