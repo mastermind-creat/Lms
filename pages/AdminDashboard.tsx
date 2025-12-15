@@ -10,7 +10,7 @@ import {
   ChevronDown, PlusCircle, CreditCard, UserPlus, Mail,
   Globe, Server, Percent, ToggleLeft, ToggleRight, List,
   Image as ImageIcon, Calendar, Clock, Star, HelpCircle, Quote, MapPin, Key, Plus,
-  Facebook, Twitter, Instagram, Linkedin
+  Facebook, Twitter, Instagram, Linkedin, GraduationCap, Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { courses } from '../data/courses';
@@ -28,6 +28,8 @@ const initialUsers = [
   { id: 2, name: "Jane Doe", email: "jane@student.ke", role: "Student", status: "Active", joined: "2024-02-20", spent: 15000, courses: 3 },
   { id: 3, name: "John Smith", email: "john@student.ke", role: "Student", status: "Suspended", joined: "2024-03-10", spent: 0, courses: 0 },
   { id: 4, name: "Emily Roth", email: "emily@instructor.ke", role: "Instructor", status: "Pending", joined: "2024-10-25", earnings: 0, courses: 1 },
+  { id: 5, name: "Michael Scott", email: "m.scott@instructor.ke", role: "Instructor", status: "Active", joined: "2024-05-12", earnings: 120000, courses: 2 },
+  { id: 6, name: "Dwight Schrute", email: "dwight@student.ke", role: "Student", status: "Active", joined: "2024-06-15", spent: 45000, courses: 5 },
 ];
 
 const initialWithdrawals = [
@@ -126,32 +128,51 @@ const CategoryManager = () => {
   );
 };
 
-const UserManagementView = ({ defaultFilter = "All" }) => {
-  const [filter, setFilter] = useState(defaultFilter);
+const UserManagementView = ({ userType }: { userType: 'Instructor' | 'Student' }) => {
   const [users, setUsers] = useState(initialUsers);
+  const [activeFilter, setActiveFilter] = useState("All"); 
 
-  React.useEffect(() => {
-    setFilter(defaultFilter);
-  }, [defaultFilter]);
+  // Filters specific to type
+  const filters = userType === 'Instructor' 
+    ? ['All', 'Active', 'Applications'] 
+    : ['All', 'Active'];
 
-  const toggleStatus = (id: number) => {
-    setUsers(users.map(u => u.id === id ? { ...u, status: u.status === 'Active' ? 'Suspended' : 'Active' } : u));
+  const toggleUserStatus = (id: number) => {
+    setUsers(users.map(u => {
+      if (u.id === id) {
+        if (u.status === 'Pending') return { ...u, status: 'Active' };
+        return { ...u, status: u.status === 'Active' ? 'Suspended' : 'Active' };
+      }
+      return u;
+    }));
   };
 
-  const filteredUsers = users.filter(u => filter === "All" || u.role === filter);
+  const deleteUser = (id: number) => {
+    if(confirm("Are you sure you want to delete this user?")) {
+      setUsers(users.filter(u => u.id !== id));
+    }
+  };
+
+  const filteredUsers = users.filter(u => {
+    if (u.role !== userType) return false;
+    if (activeFilter === 'All') return true;
+    if (activeFilter === 'Active') return u.status === 'Active';
+    if (activeFilter === 'Applications') return u.status === 'Pending';
+    return true;
+  });
 
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">User Management</h2>
-        <div className="flex gap-2">
-          {['All', 'Student', 'Instructor'].map(f => (
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{userType} Management</h2>
+        <div className="flex gap-2 bg-white dark:bg-gray-800 p-1 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+          {filters.map(f => (
             <button 
               key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filter === f ? 'bg-brand-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}
+              onClick={() => setActiveFilter(f)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${activeFilter === f ? 'bg-brand-600 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
             >
-              {f}s
+              {f}
             </button>
           ))}
         </div>
@@ -159,19 +180,19 @@ const UserManagementView = ({ defaultFilter = "All" }) => {
 
       <div className={`${cardStyle} overflow-hidden`}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300 min-w-[800px]">
             <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
               <tr>
                 <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Stats</th>
+                <th className="px-6 py-4">{userType === 'Instructor' ? 'Earnings' : 'Spent'}</th>
+                <th className="px-6 py-4">{userType === 'Instructor' ? 'Courses Created' : 'Courses Enrolled'}</th>
                 <th className="px-6 py-4">Joined</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {filteredUsers.map(user => (
+              {filteredUsers.length > 0 ? filteredUsers.map(user => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -185,35 +206,44 @@ const UserManagementView = ({ defaultFilter = "All" }) => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 ${user.role === 'Instructor' ? 'text-purple-600 font-bold' : 'text-gray-600'}`}>
-                      {user.role === 'Instructor' && <Award size={14} />} {user.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
                     <span className={`${badgeStyle} ${user.status === 'Active' ? 'bg-green-100 text-green-700' : user.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
                       {user.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-xs">
-                    {user.role === 'Instructor' ? (
-                      <span className="text-green-600 font-bold">KES {(user.earnings || 0).toLocaleString()}</span>
-                    ) : (
-                      <span>{user.courses} Courses</span>
-                    )}
+                  <td className="px-6 py-4 font-mono">
+                    {userType === 'Instructor' ? `KES ${(user.earnings || 0).toLocaleString()}` : `KES ${(user.spent || 0).toLocaleString()}`}
+                  </td>
+                  <td className="px-6 py-4">
+                    {user.courses}
                   </td>
                   <td className="px-6 py-4 text-xs">{user.joined}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <button onClick={() => toggleStatus(user.id)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500" title={user.status === 'Active' ? 'Suspend' : 'Activate'}>
-                        {user.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
-                      </button>
-                      <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500" title="View Profile">
+                      <button className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 rounded-lg transition-colors" title="View Details">
                         <Eye size={16} />
+                      </button>
+                      <button 
+                        onClick={() => toggleUserStatus(user.id)}
+                        className={`p-2 bg-gray-100 dark:bg-gray-800 rounded-lg transition-colors ${user.status === 'Active' ? 'hover:bg-yellow-50 text-yellow-600' : 'hover:bg-green-50 text-green-600'}`} 
+                        title={user.status === 'Active' ? 'Deactivate' : 'Activate/Approve'}
+                      >
+                        {user.status === 'Active' ? <Lock size={16} /> : <CheckCircle size={16} />}
+                      </button>
+                      <button 
+                        onClick={() => deleteUser(user.id)}
+                        className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 rounded-lg transition-colors" 
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No {userType.toLowerCase()}s found for this filter.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -409,10 +439,43 @@ const CourseDetailView = ({ course, onBack }: { course: any, onBack: () => void 
 
 const CourseManagementView = ({ filter = "All", onViewCourse }: { filter?: string, onViewCourse: (course: any) => void }) => {
   const filteredCourses = courses; 
+  
+  // Calculations
+  const totalEnrollments = filteredCourses.reduce((acc, curr) => acc + curr.students, 0);
+  const totalRevenue = filteredCourses.reduce((acc, curr) => {
+     const price = parseInt(curr.price.replace(/[^0-9]/g, '') || '0');
+     return acc + (price * curr.students);
+  }, 0);
+
+  const recentEnrollments = [
+    { name: "Alice Wambui", course: "Advanced React Patterns", time: "2 mins ago" },
+    { name: "Peter Kamau", course: "Python for Data Science", time: "15 mins ago" },
+    { name: "John Doe", course: "UI/UX Principles", time: "1 hour ago" },
+  ];
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <div className="flex justify-between items-center">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard title="Total Enrollments" value={totalEnrollments.toLocaleString()} icon={Users} color="bg-blue-500" trend="+5%" />
+        <StatCard title="Total Revenue" value={`KES ${totalRevenue.toLocaleString()}`} icon={DollarSign} color="bg-green-500" trend="+12%" />
+        <div className={`${cardStyle} p-6`}>
+           <h3 className="font-bold text-gray-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Recent Enrollments</h3>
+           <div className="space-y-3">
+             {recentEnrollments.map((enr, i) => (
+               <div key={i} className="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-700 last:border-0 pb-2 last:pb-0">
+                 <div>
+                   <p className="font-bold text-gray-800 dark:text-gray-200">{enr.name}</p>
+                   <p className="text-xs text-gray-500 truncate w-32">{enr.course}</p>
+                 </div>
+                 <span className="text-xs text-gray-400">{enr.time}</span>
+               </div>
+             ))}
+           </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{filter === "All" ? "All Courses" : "Pending Approvals"}</h2>
         <div className="flex gap-2">
            <button className={btnSecondary}><Filter size={16} /> Filter</button>
@@ -421,46 +484,48 @@ const CourseManagementView = ({ filter = "All", onViewCourse }: { filter?: strin
       </div>
 
       <div className={`${cardStyle} overflow-hidden`}>
-        <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-          <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
-            <tr>
-              <th className="px-6 py-4">Course</th>
-              <th className="px-6 py-4">Instructor</th>
-              <th className="px-6 py-4">Price</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-            {filteredCourses.map(course => (
-              <tr key={course.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden">
-                      <img src={course.image} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-gray-900 dark:text-white line-clamp-1 max-w-[200px]">{course.title}</span>
-                      <span className="text-xs text-gray-500">{course.category}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">{course.instructor}</td>
-                <td className="px-6 py-4 font-mono font-bold">{course.price}</td>
-                <td className="px-6 py-4">
-                  <span className={`${badgeStyle} bg-blue-100 text-blue-700`}>Published</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-2">
-                    <button className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors" onClick={() => onViewCourse(course)}>
-                      View Details
-                    </button>
-                  </div>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300 min-w-[800px]">
+            <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase font-bold text-gray-500">
+              <tr>
+                <th className="px-6 py-4">Course</th>
+                <th className="px-6 py-4">Instructor</th>
+                <th className="px-6 py-4">Price</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {filteredCourses.map(course => (
+                <tr key={course.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden">
+                        <img src={course.image} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-gray-900 dark:text-white line-clamp-1 max-w-[200px]">{course.title}</span>
+                        <span className="text-xs text-gray-500">{course.category}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">{course.instructor}</td>
+                  <td className="px-6 py-4 font-mono font-bold">{course.price}</td>
+                  <td className="px-6 py-4">
+                    <span className={`${badgeStyle} bg-blue-100 text-blue-700`}>Published</span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors" onClick={() => onViewCourse(course)}>
+                        View Details
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -956,12 +1021,12 @@ const AdminDashboard: React.FC = () => {
       ] 
     },
     { 
-      name: 'Users', icon: Users,
-      children: [
-        { name: 'All Users', filter: 'All' },
-        { name: 'Instructors', filter: 'Instructor' },
-        { name: 'Students', filter: 'Student' }
-      ]
+      name: 'Instructors', icon: GraduationCap, 
+      // Instructors logic handled in UserManagementView
+    },
+    {
+      name: 'Students', icon: Users,
+      // Students logic handled in UserManagementView
     },
     { 
       name: 'Live Classes', icon: Video,
@@ -992,8 +1057,10 @@ const AdminDashboard: React.FC = () => {
     switch (activeTab) {
       case 'Courses':
         return <CourseManagementView filter={subFilter} onViewCourse={handleViewCourse} />;
-      case 'Users': 
-        return <UserManagementView defaultFilter={subFilter === 'All Users' ? 'All' : subFilter.replace('s', '')} />;
+      case 'Instructors': 
+        return <UserManagementView userType="Instructor" />;
+      case 'Students':
+        return <UserManagementView userType="Student" />;
       case 'Financials': 
         return <FinancialsView />;
       case 'Live Classes':
