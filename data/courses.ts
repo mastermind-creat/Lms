@@ -14,6 +14,7 @@ export interface Course {
   syllabus: string[];
   isNew?: boolean;
   isPopular?: boolean;
+  status?: string; // Added to support admin dashboard management
 }
 
 export const courses: Course[] = [
@@ -30,7 +31,8 @@ export const courses: Course[] = [
     image: "/images/destiny.jpg",
     description: "Explore the foundations of faith, biblical interpretation, and theological history. This course requires authorized access to view materials.",
     syllabus: ["Introduction to Theology", "Biblical Studies", "Systematic Theology", "Church History", "Ethics and Faith"],
-    isPopular: true
+    isPopular: true,
+    status: "Published"
   },
   {
     id: 2,
@@ -45,7 +47,8 @@ export const courses: Course[] = [
     image: "/images/destiny.jpg",
     description: "Gain essential skills in pastoral counseling, human psychology, and conflict resolution. This course is password protected.",
     syllabus: ["Fundamentals of Psychology", "Counseling Techniques", "Crisis Intervention", "Family & Marriage Counseling", "Ethics in Counseling"],
-    isNew: true
+    isNew: true,
+    status: "Published"
   },
   {
     id: 3,
@@ -60,7 +63,8 @@ export const courses: Course[] = [
     image: "/images/destiny.jpg",
     description: "Develop your potential to lead with integrity, vision, and purpose. Content is restricted to enrolled leadership candidates.",
     syllabus: ["Principles of Leadership", "Strategic Planning", "Team Dynamics", "Conflict Management", "Servant Leadership"],
-    isPopular: true
+    isPopular: true,
+    status: "Published"
   },
   {
     id: 4,
@@ -74,7 +78,8 @@ export const courses: Course[] = [
     price: "Restricted Access",
     image: "/images/destiny.jpg",
     description: "Understand the mechanics of business management, entrepreneurship, and ethics. Access is restricted.",
-    syllabus: ["Entrepreneurship Basics", "Business Ethics", "Financial Management", "Marketing Fundamentals", "Operations Management"]
+    syllabus: ["Entrepreneurship Basics", "Business Ethics", "Financial Management", "Marketing Fundamentals", "Operations Management"],
+    status: "Published"
   },
   {
     id: 5,
@@ -89,7 +94,8 @@ export const courses: Course[] = [
     image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80",
     description: "Learn SEO, Social Media, and Email marketing strategies tailored for the East African digital landscape.",
     syllabus: ["Social Media Strategy", "SEO Fundamentals", "Content Marketing", "Paid Advertising (FB & Google)", "Analytics & Reporting"],
-    isPopular: true
+    isPopular: true,
+    status: "Published"
   },
   {
     id: 6,
@@ -104,7 +110,8 @@ export const courses: Course[] = [
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80",
     description: "Build beautiful, natively compiled applications for mobile, web, and desktop from a single codebase.",
     syllabus: ["Dart Programming", "Flutter Widgets", "State Management (Provider/Bloc)", "Firebase Integration", "Publishing to Stores"],
-    isNew: true
+    isNew: true,
+    status: "Pending Approval"
   },
   {
     id: 7,
@@ -118,7 +125,8 @@ export const courses: Course[] = [
     price: "KES 9,500",
     image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
     description: "Protect systems and networks. Learn ethical hacking basics, network security, and compliance standards.",
-    syllabus: ["Network Security Basics", "Ethical Hacking Intro", "Cryptography", "Web Application Security", "Security Compliance"]
+    syllabus: ["Network Security Basics", "Ethical Hacking Intro", "Cryptography", "Web Application Security", "Security Compliance"],
+    status: "Published"
   },
   {
     id: 8,
@@ -133,6 +141,7 @@ export const courses: Course[] = [
     image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=800&q=80",
     description: "Analyze financial data using Python. Build predictive models for stock markets and automate trading.",
     syllabus: ["Python for Finance", "Pandas & NumPy", "Financial Data Visualization", "Algorithmic Trading Basics", "Risk Management"],
-    isNew: true
+    isNew: true,
+    status: "Published"
   }
 ];

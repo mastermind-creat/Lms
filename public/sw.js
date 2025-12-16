@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'elimutech-v21';
+const CACHE_NAME = 'elimutech-v22';
 const urlsToCache = [
   './',
   './index.html',
