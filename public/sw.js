@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'elimutech-v22';
+const CACHE_NAME = 'elimutech-v25';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Force the waiting service worker to become the active service worker
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -19,7 +19,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
-      self.clients.claim(), // Take control of all clients immediately
+      self.clients.claim(),
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -34,8 +34,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Network First strategy for HTML requests
-  // This ensures the user always gets the latest index.html
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -46,7 +44,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache First strategy for assets (images, scripts, etc.)
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
