@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Hero from '../components/Hero';
 import Partners from '../components/Partners';
@@ -7,6 +8,7 @@ import CourseSection from '../components/CourseSection';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
 import ValueProps from '../components/ValueProps';
+import BlogSection from '../components/BlogSection';
 import { courses } from '../data/courses';
 
 const IlluminatedSeparator = () => (
@@ -72,6 +74,10 @@ const Home: React.FC = () => {
         courses={recommendedCourses}
         bgColor="bg-gray-50/50 dark:bg-gray-800/30"
       />
+      <IlluminatedSeparator />
+
+      <BlogSection />
+      
       <IlluminatedSeparator />
 
       <CallToAction />

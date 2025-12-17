@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import AllCourses from './pages/AllCourses';
 import CourseDetails from './pages/CourseDetails';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -53,6 +54,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/courses" element={<AllCourses />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
