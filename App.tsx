@@ -15,6 +15,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import StudentDashboard from './pages/StudentDashboard';
 import InstructorDashboard from './pages/InstructorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import AllInstructors from './pages/AllInstructors';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Loader from './components/Loader';
@@ -60,6 +61,7 @@ const App: React.FC = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/courses" element={<AllCourses />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
+              <Route path="/mentors" element={<AllInstructors />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />

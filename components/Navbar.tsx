@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, ShoppingCart, Heart, Bell, Sun, Moon, Home, Info, Mail, HelpCircle, BookOpen, User, LayoutDashboard, Presentation, Shield } from 'lucide-react';
+import { Menu, X, Search, ShoppingCart, Heart, Bell, Sun, Moon, Home, Info, Mail, HelpCircle, BookOpen, User, LayoutDashboard, Presentation, Shield, Users } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
@@ -25,6 +25,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/', icon: <Home size={18} /> },
     { name: 'Courses', path: '/courses', icon: <BookOpen size={18} /> },
+    { name: 'Mentors', path: '/mentors', icon: <Users size={18} /> },
     { name: 'Student', path: '/dashboard', icon: <LayoutDashboard size={18} /> },
     { name: 'Instructor', path: '/instructor', icon: <Presentation size={18} /> },
     { name: 'Admin', path: '/admin', icon: <Shield size={18} /> },
