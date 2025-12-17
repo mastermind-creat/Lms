@@ -1,10 +1,13 @@
 
 import React from 'react';
 import Hero from '../components/Hero';
+import TrendingMarquee from '../components/TrendingMarquee';
 import Partners from '../components/Partners';
 import Stats from '../components/Stats';
+import HowItWorks from '../components/HowItWorks';
 import Categories from '../components/Categories';
 import CourseSection from '../components/CourseSection';
+import InstructorSpotlight from '../components/InstructorSpotlight';
 import CallToAction from '../components/CallToAction';
 import Testimonials from '../components/Testimonials';
 import ValueProps from '../components/ValueProps';
@@ -26,10 +29,10 @@ const Home: React.FC = () => {
   return (
     <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
       <Hero />
-      <IlluminatedSeparator />
+      <TrendingMarquee />
       <Partners />
-      <IlluminatedSeparator />
-      <Stats />
+      
+      <HowItWorks />
       
       <IlluminatedSeparator />
 
@@ -37,7 +40,7 @@ const Home: React.FC = () => {
         title="Featured Courses" 
         subtitle="Curriculum designed by Kenya's top tech leads."
         courses={featuredCourses}
-        bgColor="bg-white dark:bg-gray-900"
+        bgColor="bg-gray-50/50 dark:bg-gray-800/30"
       />
 
       <IlluminatedSeparator />
@@ -47,6 +50,8 @@ const Home: React.FC = () => {
       
       <ValueProps />
       <IlluminatedSeparator />
+      
+      <InstructorSpotlight />
       
       <CourseSection 
         title="Most Studied" 
@@ -64,6 +69,8 @@ const Home: React.FC = () => {
       />
       <IlluminatedSeparator />
 
+      <Stats />
+      
       <Testimonials />
 
       <IlluminatedSeparator />
