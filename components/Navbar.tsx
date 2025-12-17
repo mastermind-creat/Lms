@@ -28,6 +28,7 @@ const Navbar: React.FC = () => {
     { name: 'Student', path: '/dashboard', icon: <LayoutDashboard size={18} /> },
     { name: 'Instructor', path: '/instructor', icon: <Presentation size={18} /> },
     { name: 'Admin', path: '/admin', icon: <Shield size={18} /> },
+    { name: 'Support', path: '/support', icon: <HelpCircle size={18} /> },
     { name: 'Contact', path: '/contact', icon: <Mail size={18} /> },
   ];
 
