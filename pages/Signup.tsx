@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { User, Mail, Lock, ArrowRight, Phone, Briefcase, Globe, BookOpen, GraduationCap, Eye, EyeOff, ChevronDown, Building, MapPin, CheckSquare, AlignLeft } from 'lucide-react';
 
 type Role = 'student' | 'instructor' | 'organization';
@@ -69,6 +69,14 @@ const Signup: React.FC = () => {
   const [role, setRole] = useState<Role>('student');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Effect to set role based on navigation state (e.g., from "Become an Instructor" button)
+  useEffect(() => {
+    if (location.state?.role) {
+      setRole(location.state.role);
+    }
+  }, [location.state]);
 
   // Common Fields (Shared for Person Name / Org Name)
   const [name, setName] = useState('');

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, MapPin, Users, BookOpen, Star, Linkedin, Twitter, Globe, X, ExternalLink, Award, Briefcase, ChevronRight } from 'lucide-react';
+import { Search, Filter, MapPin, Users, BookOpen, Star, Linkedin, Twitter, Globe, X, ExternalLink, Award, Briefcase, ChevronRight, CheckCircle } from 'lucide-react';
 import { courses } from '../data/courses';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ const cardStyle = "bg-white dark:bg-gray-800 rounded-2xl shadow-[6px_6px_12px_#e
 const btnPrimary = "px-6 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm shadow-[4px_4px_10px_rgba(243,111,33,0.3)] hover:bg-brand-700 active:shadow-none hover:-translate-y-0.5 transition-all";
 const inputStyle = "w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-500 transition-all text-gray-900 dark:text-white";
 
-// Mock Instructor Data
+// Mock Instructor Data with new fields
 const instructorsData = [
   {
     id: 1,
@@ -21,6 +21,8 @@ const instructorsData = [
     students: "12.5k",
     courses: 8,
     rating: 4.9,
+    isOnline: true,
+    topMentor: true,
     bio: "Kevin is a Senior Software Engineer at Safaricom with over 10 years of experience in Fintech. He was instrumental in the development of the M-PESA Daraja API 2.0. His teaching style focuses on practical, real-world implementations of payment systems.",
     skills: ["Fintech", "Node.js", "System Design"],
     socials: { twitter: "#", linkedin: "#", website: "#" }
@@ -35,6 +37,8 @@ const instructorsData = [
     students: "8.5k",
     courses: 5,
     rating: 5.0,
+    isOnline: false,
+    topMentor: true,
     bio: "Dr. Zainab leads the AI research division at Microsoft Africa Research Institute (MARI). She specializes in using machine learning for agricultural optimization. Her courses demystify complex AI concepts for beginners.",
     skills: ["Python", "Machine Learning", "AgriTech"],
     socials: { twitter: "#", linkedin: "#" }
@@ -49,6 +53,8 @@ const instructorsData = [
     students: "10k",
     courses: 6,
     rating: 4.8,
+    isOnline: true,
+    topMentor: false,
     bio: "Brian is a Product Designer at Andela who believes that good design solves problems. He has helped startups across Nairobi launch user-centric products. He teaches UI/UX principles using Figma and Adobe XD.",
     skills: ["UI/UX", "Figma", "User Research"],
     socials: { linkedin: "#", website: "#" }
@@ -63,6 +69,8 @@ const instructorsData = [
     students: "6k",
     courses: 4,
     rating: 4.9,
+    isOnline: false,
+    topMentor: false,
     bio: "Grace is a certified Google Cloud Architect. She is passionate about serverless architecture and helping African businesses migrate to the cloud securely and cost-effectively.",
     skills: ["AWS", "Google Cloud", "DevOps"],
     socials: { twitter: "#", linkedin: "#" }
@@ -77,6 +85,8 @@ const instructorsData = [
     students: "2.1k",
     courses: 12,
     rating: 4.7,
+    isOnline: true,
+    topMentor: false,
     bio: "The Destiny Centre provides comprehensive theological and leadership training. Focusing on faith-based leadership, counseling, and community development.",
     skills: ["Theology", "Leadership", "Counseling"],
     socials: { website: "#" }
@@ -91,6 +101,8 @@ const instructorsData = [
     students: "9k",
     courses: 3,
     rating: 4.8,
+    isOnline: false,
+    topMentor: true,
     bio: "Alex is a Flutter Expert and Google Developer Expert (GDE). He builds high-performance mobile applications for the African market, focusing on offline-first architectures.",
     skills: ["Flutter", "Dart", "Mobile"],
     socials: { twitter: "#", linkedin: "#", website: "#" }
@@ -105,6 +117,8 @@ const instructorsData = [
     students: "15k",
     courses: 2,
     rating: 4.6,
+    isOnline: false,
+    topMentor: false,
     bio: "Emily leads digital strategy at Twiga Foods. She teaches data-driven digital marketing, SEO, and content strategy tailored for e-commerce growth.",
     skills: ["SEO", "Growth Hacking", "Analytics"],
     socials: { linkedin: "#" }
@@ -119,6 +133,8 @@ const instructorsData = [
     students: "4k",
     courses: 3,
     rating: 4.7,
+    isOnline: true,
+    topMentor: false,
     bio: "James bridges the gap between traditional finance and modern fintech. He teaches Python for Finance and algorithmic trading strategies.",
     skills: ["Python", "Finance", "Algo Trading"],
     socials: { linkedin: "#" }
@@ -129,8 +145,6 @@ const InstructorModal = ({ instructor, isOpen, onClose }: { instructor: any, isO
   const navigate = useNavigate();
   if (!isOpen || !instructor) return null;
 
-  // Find courses by this instructor
-  // In a real app, we'd filter by ID, but for mock data we match names or use partial match
   const instructorCourses = courses.filter(c => 
     c.instructor === instructor.name || 
     (instructor.name === "Destiny Centre" && c.instructor === "Destiny Centre")
@@ -147,8 +161,13 @@ const InstructorModal = ({ instructor, isOpen, onClose }: { instructor: any, isO
              <X size={20} />
            </button>
 
-           <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-brand-500 to-purple-600 mb-6 shadow-lg">
-             <img src={instructor.image} alt={instructor.name} className="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-900" />
+           <div className="relative w-32 h-32 mb-6">
+             <div className="w-full h-full rounded-full p-1 bg-gradient-to-br from-brand-500 to-purple-600 shadow-lg">
+               <img src={instructor.image} alt={instructor.name} className="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-900" />
+             </div>
+             {instructor.isOnline && (
+               <span className="absolute bottom-2 right-2 w-5 h-5 bg-green-500 border-4 border-white dark:border-gray-900 rounded-full animate-pulse" title="Online Now"></span>
+             )}
            </div>
            
            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{instructor.name}</h2>
@@ -167,13 +186,15 @@ const InstructorModal = ({ instructor, isOpen, onClose }: { instructor: any, isO
                <div className="text-[10px] text-gray-500 uppercase tracking-wider">Students</div>
              </div>
              <div className="p-3 bg-white dark:bg-gray-700 rounded-xl shadow-sm">
-               <div className="text-lg font-bold text-gray-900 dark:text-white">{instructor.rating}</div>
+               <div className="text-lg font-bold text-gray-900 dark:text-white flex items-center justify-center gap-1">
+                 {instructor.rating} <Star size={14} className="text-yellow-500 fill-current" />
+               </div>
                <div className="text-[10px] text-gray-500 uppercase tracking-wider">Rating</div>
              </div>
            </div>
         </div>
 
-        {/* Right Content (Bio & Courses) */}
+        {/* Right Content */}
         <div className="w-full md:w-2/3 p-8 overflow-y-auto">
            <button onClick={onClose} className="absolute top-6 right-6 hidden md:block p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
              <X size={24} />
@@ -296,23 +317,42 @@ const AllInstructors: React.FC = () => {
           {filteredInstructors.map((instructor, index) => (
             <div 
               key={instructor.id} 
-              className={`${cardStyle} p-6 flex flex-col items-center text-center hover:-translate-y-2 hover:shadow-xl transition-all duration-300 animate-fade-in-up group`}
+              className={`${cardStyle} p-6 flex flex-col items-center text-center hover:-translate-y-2 hover:shadow-xl transition-all duration-300 animate-fade-in-up group overflow-hidden relative`}
               style={{ animationDelay: `${(index + 2) * 50}ms` }}
             >
+              {/* Top Mentor Badge */}
+              {instructor.topMentor && (
+                <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-3 py-1 rounded-bl-xl shadow-sm z-10 flex items-center gap-1">
+                  <Award size={12} /> Top Rated
+                </div>
+              )}
+
               <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-brand-500 to-purple-600">
                   <img src={instructor.image} alt={instructor.name} className="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-800" />
                 </div>
-                <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 p-1.5 rounded-full shadow-md border border-gray-100 dark:border-gray-700">
+                {instructor.isOnline && (
+                   <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full animate-pulse" title="Online Now"></span>
+                )}
+                <div className="absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 p-1.5 rounded-full shadow-md border border-gray-100 dark:border-gray-700 hidden">
                    <div className="w-6 h-6 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center text-brand-600 text-[10px] font-bold">
                      <Briefcase size={12} />
                    </div>
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-brand-600 transition-colors">{instructor.name}</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 group-hover:text-brand-600 transition-colors flex items-center gap-1">
+                {instructor.name}
+                <CheckCircle size={14} className="text-blue-500" fill="currentColor" color="white" />
+              </h3>
               <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{instructor.role}</p>
               <p className="text-xs text-brand-600 dark:text-brand-400 font-bold mb-4">@ {instructor.company}</p>
+
+              {/* Rating */}
+              <div className="flex items-center gap-1 text-sm font-bold text-gray-700 dark:text-gray-200 mb-4">
+                 <Star size={16} className="text-yellow-400 fill-current" /> {instructor.rating}
+                 <span className="text-gray-400 text-xs font-normal">({Math.floor(Math.random() * 500) + 50} reviews)</span>
+              </div>
 
               <div className="w-full border-t border-gray-100 dark:border-gray-700 py-4 mb-4 grid grid-cols-2 gap-2">
                 <div>
