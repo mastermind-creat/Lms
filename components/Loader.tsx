@@ -6,7 +6,7 @@ const Loader: React.FC = () => {
       <div className="relative">
         <div className="absolute inset-0 bg-brand-500 blur-xl opacity-20 animate-pulse"></div>
         <div className="relative bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 animate-bounce">
-           <img src="/icon.png" alt="Loading..." className="w-12 h-12 object-contain" />
+          <img src="/images/icon.png" alt="Loading..." className="w-12 h-12 object-contain" />
         </div>
       </div>
       <div className="mt-8 flex flex-col items-center gap-2">
